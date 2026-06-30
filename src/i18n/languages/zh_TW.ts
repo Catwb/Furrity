@@ -50,4 +50,5 @@ export const zh_TW: Translation = {
 	[Key.planned]: "Planned",
 	[Key.chapterCount]: "chapter",
 	[Key.chaptersCount]: "chapters",
+	[Key.friends]: "友鏈",
 };

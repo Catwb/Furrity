@@ -50,4 +50,5 @@ export const ja: Translation = {
 	[Key.planned]: "Planned",
 	[Key.chapterCount]: "chapter",
 	[Key.chaptersCount]: "chapters",
+	[Key.friends]: "友達",
 };

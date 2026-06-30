@@ -50,4 +50,5 @@ export const id: Translation = {
 	[Key.planned]: "Planned",
 	[Key.chapterCount]: "chapter",
 	[Key.chaptersCount]: "chapters",
+	[Key.friends]: "Teman",
 };

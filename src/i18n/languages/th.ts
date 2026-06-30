@@ -50,4 +50,5 @@ export const th: Translation = {
 	[Key.planned]: "Planned",
 	[Key.chapterCount]: "chapter",
 	[Key.chaptersCount]: "chapters",
+	[Key.friends]: "เพื่อน",
 };

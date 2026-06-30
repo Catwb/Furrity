@@ -50,4 +50,5 @@ export const vi: Translation = {
 	[Key.planned]: "Planned",
 	[Key.chapterCount]: "chapter",
 	[Key.chaptersCount]: "chapters",
+	[Key.friends]: "Bạn bè",
 };

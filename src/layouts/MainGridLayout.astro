@@ -57,7 +57,7 @@ const mainPanelTop = siteConfig.banner.enable
     {siteConfig.background
         ? <div id="banner" class="h-full w-full"></div>
         : <ImageWrapper id="banner" alt="Banner image of the blog" class:list={["object-cover h-full transition duration-700 opacity-0 scale-105"]}
-                        src={siteConfig.banner.src} position={siteConfig.banner.position}>
+                        src={siteConfig.banner.src ?? ""} position={siteConfig.banner.position}>
           </ImageWrapper>
     }
     {isHomePage && <div class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none">

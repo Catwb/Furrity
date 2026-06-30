@@ -32,6 +32,21 @@ enum I18nKey {
 	author = "author",
 	publishedAt = "publishedAt",
 	license = "license",
+
+	novels = "novels",
+	characters = "characters",
+	series = "series",
+	chapters = "chapters",
+	volume = "volume",
+	readingMode = "readingMode",
+	totalWords = "totalWords",
+	novelStatus = "novelStatus",
+	ongoing = "ongoing",
+	completed = "completed",
+	hiatus = "hiatus",
+	planned = "planned",
+	chapterCount = "chapterCount",
+	chaptersCount = "chaptersCount",
 }
 
 export default I18nKey;

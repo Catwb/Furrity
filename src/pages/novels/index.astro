@@ -1,0 +1,56 @@
+---
+import { Icon } from "astro-icon/components";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getNovelMetas, getSeriesList } from "@utils/novel-utils";
+import { getNovelUrl } from "@utils/url-utils";
+
+const metas = await getNovelMetas();
+const seriesList = getSeriesList(metas);
+const hasSeries = seriesList.length > 0 && seriesList.some((s) => s.novels.length > 0);
+---
+
+<MainGridLayout title={i18n(I18nKey.novels)}>
+    <div class="flex flex-col gap-6">
+        {hasSeries && seriesList.map((series) => (
+            <div class="card-base rounded-[var(--radius-large)] p-6">
+                <h2 class="text-xl font-bold text-black/80 dark:text-white/80 mb-4 flex items-center gap-2">
+                    <Icon name="material-symbols:book-2-rounded" class="text-[var(--primary)] text-2xl" />
+                    {series.name}
+                </h2>
+                <div class="flex flex-col gap-4">
+                    {series.novels.map((novel) => (
+                        <a href={getNovelUrl(novel.slug)}
+                           class="flex items-center gap-4 p-4 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition active:scale-[0.98]">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-lg text-black/85 dark:text-white/85">{novel.title}</h3>
+                                {novel.description && (
+                                    <p class="text-sm text-black/50 dark:text-white/50 mt-1 line-clamp-2">{novel.description}</p>
+                                )}
+                                <div class="flex items-center gap-3 mt-2 text-xs text-black/40 dark:text-white/40">
+                                    <span class="flex items-center gap-1">
+                                        <Icon name="material-symbols:notes-rounded" class="text-sm" />
+                                        {novel.wordCount.toLocaleString()} {i18n(I18nKey.totalWords)}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <Icon name="material-symbols:library-books-rounded" class="text-sm" />
+                                        {novel.chapterCount} {i18n(I18nKey.chapters)}
+                                    </span>
+                                </div>
+                            </div>
+                            <Icon name="material-symbols:chevron-right-rounded" class="text-2xl text-[var(--primary)]" />
+                        </a>
+                    ))}
+                </div>
+            </div>
+        ))}
+
+        {!hasSeries && metas.length === 0 && (
+            <div class="card-base rounded-[var(--radius-large)] p-12 text-center text-black/40 dark:text-white/40">
+                <Icon name="material-symbols:auto-stories-outline-rounded" class="text-5xl mx-auto mb-4 opacity-50" />
+                <p>{i18n(I18nKey.untitled)}</p>
+            </div>
+        )}
+    </div>
+</MainGridLayout>

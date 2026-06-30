@@ -71,8 +71,8 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.About,
 		{
 			name: "GitHub",
-			url: "https://github.com/saicaca/fuwari", // 内部链接不应包含 base path，会自动添加
-			external: true, // 显示外部链接图标，点击在新标签页打开
+			url: "https://github.com/saicaca/fuwari",
+			external: true,
 		},
 	],
 };

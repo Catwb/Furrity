@@ -30,6 +30,7 @@ A static blog template built with [Astro](https://astro.build).
 - [x] [Markdown extended features](https://github.com/saicaca/fuwari?tab=readme-ov-file#-markdown-extended-syntax)
 - [x] Table of contents
 - [x] RSS feed
+- [x] **Novel / Fiction support** — dedicated content type with chapters, series, characters, and reading mode
 
 ## 🚀 Getting Started
 
@@ -71,6 +72,79 @@ In addition to Astro's default support for [GitHub Flavored Markdown](https://gi
 - Admonitions ([Preview and Usage](https://fuwari.vercel.app/posts/markdown-extended/#admonitions))
 - GitHub repository cards ([Preview and Usage](https://fuwari.vercel.app/posts/markdown-extended/#github-repository-cards))
 - Enhanced code blocks with Expressive Code ([Preview](https://fuwari.vercel.app/posts/expressive-code/) / [Docs](https://expressive-code.com/))
+
+## 📖 Writing Novels / Fiction
+
+This theme supports novels and fiction as a dedicated content type, separate from blog posts.
+
+### Directory Structure
+
+```
+src/content/
+├── novels/
+│   └── your-novel-slug/
+│       ├── index.md          # Novel overview (metadata only, no chapter field)
+│       ├── 01-chapter.md     # Chapter 1
+│       └── 02-chapter.md     # Chapter 2
+└── characters/
+    └── character-name.md     # Character profile
+```
+
+### Novel Overview (`index.md`)
+
+```yaml
+---
+title: 剑起风云       # Chapter or novel title
+novel: your-novel-slug    # Unique slug grouping all chapters
+novelTitle: 剑起风云       # Display name (shown in the novel list)
+description: 少年陈墨...   # Synopsis / description
+series: 仙剑奇谭            # Optional: group novels into a series
+seriesOrder: 1              # Order within the series
+published: 2026-06-01
+---
+```
+
+### Chapter (any `.md` file with a `chapter` field)
+
+```yaml
+---
+title: 清晨
+novel: your-novel-slug
+novelTitle: 剑起风云
+chapter: 1                  # Chapter number (controls sorting)
+published: 2026-06-01
+characters:                 # Optional: link characters appearing in this chapter
+  - chen-mo
+  - su-yun-er
+wordCount: 1560             # Manual word count (displayed in chapter list)
+---
+```
+
+### Character Profile
+
+```yaml
+---
+name: 陈墨
+novel: your-novel-slug
+role: protagonist           # protagonist / antagonist / supporting / minor / guest
+description: 青云宗外门杂役...
+alias:
+  - 小墨
+---
+```
+
+### Generated Routes
+
+| Route | Content |
+|---|---|
+| `/novels/` | List of all novels (grouped by series) |
+| `/novels/<novel-slug>/` | Novel overview page (description, characters, chapter list) |
+| `/novels/<novel-slug>/<chapter>/` | Chapter reading page with prev/next navigation |
+| `/characters/` | Character list grouped by novel |
+
+### Reading Mode
+
+Each chapter page has a "Reading Mode" toggle button that hides the sidebar and expands the content area for distraction-free reading. The preference is saved in `localStorage`.
 
 ## ⚡ Commands
 

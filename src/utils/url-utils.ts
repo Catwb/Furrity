@@ -43,6 +43,20 @@ export function getDir(path: string): string {
 	return path.substring(0, lastSlashIndex + 1);
 }
 
+export function getNovelUrl(novelSlug: string): string {
+	return url(`/novels/${novelSlug}/`);
+}
+
+export function getChapterUrl(novelSlug: string, chapterId: string): string {
+	const cleanId = chapterId.replace(/\.md$/, "");
+	const chapterSlug = cleanId.replace(`${novelSlug}/`, "");
+	return url(`/novels/${novelSlug}/${chapterSlug}/`);
+}
+
+export function getCharacterUrl(): string {
+	return url("/characters/");
+}
+
 export function url(path: string) {
 	return joinUrl("", import.meta.env.BASE_URL, path);
 }

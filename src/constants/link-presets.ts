@@ -19,4 +19,12 @@ export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 		name: i18n(I18nKey.categories),
 		url: "/categories/",
 	},
+	[LinkPreset.Novels]: {
+		name: i18n(I18nKey.novels),
+		url: "/novels/",
+	},
+	[LinkPreset.Characters]: {
+		name: i18n(I18nKey.characters),
+		url: "/characters/",
+	},
 };

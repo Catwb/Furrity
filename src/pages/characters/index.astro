@@ -1,0 +1,83 @@
+---
+import { Icon } from "astro-icon/components";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getAllCharacters, getAllNovelEntries } from "@utils/novel-utils";
+
+const allCharacters = await getAllCharacters();
+const allNovels = await getAllNovelEntries();
+
+const novelNames = new Map<string, string>();
+for (const n of allNovels) {
+	if (!n.data.chapter) {
+		novelNames.set(n.data.novel, n.data.novelTitle);
+	}
+}
+
+const grouped = new Map<string, typeof allCharacters>();
+for (const c of allCharacters) {
+	const key = c.data.novel;
+	if (!grouped.has(key)) grouped.set(key, []);
+	grouped.get(key)!.push(c);
+}
+
+const roleOrder: Record<string, number> = { protagonist: 0, antagonist: 1, supporting: 2, minor: 3, guest: 4 };
+function sortByRole(chars: typeof allCharacters) {
+	return [...chars].sort((a, b) => {
+		const ra = roleOrder[a.data.role ?? "guest"] ?? 9;
+		const rb = roleOrder[b.data.role ?? "guest"] ?? 9;
+		return ra - rb;
+	});
+}
+
+---
+
+<MainGridLayout title={i18n(I18nKey.characters)}>
+    {allCharacters.length === 0 && (
+        <div class="card-base rounded-[var(--radius-large)] p-12 text-center text-black/40 dark:text-white/40">
+            <Icon name="material-symbols:groups-outline-rounded" class="text-5xl mx-auto mb-4 opacity-50" />
+            <p>{i18n(I18nKey.untitled)}</p>
+        </div>
+    )}
+
+    {allCharacters.length > 0 && (
+        <div class="flex flex-col gap-6">
+            {Array.from(grouped.entries()).map(([novelSlug, chars]) => (
+                <div class="card-base rounded-[var(--radius-large)] p-6">
+                    <h2 class="text-xl font-bold text-black/80 dark:text-white/80 mb-4 flex items-center gap-2">
+                        <Icon name="material-symbols:auto-stories-rounded" class="text-[var(--primary)] text-2xl" />
+                        {novelNames.get(novelSlug) || novelSlug}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {sortByRole(chars).map((c) => (
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-black/5 dark:bg-white/5">
+                                {c.data.avatar ? (
+                                    <img src={c.data.avatar} alt={c.data.name} class="w-10 h-10 rounded-full object-cover" />
+                                ) : (
+                                    <div class="w-10 h-10 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-lg font-bold shrink-0">
+                                        {c.data.name[0]}
+                                    </div>
+                                )}
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-medium text-sm text-black/80 dark:text-white/80 flex items-center gap-1">
+                                        {c.data.name}
+                                        {c.data.role === "protagonist" && (
+                                            <Icon name="material-symbols:star-rounded" class="text-[var(--primary)] text-sm" title={i18n(I18nKey.author)} />
+                                        )}
+                                    </div>
+                                    {c.data.alias.length > 0 && (
+                                        <div class="text-xs text-black/40 dark:text-white/40 truncate">{c.data.alias.join("、")}</div>
+                                    )}
+                                    {c.data.description && (
+                                        <div class="text-xs text-black/50 dark:text-white/50 mt-1 line-clamp-2">{c.data.description}</div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    )}
+</MainGridLayout>

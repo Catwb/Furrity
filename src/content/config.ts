@@ -28,10 +28,47 @@ const postsCollection = defineCollection({
 		nextSlug: z.string().default(""),
 	}),
 });
+
 const specCollection = defineCollection({
 	schema: z.object({}),
 });
+
+const novelsCollection = defineCollection({
+	schema: z.object({
+		title: z.string(),
+		description: z.string().optional().default(""),
+		published: z.date().optional(),
+		updated: z.date().optional(),
+		draft: z.boolean().optional().default(false),
+
+		novel: z.string(),
+		novelTitle: z.string(),
+		series: z.string().optional(),
+		seriesOrder: z.number().optional(),
+		volume: z.number().optional(),
+		volumeTitle: z.string().optional(),
+
+		chapter: z.number().optional(),
+		part: z.number().optional(),
+		characters: z.array(z.string()).optional().default([]),
+		wordCount: z.number().optional(),
+	}),
+});
+
+const charactersCollection = defineCollection({
+	schema: z.object({
+		name: z.string(),
+		novel: z.string(),
+		description: z.string().optional().default(""),
+		avatar: z.string().optional(),
+		role: z.enum(["protagonist", "antagonist", "supporting", "minor", "guest"]).optional(),
+		alias: z.array(z.string()).optional().default([]),
+	}),
+});
+
 export const collections = {
 	posts: postsCollection,
 	spec: specCollection,
+	novels: novelsCollection,
+	characters: charactersCollection,
 };

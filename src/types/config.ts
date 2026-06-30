@@ -86,6 +86,20 @@ export type Favicon = {
 	sizes?: string;
 };
 
+export type FriendLink = {
+	name: string;
+	url: string;
+	avatar?: string;
+	description?: string;
+	color?: string;
+};
+
+export type FriendLinkGroup = {
+	title: string;
+	collapsed?: boolean;
+	links: FriendLink[];
+};
+
 export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
@@ -93,6 +107,7 @@ export enum LinkPreset {
 	Categories = 3,
 	Novels = 4,
 	Characters = 5,
+	Friends = 6,
 }
 
 export type NavBarLink = {

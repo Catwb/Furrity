@@ -1,0 +1,82 @@
+---
+import { getEntry, render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { friendLinkGroups } from "../friend-links.config";
+import { siteConfig } from "../config";
+import Markdown from "@components/misc/Markdown.astro";
+import TwikooComments from "@components/TwikooComments.svelte";
+
+const friendsPost = await getEntry("spec", "friends");
+const { Content } = friendsPost ? await render(friendsPost) : { Content: undefined };
+---
+
+<MainGridLayout title={i18n(I18nKey.friends)}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
+        <div class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
+            <!-- title -->
+            <div class="relative onload-animation">
+                <div class="transition w-full block font-bold mb-3 text-3xl md:text-[2.25rem]/[2.75rem] text-black/90 dark:text-white/90 md:before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)] before:absolute before:top-[0.75rem] before:left-[-1.125rem]">
+                    {i18n(I18nKey.friends)}
+                </div>
+            </div>
+
+            {Content && (
+                <Markdown class="mb-6 markdown-content onload-animation">
+                    <Content />
+                </Markdown>
+            )}
+
+            {friendLinkGroups.map((group) => (
+                <details class:list={["group mb-4 card-base rounded-[var(--radius-large)] overflow-hidden transition", {}]} open={!group.collapsed}>
+                    <summary class="flex items-center gap-2 px-5 py-3 cursor-pointer text-sm font-bold text-black/60 dark:text-white/60 hover:text-black/80 dark:hover:text-white/80 transition select-none">
+                        <Icon name="material-symbols:chevron-right-rounded" class="text-lg transition rotate-0 group-open:rotate-90" />
+                        {group.title}
+                        <span class="ml-auto text-xs text-black/30 dark:text-white/30">{group.links.length}</span>
+                    </summary>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-5 pb-4">
+                        {group.links.map((link) => (
+                            <a href={link.url} target="_blank" rel="noopener"
+                               class="flex items-start gap-4 p-4 rounded-xl transition active:scale-[0.98]"
+                               style={link.color ? `background-color: ${link.color}` : undefined}>
+                                {link.avatar ? (
+                                    <img src={link.avatar} alt={link.name}
+                                         class="w-12 h-12 rounded-full object-cover shrink-0" />
+                                ) : (
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white"
+                                         style={link.color ? `background-color: ${link.color}` : 'background-color: var(--primary)'}>
+                                        {link.name[0]}
+                                    </div>
+                                )}
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-black/85 dark:text-white/85 flex items-center gap-1 text-sm">
+                                        {link.name}
+                                        <Icon name="fa6-solid:arrow-up-right-from-square"
+                                              class="text-[0.6rem] text-black/30 dark:text-white/30" />
+                                    </div>
+                                    {link.description && (
+                                        <div class="text-xs text-black/50 dark:text-white/50 mt-0.5 line-clamp-2">
+                                            {link.description}
+                                        </div>
+                                    )}
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                </details>
+            ))}
+        </div>
+    </div>
+
+    {siteConfig.twikoo?.enable && (
+        <div class="card-base rounded-2xl px-6 md:px-9 py-6 mb-4">
+            <h2 class="text-lg font-bold text-black/80 dark:text-white/80 mb-4 flex items-center gap-2">
+                <Icon name="material-symbols:chat-outline-rounded" class="text-[var(--primary)]" />
+                {i18n(I18nKey.comments)}
+            </h2>
+            <TwikooComments client:only="svelte" />
+        </div>
+    )}
+</MainGridLayout>

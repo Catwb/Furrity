@@ -47,6 +47,7 @@ enum I18nKey {
 	planned = "planned",
 	chapterCount = "chapterCount",
 	chaptersCount = "chaptersCount",
+	friends = "friends",
 }
 
 export default I18nKey;

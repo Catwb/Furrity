@@ -2,6 +2,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils.ts";
+import type { CategoryNode } from "@types/config.ts";
 
 // // Retrieve posts and sort them by publication date
 async function getRawSortedPosts() {
@@ -78,24 +79,94 @@ export type Category = {
 	url: string;
 };
 
+export async function getCategoryTree(): Promise<CategoryNode[]> {
+	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+
+	const root: CategoryNode[] = [];
+	let uncategorizedCount = 0;
+
+	allBlogPosts.forEach((post) => {
+		const cats = post.data.category;
+		if (!cats || cats.length === 0) {
+			uncategorizedCount++;
+			return;
+		}
+
+		cats.forEach((cat) => {
+			const segments = cat.split("/").map(s => s.trim()).filter(s => s);
+			if (segments.length === 0) return;
+
+			let currentLevel = root;
+			let fullPath = "";
+			for (let i = 0; i < segments.length; i++) {
+				const seg = segments[i];
+				fullPath = fullPath ? `${fullPath}/${seg}` : seg;
+
+				let node = currentLevel.find(n => n.name === seg);
+				if (!node) {
+					node = {
+						name: seg,
+						fullName: fullPath,
+						count: 0,
+						totalCount: 0,
+						children: [],
+						url: getCategoryUrl(fullPath),
+						depth: i,
+					};
+					currentLevel.push(node);
+				}
+				node.totalCount++;
+				if (i === segments.length - 1) {
+					node.count++;
+				}
+				currentLevel = node.children;
+			}
+		});
+	});
+
+	function sortNodes(nodes: CategoryNode[]) {
+		nodes.sort((a, b) =>
+			a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+		);
+		nodes.forEach((n) => sortNodes(n.children));
+	}
+	sortNodes(root);
+
+	if (uncategorizedCount > 0) {
+		root.push({
+			name: i18n(I18nKey.uncategorized),
+			fullName: i18n(I18nKey.uncategorized),
+			count: uncategorizedCount,
+			totalCount: uncategorizedCount,
+			children: [],
+			url: getCategoryUrl(null),
+			depth: 0,
+		});
+	}
+
+	return root;
+}
+
 export async function getCategoryList(): Promise<Category[]> {
 	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
 	const count: { [key: string]: number } = {};
-	allBlogPosts.forEach((post: { data: { category: string | null } }) => {
-		if (!post.data.category) {
+	allBlogPosts.forEach((post) => {
+		const cats = post.data.category;
+		if (!cats || cats.length === 0) {
 			const ucKey = i18n(I18nKey.uncategorized);
 			count[ucKey] = count[ucKey] ? count[ucKey] + 1 : 1;
 			return;
 		}
 
-		const categoryName =
-			typeof post.data.category === "string"
-				? post.data.category.trim()
-				: String(post.data.category).trim();
-
-		count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
+		cats.forEach((cat) => {
+			const categoryName = cat.trim();
+			if (!categoryName) return;
+			count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
+		});
 	});
 
 	const lst = Object.keys(count).sort((a, b) => {

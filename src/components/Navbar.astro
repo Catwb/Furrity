@@ -19,6 +19,22 @@ let links: NavBarLink[] = navBarConfig.links.map(
 		return item;
 	},
 );
+
+type FlatNavItem = { name: string; url: string; external?: boolean; depth: number };
+function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] {
+	const result: FlatNavItem[] = [];
+	for (const item of items) {
+		result.push({ name: item.name, url: item.url, external: item.external, depth });
+		if (item.children && item.children.length > 0) {
+			result.push(...flattenNavItems(item.children, depth + 1));
+		}
+	}
+	return result;
+}
+
+const linkChildren = links.map((l) =>
+	l.children && l.children.length > 0 ? flattenNavItems(l.children) : null,
+);
 ---
 <div id="navbar" class="z-50 onload-animation">
     <div class="absolute h-8 left-0 right-0 -top-8 bg-[var(--card-bg)] transition"></div> <!-- used for onload animation -->
@@ -31,8 +47,37 @@ let links: NavBarLink[] = navBarConfig.links.map(
                 {siteConfig.title}
             </div>
         </a>
-        <div class="hidden md:flex">
-            {links.map((l) => {
+        <div class="hidden md:flex items-center gap-0">
+            {links.map((l, i) => {
+                if (l.children && l.children.length > 0) {
+                    const dropdownId = `nav-dropdown-${i}`;
+                    return <div class="relative" data-dropdown={dropdownId}>
+                        <button class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95 whitespace-nowrap"
+                                data-dropdown-btn={dropdownId}
+                        >
+                            <div class="flex items-center gap-1">
+                                {l.name}
+                                <Icon name="material-symbols:expand-more" class="text-[1.125rem] transition"></Icon>
+                            </div>
+                        </button>
+                        <div id={dropdownId} class="absolute top-11 left-0 pt-[0.625rem] transition opacity-0 pointer-events-none"
+                             data-dropdown-panel={dropdownId}
+                        >
+                            <div class="card-base float-panel p-2 min-w-[12rem] max-h-[70vh] overflow-y-auto">
+                                {linkChildren[i].map((child) => (
+                                    <a href={child.external ? child.url : url(child.url)}
+                                       target={child.external ? "_blank" : null}
+                                       class="flex transition whitespace-nowrap items-center w-full btn-plain scale-animation rounded-lg h-9 font-medium active:scale-95 mb-0.5 last:mb-0"
+                                       style={child.depth > 0 ? `padding-left: ${0.75 + child.depth * 1.25}rem` : ''}
+                                    >
+                                        {child.name}
+                                        {child.external && <Icon name="fa6-solid:arrow-up-right-from-square" class="text-[0.75rem] ml-1.5 text-black/[0.25] dark:text-white/[0.25]"></Icon>}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </div>;
+                }
                 return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
                           class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95"
                 >
@@ -72,6 +117,36 @@ function switchTheme() {
     }
 }
 
+function initDropdowns() {
+    document.querySelectorAll('[data-dropdown]').forEach(function (wrapper) {
+        const id = wrapper.getAttribute('data-dropdown');
+        const btn = wrapper.querySelector('[data-dropdown-btn="' + id + '"]');
+        const panel = wrapper.querySelector('[data-dropdown-panel="' + id + '"]');
+
+        if (!btn || !panel) return;
+
+        let hideTimeout;
+
+        function show() {
+            clearTimeout(hideTimeout);
+            panel.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function hide() {
+            hideTimeout = setTimeout(function () {
+                panel.classList.add('opacity-0', 'pointer-events-none');
+            }, 100);
+        }
+
+        wrapper.addEventListener('mouseenter', show);
+        wrapper.addEventListener('mouseleave', hide);
+        panel.addEventListener('mouseenter', function () {
+            clearTimeout(hideTimeout);
+        });
+        panel.addEventListener('mouseleave', hide);
+    });
+}
+
 function loadButtonScript() {
     let switchBtn = document.getElementById("scheme-switch");
     if (switchBtn) {
@@ -99,6 +174,8 @@ function loadButtonScript() {
             }
         };
     }
+
+    initDropdowns();
 }
 
 loadButtonScript();

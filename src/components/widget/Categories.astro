@@ -1,16 +1,30 @@
 ---
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
-import { getCategoryList } from "../../utils/content-utils";
+import { getCategoryTree } from "../../utils/content-utils";
+import type { CategoryNode } from "../../types/config";
 import ButtonLink from "../control/ButtonLink.astro";
 import WidgetLayout from "./WidgetLayout.astro";
 
-const categories = await getCategoryList();
+const categoryTree = await getCategoryTree();
+
+function flattenTree(nodes: CategoryNode[]): CategoryNode[] {
+	const result: CategoryNode[] = [];
+	for (const node of nodes) {
+		result.push(node);
+		if (node.children.length > 0) {
+			result.push(...flattenTree(node.children));
+		}
+	}
+	return result;
+}
+
+const flatCategories = flattenTree(categoryTree);
 
 const COLLAPSED_HEIGHT = "7.5rem";
 const COLLAPSE_THRESHOLD = 5;
 
-const isCollapsed = categories.length >= COLLAPSE_THRESHOLD;
+const isCollapsed = flatCategories.length >= COLLAPSE_THRESHOLD;
 
 interface Props {
 	class?: string;
@@ -23,13 +37,15 @@ const style = Astro.props.style;
 <WidgetLayout name={i18n(I18nKey.categories)} id="categories" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
                 class={className} style={style}
 >
-    {categories.map((c) =>
-        <ButtonLink
-            url={c.url}
-            badge={String(c.count)}
-            label={`View all posts in the ${c.name.trim()} category`}
-        >
-            {c.name.trim()}
-        </ButtonLink>
+    {flatCategories.map((node) =>
+        <div style={node.depth > 0 ? `padding-left: ${node.depth * 1.25}rem` : ''}>
+            <ButtonLink
+                url={node.url}
+                badge={String(node.totalCount)}
+                label={`View all posts in the ${node.fullName} category`}
+            >
+                {node.name}
+            </ButtonLink>
+        </div>
     )}
 </WidgetLayout>

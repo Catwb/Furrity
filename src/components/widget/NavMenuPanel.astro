@@ -8,25 +8,62 @@ interface Props {
 }
 
 const links = Astro.props.links;
+
+type FlatNavItem = { name: string; url: string; external?: boolean; depth: number };
+function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] {
+	const result: FlatNavItem[] = [];
+	for (const item of items) {
+		result.push({ name: item.name, url: item.url, external: item.external, depth });
+		if (item.children && item.children.length > 0) {
+			result.push(...flattenNavItems(item.children, depth + 1));
+		}
+	}
+	return result;
+}
 ---
+
 <div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all fixed right-4 px-2 py-2"]}>
-    {links.map((link) => (
-        <a href={link.external ? link.url : url(link.url)} class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
-            hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition
-        "
-           target={link.external ? "_blank" : null}
-        >
-            <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
-                {link.name}
-            </div>
-            {!link.external && <Icon name="material-symbols:chevron-right-rounded"
-                  class="transition text-[1.25rem] text-[var(--primary)]"
-            >
-            </Icon>}
-            {link.external && <Icon name="fa6-solid:arrow-up-right-from-square"
-                  class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
-            >
-            </Icon>}
-        </a>
-    ))}
+    {links.map((link) => {
+        const items = link.children && link.children.length > 0
+            ? flattenNavItems([link])
+            : [link];
+        return items.map((item, i) => (
+            item.depth === 0 && i > 0 ? (
+                <div style={`padding-left: ${item.depth * 1.25}rem`}>
+                    <a href={item.external ? item.url : url(item.url)}
+                       class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
+                            hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
+                       target={item.external ? "_blank" : null}
+                    >
+                        <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
+                            {item.name}
+                        </div>
+                        {!item.external && <Icon name="material-symbols:chevron-right-rounded"
+                              class="transition text-[1.25rem] text-[var(--primary)]"
+                        ></Icon>}
+                        {item.external && <Icon name="fa6-solid:arrow-up-right-from-square"
+                              class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
+                        ></Icon>}
+                    </a>
+                </div>
+            ) : (
+                <a href={item.external ? item.url : url(item.url)}
+                   class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
+                        hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
+                   style={item.depth > 0 ? `padding-left: ${0.75 + item.depth * 1.25}rem` : ''}
+                   target={item.external ? "_blank" : null}
+                >
+                    <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
+                        {item.name}
+                    </div>
+                    {!item.external && <Icon name="material-symbols:chevron-right-rounded"
+                          class="transition text-[1.25rem] text-[var(--primary)]"
+                    ></Icon>}
+                    {item.external && <Icon name="fa6-solid:arrow-up-right-from-square"
+                          class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
+                    ></Icon>}
+                </a>
+            )
+        ));
+    })}
 </div>

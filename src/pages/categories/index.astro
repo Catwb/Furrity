@@ -1,0 +1,46 @@
+---
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import type { CategoryNode } from "../../types/config";
+import ButtonLink from "../../components/control/ButtonLink.astro";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { getCategoryTree } from "../../utils/content-utils";
+
+const categoryTree = await getCategoryTree();
+
+function flattenTree(nodes: CategoryNode[]): CategoryNode[] {
+	const result: CategoryNode[] = [];
+	for (const node of nodes) {
+		result.push(node);
+		if (node.children.length > 0) {
+			result.push(...flattenTree(node.children));
+		}
+	}
+	return result;
+}
+
+const flatCategories = flattenTree(categoryTree);
+---
+
+<MainGridLayout title={i18n(I18nKey.categories)}>
+    <div class="card-base px-8 py-6">
+        <h1 class="text-2xl font-bold mb-6 text-90">{i18n(I18nKey.categories)}</h1>
+        {flatCategories.length > 0 ? (
+            <div class="flex flex-col gap-1">
+                {flatCategories.map((node) => (
+                    <div style={node.depth > 0 ? `padding-left: ${node.depth * 1.5}rem` : ''}>
+                        <ButtonLink
+                            url={node.url}
+                            badge={String(node.totalCount)}
+                            label={`View all posts in the ${node.fullName} category`}
+                        >
+                            {node.name}
+                        </ButtonLink>
+                    </div>
+                ))}
+            </div>
+        ) : (
+            <p class="text-50">No categories found.</p>
+        )}
+    </div>
+</MainGridLayout>

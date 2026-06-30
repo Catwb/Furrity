@@ -28,7 +28,11 @@ export function getCategoryUrl(category: string | null): string {
 		category.trim().toLowerCase() === i18n(I18nKey.uncategorized).toLowerCase()
 	)
 		return url("/archive/?uncategorized=true");
-	return url(`/archive/?category=${encodeURIComponent(category.trim())}`);
+	const segments = category
+		.trim()
+		.split("/")
+		.map((s) => encodeURIComponent(s.trim()));
+	return url(`/category/${segments.join("/")}/`);
 }
 
 export function getDir(path: string): string {

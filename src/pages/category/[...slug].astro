@@ -1,0 +1,98 @@
+---
+import type { GetStaticPaths } from "astro";
+import Pagination from "../../components/control/Pagination.astro";
+import PostPage from "../../components/PostPage.astro";
+import { PAGE_SIZE } from "../../constants/constants";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { getCategoryTree, getSortedPosts } from "../../utils/content-utils";
+import { getCategoryUrl } from "../../utils/url-utils";
+
+export const getStaticPaths = (async () => {
+	const tree = await getCategoryTree();
+	const allPosts = await getSortedPosts();
+
+	const paths: {
+		params: { slug?: string };
+		props: { page: any; categoryPath: string; categoryName: string };
+	}[] = [];
+
+	function collect(
+		nodes: { name: string; fullName: string; children: any[] }[],
+	) {
+		for (const node of nodes) {
+			const categoryPath = node.fullName;
+
+			const filteredPosts = allPosts.filter((post) => {
+				const cats = post.data.category;
+				if (!cats || cats.length === 0) return false;
+				return cats.some(
+					(c: string) =>
+						c === categoryPath || c.startsWith(categoryPath + "/"),
+				);
+			});
+
+			if (filteredPosts.length > 0) {
+				const totalPages = Math.ceil(filteredPosts.length / PAGE_SIZE);
+				for (let p = 1; p <= totalPages; p++) {
+					const start = (p - 1) * PAGE_SIZE;
+					const pageData = filteredPosts.slice(start, start + PAGE_SIZE);
+
+					const slug = p === 1 ? categoryPath : `${categoryPath}/${p}`;
+					paths.push({
+						params: { slug },
+						props: {
+							page: {
+								data: pageData,
+								currentPage: p,
+								lastPage: totalPages,
+								total: filteredPosts.length,
+								url: {
+									prev:
+										p > 1
+											? getCategoryUrl(categoryPath) +
+												(p - 1 > 1 ? `${p - 1}/` : "")
+											: undefined,
+									next:
+										p < totalPages
+											? getCategoryUrl(categoryPath) + `${p + 1}/`
+											: undefined,
+								},
+							},
+							categoryPath,
+							categoryName: node.name,
+						},
+					});
+				}
+			}
+
+			collect(node.children);
+		}
+	}
+
+	collect(tree);
+	return paths;
+}) satisfies GetStaticPaths;
+
+const slug = Astro.params.slug;
+let categoryPath: string;
+let categoryName: string;
+let page: any;
+
+// slug is undefined for /category/ (handled by index.astro)
+// For actual category pages, slug is the full path like "Examples" or "Examples/Markdown"
+const { page: pageProp, categoryPath: catPathProp, categoryName: catNameProp } = Astro.props;
+page = pageProp;
+categoryPath = catPathProp;
+categoryName = catNameProp;
+---
+
+<MainGridLayout title={categoryPath}>
+    <PostPage page={page}></PostPage>
+    {page.lastPage > 1 && (
+        <Pagination
+            class="mx-auto onload-animation"
+            page={page}
+            pageUrlPrefix={getCategoryUrl(categoryPath)}
+        ></Pagination>
+    )}
+</MainGridLayout>

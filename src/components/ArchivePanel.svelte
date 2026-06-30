@@ -19,7 +19,7 @@ interface Post {
 	data: {
 		title: string;
 		tags: string[];
-		category?: string;
+		category?: string[];
 		published: Date;
 	};
 }
@@ -53,13 +53,19 @@ onMount(async () => {
 	}
 
 	if (categories.length > 0) {
-		filteredPosts = filteredPosts.filter(
-			(post) => post.data.category && categories.includes(post.data.category),
-		);
+		filteredPosts = filteredPosts.filter((post) => {
+			const postCats = post.data.category;
+			if (!postCats || postCats.length === 0) return false;
+			return categories.some((cat) =>
+				postCats.some((pc) => pc === cat || pc.startsWith(cat + "/")),
+			);
+		});
 	}
 
 	if (uncategorized) {
-		filteredPosts = filteredPosts.filter((post) => !post.data.category);
+		filteredPosts = filteredPosts.filter(
+			(post) => !post.data.category || post.data.category.length === 0,
+		);
 	}
 
 	const grouped = filteredPosts.reduce(

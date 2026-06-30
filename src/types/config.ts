@@ -48,12 +48,14 @@ export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
+	Categories = 3,
 }
 
 export type NavBarLink = {
 	name: string;
 	url: string;
 	external?: boolean;
+	children?: NavBarLink[];
 };
 
 export type NavBarConfig = {
@@ -90,7 +92,7 @@ export type BlogPostData = {
 	tags: string[];
 	draft?: boolean;
 	image?: string;
-	category?: string;
+	category?: string[];
 	prevTitle?: string;
 	prevSlug?: string;
 	nextTitle?: string;
@@ -99,4 +101,14 @@ export type BlogPostData = {
 
 export type ExpressiveCodeConfig = {
 	theme: string;
+};
+
+export type CategoryNode = {
+	name: string;
+	fullName: string;
+	count: number;
+	totalCount: number;
+	children: CategoryNode[];
+	url: string;
+	depth: number;
 };

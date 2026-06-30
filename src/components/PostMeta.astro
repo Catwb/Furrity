@@ -10,7 +10,7 @@ interface Props {
 	published: Date;
 	updated?: Date;
 	tags: string[];
-	category: string | null;
+	category: string[];
 	hideTagsForMobile?: boolean;
 	hideUpdateDate?: boolean;
 }
@@ -23,13 +23,20 @@ const {
 	hideUpdateDate = false,
 } = Astro.props;
 const className = Astro.props.class;
+
+type CategorySeg = { name: string; fullPath: string }[];
+const categorySegmentsList: CategorySeg[] = (category || []).map((cat) =>
+	cat.split("/").map((s) => s.trim()).filter((s) => s).map((seg, i, arr) => ({
+		name: seg,
+		fullPath: arr.slice(0, i + 1).join("/"),
+	})),
+);
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
     <!-- publish date -->
     <div class="flex items-center">
-        <div class="meta-icon"
-        >
+        <div class="meta-icon">
             <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl"></Icon>
         </div>
         <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(published)}</span>
@@ -38,8 +45,7 @@ const className = Astro.props.class;
     <!-- update date -->
     {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
         <div class="flex items-center">
-            <div class="meta-icon"
-            >
+            <div class="meta-icon">
                 <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
             </div>
             <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
@@ -48,16 +54,34 @@ const className = Astro.props.class;
 
     <!-- categories -->
     <div class="flex items-center">
-        <div class="meta-icon"
-        >
+        <div class="meta-icon">
             <Icon name="material-symbols:book-2-outline-rounded" class="text-xl"></Icon>
         </div>
-        <div class="flex flex-row flex-nowrap items-center">
-            <a href={getCategoryUrl(category)} aria-label={`View all posts in the ${category} category`}
-               class="link-lg transition text-50 text-sm font-medium
+        <div class="flex flex-row flex-wrap items-center gap-x-1">
+            {categorySegmentsList.length > 0 ? (
+                categorySegmentsList.map((segments, ci) => (
+                    <>
+                        {ci > 0 && <span class="text-[var(--meta-divider)] text-sm mx-0.5">|</span>}
+                        {segments.map((seg, i) => (
+                            <>
+                                {i > 0 && <span class="text-[var(--meta-divider)] text-sm">/</span>}
+                                <a href={getCategoryUrl(seg.fullPath)}
+                                   aria-label={`View all posts in the ${seg.name} category`}
+                                   class="link-lg transition text-50 text-sm font-medium
+                                        hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
+                                    {seg.name}
+                                </a>
+                            </>
+                        ))}
+                    </>
+                ))
+            ) : (
+                <a href={getCategoryUrl(null)} aria-label={`View all uncategorized posts`}
+                   class="link-lg transition text-50 text-sm font-medium
                             hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
-                {category || i18n(I18nKey.uncategorized)}
-            </a>
+                    {i18n(I18nKey.uncategorized)}
+                </a>
+            )}
         </div>
     </div>
 

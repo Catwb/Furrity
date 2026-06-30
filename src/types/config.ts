@@ -20,9 +20,10 @@ export type SiteConfig = {
 		hue: number;
 		fixed: boolean;
 	};
+	background?: string;
 	banner: {
 		enable: boolean;
-		src: string;
+		src?: string;
 		position?: "top" | "center" | "bottom";
 		credit: {
 			enable: boolean;

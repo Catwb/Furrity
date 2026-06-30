@@ -11,12 +11,13 @@ export const siteConfig: SiteConfig = {
 	title: "Fuwari",
 	subtitle: "Demo Site",
 	lang: "zh_CN", // 语言代码，例如 'en'、'zh_CN'、'ja' 等
+	background: "url(https://api.furry.ist/furry-img/?mode=auto)", // 网站全局背景，设置后 Hero 区域变为透明，透出此背景
 	themeColor: {
 		hue: 250, // 主题色色调，0 到 360。例如红色: 0，青色: 200，蓝色: 250，粉色: 345
 		fixed: false, // 隐藏主题色选择器
 	},
 	banner: {
-		enable: true,
+		enable: false,
 		src: "assets/images/demo-banner.png", // 相对于 /src 目录。如果以 '/' 开头则相对于 /public 目录
 		position: "center", // 等同 object-position，仅支持 'top'、'center'、'bottom'。默认为 'center'
 		credit: {

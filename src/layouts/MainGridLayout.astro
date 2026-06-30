@@ -32,6 +32,7 @@ const {
 	setOGTypeArticle,
 	headings = [],
 } = Astro.props;
+const isHomePage = Astro.url.pathname === "/";
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -51,12 +52,22 @@ const mainPanelTop = siteConfig.banner.enable
     </div>
 </div>
 
-<!-- Banner -->
+<!-- Banner / Hero -->
 {siteConfig.banner.enable && <div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
-    <ImageWrapper id="banner" alt="Banner image of the blog" class:list={["object-cover h-full transition duration-700 opacity-0 scale-105"]}
-                  src={siteConfig.banner.src} position={siteConfig.banner.position}
-    >
-    </ImageWrapper>
+    {siteConfig.background
+        ? <div id="banner" class="h-full w-full"></div>
+        : <ImageWrapper id="banner" alt="Banner image of the blog" class:list={["object-cover h-full transition duration-700 opacity-0 scale-105"]}
+                        src={siteConfig.banner.src} position={siteConfig.banner.position}>
+          </ImageWrapper>
+    }
+    {isHomePage && <div class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            {siteConfig.title}
+        </h1>
+        <p class="mt-3 md:mt-4 text-base md:text-lg lg:text-xl text-white/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] max-w-lg">
+            {siteConfig.subtitle}
+        </p>
+    </div>}
 </div>}
 
 <!-- Main content -->
@@ -109,11 +120,9 @@ const mainPanelTop = siteConfig.banner.enable
         {siteConfig.toc.enable && <div id="toc-wrapper" class:list={["hidden lg:block transition absolute top-0 -right-[var(--toc-width)] w-[var(--toc-width)] items-center",
             {"toc-hide": siteConfig.banner.enable}]}
         >
-            <div id="toc-inner-wrapper" class="fixed top-14 w-[var(--toc-width)] h-[calc(100vh_-_20rem)] overflow-y-scroll overflow-x-hidden hide-scrollbar">
-                <div id="toc" class="w-full h-full transition-swup-fade ">
-                    <div class="h-8 w-full"></div>
+            <div id="toc-inner-wrapper" class="fixed top-14 w-[var(--toc-width)] max-h-[calc(100vh_-_20rem)] overflow-y-scroll overflow-x-hidden hide-scrollbar">
+                <div id="toc" class="w-full transition-swup-fade card-base py-6 px-2">
                     <TOC headings={headings}></TOC>
-                    <div class="h-8 w-full"></div>
                 </div>
             </div>
         </div>}

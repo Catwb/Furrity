@@ -56,6 +56,14 @@ export const siteConfig: SiteConfig = {
 	// 		{ type: "text", title: "About", content: "This blog is built with **Astro** and **Fuwari** theme." },
 	// 	],
 	// },
+	// twikoo: {
+	// 	enable: true,
+	// 	envId: "https://your-twikoo-deployment.vercel.app",
+	// 	region: "",            // "ap-guangzhou" for Tencent Cloud, empty for Vercel
+	// 	lang: "zh-CN",         // optional, defaults to site language
+	// 	cdn: "https://your-cdn.com/twikoo.all.min.js",  // optional, defaults to jsdelivr
+	// 	css: "https://your-cdn.com/twikoo-custom.css",  // optional, custom stylesheet
+	// },
 	// custom: {
 	// 	css: ".some-class { color: red; }",
 	// 	js: "console.log('site loaded')",

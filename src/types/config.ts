@@ -39,10 +39,20 @@ export type SiteConfig = {
 	favicon: Favicon[];
 	fonts?: FontConfig;
 	footer?: FooterConfig;
+	twikoo?: TwikooConfig;
 	sidebar?: {
 		components: SidebarComponent[];
 	};
 	custom?: CustomCodeConfig;
+};
+
+export type TwikooConfig = {
+	enable: boolean;
+	envId: string;
+	region?: string;
+	lang?: string;
+	cdn?: string;
+	css?: string;
 };
 
 export type FontConfig = {

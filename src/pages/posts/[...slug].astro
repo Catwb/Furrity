@@ -13,6 +13,7 @@ import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
+import TwikooComments from "@components/TwikooComments.svelte";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
@@ -133,4 +134,13 @@ const jsonLd = {
         </a>
     </div>
 
+    {siteConfig.twikoo?.enable && (
+        <div class="card-base rounded-2xl px-6 md:px-9 py-6 mb-4">
+            <h2 class="text-lg font-bold text-black/80 dark:text-white/80 mb-4 flex items-center gap-2">
+                <Icon name="material-symbols:chat-outline-rounded" class="text-[var(--primary)]" />
+                {i18n(I18nKey.comments)}
+            </h2>
+            <TwikooComments client:only="svelte" />
+        </div>
+    )}
 </MainGridLayout>

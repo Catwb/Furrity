@@ -13,10 +13,10 @@ const footerHtml = hasCustomFooter ? md.render(footerContent!) : "";
 ---
 
 {hasCustomFooter
-? <div class="card-base py-6 px-6 mb-8 flex flex-col items-center justify-center markdown-footer">
+? <div class="card-base py-6 px-6 mt-8 mb-8 flex flex-col items-center justify-center markdown-footer">
     <Fragment set:html={footerHtml} />
 </div>
-: <div class="card-base py-6 px-6 mb-8 flex flex-col items-center justify-center">
+: <div class="card-base py-6 px-6 mt-8 mb-8 flex flex-col items-center justify-center">
     <div class="transition text-50 text-sm text-center">
         &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All Rights Reserved. /
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('rss.xml')}>RSS</a> /

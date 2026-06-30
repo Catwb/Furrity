@@ -75,9 +75,9 @@ export type SidebarComponent = {
 };
 
 export type CustomCodeConfig = {
-	css?: string;
-	js?: string;
-	head?: string;
+	css?: string[];
+	js?: string[];
+	head?: string[];
 };
 
 export type Favicon = {

@@ -65,9 +65,16 @@ export const siteConfig: SiteConfig = {
 	// 	css: "https://your-cdn.com/twikoo-custom.css",  // optional, custom stylesheet
 	// },
 	// custom: {
-	// 	css: ".some-class { color: red; }",
-	// 	js: "console.log('site loaded')",
-	// 	head: '<meta name="custom" content="value">',
+	// 	css: [
+	// 		".some-class { color: red; }",
+	// 		"https://your-cdn.com/twikoo-custom.css",
+	// 	],
+	// 	js: [
+	// 		"console.log('site loaded')",
+	// 	],
+	// 	head: [
+	// 		'<meta name="custom" content="value">',
+	// 	],
 	// },
 };
 

@@ -1,12 +1,22 @@
 ---
-
-import { profileConfig } from "../config";
+import MarkdownIt from "markdown-it";
+import { profileConfig, siteConfig } from "../config";
 import { url } from "../utils/url-utils";
 
 const currentYear = new Date().getFullYear();
+
+const footerConfig = siteConfig.footer;
+const footerContent = footerConfig?.content;
+const hasCustomFooter = footerConfig?.enable && footerContent;
+const md = new MarkdownIt({ html: true });
+const footerHtml = hasCustomFooter ? md.render(footerContent!) : "";
 ---
 
-<div class="card-base py-6 px-6 mb-8 flex flex-col items-center justify-center">
+{hasCustomFooter
+? <div class="card-base py-6 px-6 mb-8 flex flex-col items-center justify-center markdown-footer">
+    <Fragment set:html={footerHtml} />
+</div>
+: <div class="card-base py-6 px-6 mb-8 flex flex-col items-center justify-center">
     <div class="transition text-50 text-sm text-center">
         &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All Rights Reserved. /
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('rss.xml')}>RSS</a> /
@@ -16,3 +26,13 @@ const currentYear = new Date().getFullYear();
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>
     </div>
 </div>
+}
+
+<style is:global>
+    .markdown-footer a {
+        @apply text-[var(--primary)] font-medium;
+    }
+    .markdown-footer p {
+        @apply text-sm text-center;
+    }
+</style>

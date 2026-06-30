@@ -100,6 +100,27 @@ const bannerOffset =
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description || pageTitle}>
 
+		{siteConfig.fonts?.google && <>
+			<link rel="preconnect" href="https://fonts.googleapis.com" />
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+			<link href={`https://fonts.googleapis.com/css2?family=${siteConfig.fonts.google.map(f => f.replace(/ /g, '+') + ':wght@300;400;500;700').join('&family=')}&display=swap`} rel="stylesheet" />
+		</>}
+
+		{siteConfig.custom?.head && <Fragment set:html={siteConfig.custom.head} />}
+
+		{siteConfig.custom?.css && <style is:global>{siteConfig.custom.css}</style>}
+
+		{siteConfig.fonts && <style is:global>
+			:root {
+				--font-heading: {siteConfig.fonts.heading || 'inherit'};
+				--font-body: {siteConfig.fonts.body || 'inherit'};
+				--font-code: {siteConfig.fonts.code || 'inherit'};
+			}
+			h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading) !important; }
+			body, p, div, span, li { font-family: var(--font-body) !important; }
+			code, pre, kbd { font-family: var(--font-code) !important; }
+		</style>}
+
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		{favicons.map(favicon => (
@@ -157,6 +178,8 @@ const bannerOffset =
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
+
+		{siteConfig.custom?.js && <script is:inline>{siteConfig.custom.js}</script>}
 	</body>
 </html>
 

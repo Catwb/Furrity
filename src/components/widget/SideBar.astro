@@ -1,8 +1,11 @@
 ---
+import MarkdownIt from "markdown-it";
 import type { MarkdownHeading } from "astro";
+import { siteConfig } from "../../config";
 import Categories from "./Categories.astro";
 import Profile from "./Profile.astro";
 import Tag from "./Tags.astro";
+import WidgetLayout from "./WidgetLayout.astro";
 
 interface Props {
 	class?: string;
@@ -10,13 +13,49 @@ interface Props {
 }
 
 const className = Astro.props.class;
+const sidebarComponents = siteConfig.sidebar?.components;
+const hasCustomSidebar = sidebarComponents && sidebarComponents.length > 0;
+
+const md = new MarkdownIt({ html: true });
+
+interface RenderedComponent {
+	html: string;
+}
+const renderedComponents: RenderedComponent[] = [];
+if (hasCustomSidebar) {
+	for (let i = 0; i < sidebarComponents.length; i++) {
+		const comp = sidebarComponents[i];
+		if (comp.type === "text" && comp.content) {
+			renderedComponents.push({ html: md.render(comp.content) });
+		} else {
+			renderedComponents.push({ html: "" });
+		}
+	}
+}
 ---
+
 <div id="sidebar" class:list={[className, "w-full"]}>
-    <div class="flex flex-col w-full gap-4 mb-4">
-        <Profile></Profile>
+    {hasCustomSidebar
+    ? <div class="flex flex-col w-full gap-4">
+        {sidebarComponents.map((comp, i) => (
+            comp.type === "profile" ? <Profile />
+            : comp.type === "categories" ? <Categories class="onload-animation" style={`animation-delay: ${i * 50}ms`} />
+            : comp.type === "tags" ? <Tag class="onload-animation" style={`animation-delay: ${i * 50}ms`} />
+            : comp.type === "text" && comp.content ? (
+                <WidgetLayout name={comp.title || ""} id={`sidebar-text-${i}`} class="onload-animation" style={`animation-delay: ${i * 50}ms`}>
+                    <Fragment set:html={renderedComponents[i].html} />
+                </WidgetLayout>
+            ) : null
+        ))}
     </div>
-    <div id="sidebar-sticky" class="transition-all duration-700 flex flex-col w-full gap-4 top-4 sticky top-4">
-        <Categories class="onload-animation" style="animation-delay: 150ms"></Categories>
-        <Tag class="onload-animation" style="animation-delay: 200ms"></Tag>
-    </div>
+    : <>
+        <div class="flex flex-col w-full gap-4 mb-4">
+            <Profile></Profile>
+        </div>
+        <div id="sidebar-sticky" class="transition-all duration-700 flex flex-col w-full gap-4 top-4 sticky top-4">
+            <Categories class="onload-animation" style="animation-delay: 150ms"></Categories>
+            <Tag class="onload-animation" style="animation-delay: 200ms"></Tag>
+        </div>
+    </>
+    }
 </div>

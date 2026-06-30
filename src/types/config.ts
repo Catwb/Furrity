@@ -37,6 +37,37 @@ export type SiteConfig = {
 	};
 
 	favicon: Favicon[];
+	fonts?: FontConfig;
+	footer?: FooterConfig;
+	sidebar?: {
+		components: SidebarComponent[];
+	};
+	custom?: CustomCodeConfig;
+};
+
+export type FontConfig = {
+	google?: string[];
+	heading?: string;
+	body?: string;
+	code?: string;
+};
+
+export type FooterConfig = {
+	enable: boolean;
+	content?: string;
+};
+
+export type SidebarComponent = {
+	type: "profile" | "categories" | "tags" | "text";
+	title?: string;
+	content?: string;
+	sticky?: boolean;
+};
+
+export type CustomCodeConfig = {
+	css?: string;
+	js?: string;
+	head?: string;
 };
 
 export type Favicon = {

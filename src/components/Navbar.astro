@@ -64,7 +64,7 @@ const linkChildren = links.map((l) =>
                              data-dropdown-panel={dropdownId}
                         >
                             <div class="card-base float-panel p-2 min-w-[12rem] max-h-[70vh] overflow-y-auto">
-                                {linkChildren[i].map((child) => (
+                                {(linkChildren[i] ?? []).map((child) => (
                                     <a href={child.external ? child.url : url(child.url)}
                                        target={child.external ? "_blank" : null}
                                        class="flex transition whitespace-nowrap items-center w-full btn-plain scale-animation rounded-lg h-9 font-medium active:scale-95 mb-0.5 last:mb-0"
@@ -125,25 +125,25 @@ function initDropdowns() {
 
         if (!btn || !panel) return;
 
-        let hideTimeout;
+        let hideTimeout: ReturnType<typeof setTimeout> | undefined;
 
         function show() {
-            clearTimeout(hideTimeout);
-            panel.classList.remove('opacity-0', 'pointer-events-none');
+            if (hideTimeout !== undefined) clearTimeout(hideTimeout);
+            panel!.classList.remove('opacity-0', 'pointer-events-none');
         }
 
         function hide() {
             hideTimeout = setTimeout(function () {
-                panel.classList.add('opacity-0', 'pointer-events-none');
+                panel!.classList.add('opacity-0', 'pointer-events-none');
             }, 100);
         }
 
         wrapper.addEventListener('mouseenter', show);
         wrapper.addEventListener('mouseleave', hide);
-        panel.addEventListener('mouseenter', function () {
-            clearTimeout(hideTimeout);
+        panel!.addEventListener('mouseenter', function () {
+            if (hideTimeout !== undefined) clearTimeout(hideTimeout);
         });
-        panel.addEventListener('mouseleave', hide);
+        panel!.addEventListener('mouseleave', hide);
     });
 }
 

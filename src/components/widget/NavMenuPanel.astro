@@ -24,9 +24,7 @@ function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] 
 
 <div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all fixed right-4 px-2 py-2"]}>
     {links.map((link) => {
-        const items = link.children && link.children.length > 0
-            ? flattenNavItems([link])
-            : [link];
+        const items = flattenNavItems([link]);
         return items.map((item, i) => (
             item.depth === 0 && i > 0 ? (
                 <div style={`padding-left: ${item.depth * 1.25}rem`}>

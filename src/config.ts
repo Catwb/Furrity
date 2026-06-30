@@ -38,6 +38,29 @@ export const siteConfig: SiteConfig = {
 		//   sizes: '32x32',              // （可选）favicon 尺寸，仅在有多尺寸 favicon 时设置
 		// }
 	],
+	// fonts: {
+	// 	google: ["Noto Sans SC", "Noto Serif SC"],
+	// 	heading: "'Noto Sans SC', sans-serif",
+	// 	body: "'Noto Serif SC', serif",
+	// 	code: "'JetBrains Mono', monospace",
+	// },
+	// footer: {
+	// 	enable: true,
+	// 	content: "© 2026 **My Blog**. Powered by [Astro](https://astro.build) & [Fuwari](https://github.com/saicaca/fuwari)",
+	// },
+	// sidebar: {
+	// 	components: [
+	// 		{ type: "profile" },
+	// 		{ type: "categories" },
+	// 		{ type: "tags" },
+	// 		{ type: "text", title: "About", content: "This blog is built with **Astro** and **Fuwari** theme." },
+	// 	],
+	// },
+	// custom: {
+	// 	css: ".some-class { color: red; }",
+	// 	js: "console.log('site loaded')",
+	// 	head: '<meta name="custom" content="value">',
+	// },
 };
 
 export const navBarConfig: NavBarConfig = {

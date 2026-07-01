@@ -27,7 +27,7 @@ A static blog template built with [Astro](https://astro.build).
 - [x] Customizable theme colors & banner
 - [x] Responsive design
 - [x] Search functionality with [Pagefind](https://pagefind.app/)
-- [x] [Markdown extended features](https://github.com/saicaca/fuwari?tab=readme-ov-file#-markdown-extended-syntax)
+- [x] Markdown extended features (admonitions, enhanced code blocks)
 - [x] Table of contents
 - [x] RSS feed
 - [x] **Novel / Fiction support** — dedicated content type with chapters, series, characters, and reading mode
@@ -70,7 +70,6 @@ lang: jp      # Set only if the post's language differs from the site's language
 In addition to Astro's default support for [GitHub Flavored Markdown](https://github.github.com/gfm/), several extra Markdown features are included:
 
 - Admonitions ([Preview and Usage](https://fuwari.vercel.app/posts/markdown-extended/#admonitions))
-- GitHub repository cards ([Preview and Usage](https://fuwari.vercel.app/posts/markdown-extended/#github-repository-cards))
 - Enhanced code blocks with Expressive Code ([Preview](https://fuwari.vercel.app/posts/expressive-code/) / [Docs](https://expressive-code.com/))
 
 ## 📖 Writing Novels / Fiction

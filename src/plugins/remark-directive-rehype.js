@@ -1,8 +1,10 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
+import { resetRegistry } from "./rehype-tags/_registry.js";
 
 export function parseDirectiveNode() {
 	return (tree, { _data }) => {
+		resetRegistry();
 		visit(tree, (node) => {
 			if (
 				node.type === "containerDirective" ||

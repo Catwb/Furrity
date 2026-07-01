@@ -18,7 +18,11 @@ import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config.ts";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
-import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
+import { BoxComponent } from "./src/plugins/rehype-tags/box.mjs";
+import { NoteComponent } from "./src/plugins/rehype-tags/note.mjs";
+import { FoldingComponent } from "./src/plugins/rehype-tags/folding.mjs";
+import { ButtonComponent } from "./src/plugins/rehype-tags/button.mjs";
+import { FrameComponent } from "./src/plugins/rehype-tags/frame.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
@@ -119,12 +123,16 @@ export default defineConfig({
 				rehypeComponents,
 				{
 					components: {
-						github: GithubCardComponent,
 						note: (x, y) => AdmonitionComponent(x, y, "note"),
 						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
 						important: (x, y) => AdmonitionComponent(x, y, "important"),
 						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
 						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
+						box: BoxComponent,
+						stnote: NoteComponent,
+						folding: FoldingComponent,
+						button: ButtonComponent,
+						frame: FrameComponent,
 					},
 				},
 			],

@@ -9,17 +9,6 @@ category: 'Examples/Markdown'
 draft: false 
 ---
 
-## GitHub Repository Cards
-You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API. 
-
-::github{repo="Fabrizz/MMM-OnSpotify"}
-
-Create a GitHub repository card with the code `::github{repo="<owner>/<repo>"}`.
-
-```markdown
-::github{repo="saicaca/fuwari"}
-```
-
 ## Admonitions
 
 Following types of admonitions are supported: `note` `tip` `important` `warning` `caution`
@@ -93,3 +82,22 @@ The content :spoiler[is hidden **ayyy**]!
 The content :spoiler[is hidden **ayyy**]!
 
 ```
+
+
+
+## Stellar Tag Plugins (Migration Test)
+
+:::box{color="blue" title="Box Example"}
+A **box** container with markdown content.
+:::
+
+:::folding{color="yellow" title="Click to expand"}
+Hidden content with **bold text**.
+:::
+
+:::stnote{color="green" title="Note"}
+A styled note with green accent.
+:::
+
+::button{color="red" text="Click Me" url="https://example.com"}
+

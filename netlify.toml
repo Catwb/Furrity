@@ -1,0 +1,74 @@
+# -----------------
+# CORS 配置区
+[[headers]]
+  for = "/*"  # 匹配所有路径
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "cache-control, Content-Type, Authorization"
+    X-CORS-Config-Source = "netlify-headers"  # 自定义标识头
+
+# 单独处理 OPTIONS 请求
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Max-Age = "86400"
+  method = ["OPTIONS"]  # 仅针对OPTIONS方法
+
+# -----------------
+
+# -----------------
+# 插件配置区
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs.settings]
+    locale = "zh" # generates Lighthouse reports in Español
+
+# -----------------
+  
+
+# ----------------
+# 重定向配置区
+
+# 1. 优先处理特殊目录 (如 /posts/)
+[[redirects]]
+  from = "/posts/:splat/index.html"
+  to = "/posts/:splat/"
+  status = 301
+  force = true
+
+# 2. 显式处理 /posts/index.html
+[[redirects]]
+  from = "/posts/index.html"
+  to = "/posts/"
+  status = 301
+  force = true
+
+# 3. 全局兜底规则（放在最后）
+[[redirects]]
+  from = "/:splat/index.html"
+  to = "/:splat/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/404/"
+  status = 404
+
+# 4. 隐式处理 /index.html
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+# 5. 路径标准化（可选）
+[[redirects]]
+  from = "/*//:splat"
+  to = "/:splat"
+  status = 301
+
+# -----------------

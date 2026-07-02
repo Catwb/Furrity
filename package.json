@@ -36,6 +36,7 @@
     "astro": "5.13.10",
     "astro-expressive-code": "^0.41.4",
     "astro-icon": "^1.1.5",
+    "gray-matter": "^4.0.3",
     "hastscript": "^9.0.1",
     "katex": "^0.16.27",
     "markdown-it": "^14.1.0",
@@ -74,6 +75,11 @@
   },
   "packageManager": "pnpm@11.9.0",
   "pnpm": {
-    "onlyBuiltDependencies": ["@parcel/watcher", "esbuild", "sharp", "swup"]
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "sharp",
+      "swup"
+    ]
   }
 }

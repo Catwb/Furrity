@@ -1,0 +1,83 @@
+---
+title: 加密
+---
+
+
+
+:::box{color=cyan title="前言"}
+👋hi，本页面用于存放我的一些公钥，如果你想发点什么不想暴露于公共的，可以使用我的公钥加密后发给我（邮箱等渠道），但请注意标明加密类型！
+
+在使用过程中你应当将代码块内**所有文本**复制下来，包括头部标识，这样才算是一个完整的key。
+:::
+
+---
+
+**RSA**
+
+格式为**PKCS#1**，请注意，RSA只能用于加密**英文明文**。
+
+```
+-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAlz25FP5yI+c0wuYIh07jTAN2iSJA2I/K0Fb3fQfcC8bYpMaFz9hV
++ka40xAW7Al0HcfvEXaRp1obo9P4Zcbu0npZjdD6wLa5ovIrDGUnqLHfjQ/fa4Vr
+UFrm11sjW0+J6c6DWdkau6piuWpAFGvCPQYTmn2yDvgHO6xeCVvixYFEoruyLBxS
+tUFfcgzul01DsNW7/wIhsy55bK7w2e7ZUnAgpWrSgEy14V0TyUdTq0JRtZtxvsDC
+NyqeR4m0Lmp2LvfNrkH37wtzdevRn2Acvok89ElyOEW1GxbMSf7SR5dGfF4FktG3
+UXq9BasUM8Ld0TG/W7JGCZK46lq+59PKvQIDAQAB
+-----END RSA PUBLIC KEY-----
+```
+
+---
+
+**PGP**
+
+格式为**curve25519**。
+
+```
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEaDKv3BYJKwYBBAHaRw8BAQdAzL1MghNzFwz6u5f5pks2H3/xfzZPaDmS
+CFO3SIEv5eTNAMLAEwQTFgoAhQWCaDKv3AMLCQcJkBZjuiw9sUsGRRQAAAAA
+ABwAIHNhbHRAbm90YXRpb25zLm9wZW5wZ3Bqcy5vcmc0Km4h/NJtl5/fR91Z
+1JylWA786n79RKegKy64UwEoFwUVCggODAQWAAIBAhkBApsDAh4BFiEECn2Z
+xx6AXj6nKOLJFmO6LD2xSwYAAJXHAP9qwRqp9hqxySXVAi9OJvZsV4/eFbFZ
+24qpOcRvtxhhwwD/ePA1AbEJw02jmLxoSHITHaxiWYu3yEs/IoivZbsYNA/O
+OARoMq/cEgorBgEEAZdVAQUBAQdAVwz1blz3mIubmrd6iMFRyHqb+EeTh5C8
+asyUlJc6qmgDAQgHwr4EGBYKAHAFgmgyr9wJkBZjuiw9sUsGRRQAAAAAABwA
+IHNhbHRAbm90YXRpb25zLm9wZW5wZ3Bqcy5vcmdl4RwXuuMgVuxKBWE/HLhI
+3B5XFXVHtjK87pwmp6yuvgKbDBYhBAp9mccegF4+pyjiyRZjuiw9sUsGAAA2
+AgD/Uw/VfzkN4vSEdJ7ARbaTZUg2P0FbIpkKtrjovenQbooA/jW0gGjM47VK
+MHeCADJm/B4t8ScT8CWGLwsxdekTg1AD
+=3+K5
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+**指纹**：`SHA256:8e1707f191968100fafb3a7772ad23c69c1d5836beed7ce724c0d582f443433a`或`41:c7:2f:c6:26:cb:19:d0:36:e9:cd:3a:86:9d:89:d8`
+
+---
+
+**PGP For Email**
+
+至于为什么For Email，因为内含我的邮箱。
+
+```
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEaDKxLhYJKwYBBAHaRw8BAQdATOVQSpPhviMe8x/A8s8Plcj7/OajQe72
+XIxkuEZPnarNGFFpeWFvIDxodWFsYW96aGVAcXEuY29tPsLAEwQTFgoAhQWC
+aDKxLgMLCQcJkC+4dLmZ0i8ERRQAAAAAABwAIHNhbHRAbm90YXRpb25zLm9w
+ZW5wZ3Bqcy5vcmdEs1OuG8l8wq8emVrqMX4G7MZmU1Kk7nLdAXHdjcv10wUV
+CggODAQWAAIBAhkBApsDAh4BFiEExJ8VYyE1iWxbDUW0L7h0uZnSLwQAAM6F
+AQCAM3EwDlECABNofyZlWhRJ4rg8gIDTeIhCrY+cO1H9CQD/ax7TRc6uoGmu
+YvRJAE8nTqzOU0ScKWd/GqHgcR6hpwLOOARoMrEuEgorBgEEAZdVAQUBAQdA
+eqvc5PP9HTC+N15zByz5SWu9hOa/XIhPHMUBpQk+u2kDAQgHwr4EGBYKAHAF
+gmgysS4JkC+4dLmZ0i8ERRQAAAAAABwAIHNhbHRAbm90YXRpb25zLm9wZW5w
+Z3Bqcy5vcmfTLxkptxwF4LlwlzDE4lTwVDF7Xhl+15YcrRMk8IFkdQKbDBYh
+BMSfFWMhNYlsWw1FtC+4dLmZ0i8EAABBlgD/Xql+Rd29VQruBr/gTIf/uMc5
+7Ro5lprrLvGxBwrN00QBAJHirvbGhbnz9Uy304XpOIt+IBoeF4hkd+9mcv5w
+d9cO
+=JCZd
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+**指纹**：`SHA256:79f3a055f375dd28655aee5f9125622d1714e806db97ec480c2934e06a9684d9`或`fd:71:c0:5f:ad:07:45:bc:1e:30:92:ff:db:fc:b6:cc`

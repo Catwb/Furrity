@@ -1,0 +1,27 @@
+---
+title: 朋友圈
+---
+
+:::folding{title="朋友圈说明 color:blue"}
+**什么是朋友圈？**
+
+**朋友圈**是与我交换了友链的友站文章订阅。你可以在此查看来自友链网站的更新而不必进入友链的网站。
+
+**构建根本**
+
+采用了 **Github Aciton** 自动构建，自动获取友链文章；但如果友链网站开启了人机验证等措施，则无法获取。
+
+**日程表**
+
+- 周一至周五：每天一次获取
+- 周六至周日：每4小时一次获取
+:::
+
+<script src="https://cdn.245179.xyz/js/fclite.load.js"></script>
+
+<div id="friend-circle-lite-root"></div>
+
+<script src="https://cdn.245179.xyz/js/fclite.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.245179.xyz/css/fclite.min.css">
+

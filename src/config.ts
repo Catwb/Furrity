@@ -33,11 +33,49 @@ export const siteConfig: SiteConfig = {
 	},
 	favicon: [
 		// 留空使用默认 favicon
-		// {
-		//   src: '/favicon/icon.png',    // favicon 路径，相对于 /public 目录
-		//   theme: 'light',              // （可选）'light' 或 'dark'，仅在深浅色使用不同 favicon 时设置
-		//   sizes: '32x32',              // （可选）favicon 尺寸，仅在有多尺寸 favicon 时设置
-		// }
+		{
+			src: "/favicon/favicon-light-32.png",
+			sizes: "32x32",
+			theme: "light",
+		},
+		{
+			src: "/favicon/favicon-light-128.png",
+			sizes: "128x128",
+			theme: "light",
+		},
+		{
+			src: "/favicon/favicon-light-180.png",
+			sizes: "180x180",
+			theme: "light",
+		},
+		{
+			src: "/favicon/favicon-light-192.png",
+			sizes: "192x192",
+			theme: "light",
+		},
+		{
+			src: "/favicon/favicon-dark-32.png",
+			sizes: "32x32",
+			theme: "dark",
+		},
+		{
+			src: "/favicon/favicon-dark-128.png",
+			sizes: "128x128",
+			theme: "dark",
+		},
+		{
+			src: "/favicon/favicon-dark-180.png",
+			sizes: "180x180",
+			theme: "dark",
+		},
+		{
+			src: "/favicon/favicon-dark-192.png",
+			sizes: "192x192",
+			theme: "dark",
+		},
+		{
+			src: "/favicon/favicon.webp",
+		},
 	],
 	// fonts: {
 	// 	google: ["Noto Sans SC", "Noto Serif SC"],
@@ -95,7 +133,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/demo-avatar.png", // 相对于 /src 目录。如果以 '/' 开头则相对于 /public 目录
+	avatar: "assets/images/avatar.jpg", // 相对于 /src 目录。如果以 '/' 开头则相对于 /public 目录
 	name: "Lorem Ipsum",
 	bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 	links: [

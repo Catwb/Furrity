@@ -6,13 +6,15 @@ const SRC = "D:\\文档\\1工作站\\testTheme\\_posts"
 const DST = "D:\\文档\\1工作站\\testTheme\\Furrity\\src\\content\\posts"
 
 const TAG_MAP = [
-  // box: {% box color:cyan 标题 %}...{% endbox %}
+  // box: {% box color:cyan 标题 %} 或 {% box 标题 color:cyan %}...{% endbox %}
   //       → :::box{color=cyan title="标题"}\n...\n:::
-  [/{%\s*box\s+(?:color:(\S+))?\s*(.*?)\s*%}([\s\S]*?){%\s*endbox\s*%}/g,
-   (_, color, title, body) => {
+  [/{%\s*box\s+([\s\S]*?)%}([\s\S]*?){%\s*endbox\s*%}/g,
+   (_, raw, body) => {
+     const color = raw.match(/color:(\S+)/)?.[1]
+     const title = raw.replace(/color:\S+\s*/g, "").trim()
      const p = []
      if (color) p.push(`color=${color}`)
-     if (title) p.push(`title="${title.trim()}"`)
+     if (title) p.push(`title="${title}"`)
      const ps = p.length ? `{${p.join(" ")}}` : ""
      return `:::box${ps}\n${body.replace(/^ +/gm, "").trim()}\n:::`
    }],
@@ -86,10 +88,28 @@ const TAG_MAP = [
      return `[🎵 Netease Music](https://music.163.com/#/song?id=${id})`
    }],
 
-  // tabs: {% tabs %}...{% endtabs %}
-  //        → flatten (strip wrapper, keep content)
-  [/{%\s*tabs\s*%}([\s\S]*?){%\s*endtabs\s*%}/g,
-   (_, body) => body.replace(/^ +/gm, "").trim()],
+  // tabs: {% tabs name,active_index %}<!-- tab title -->...<!-- endtab -->...{% endtabs %}
+  //        → <div class="tag-plugin tabs"> with raw HTML tab structure
+  [/{%\s*tabs\s+([^%]+?)\s*%}([\s\S]*?){%\s*endtabs\s*%}/g,
+   (_, args, content) => {
+     const active = parseInt(args.split(",")[1]?.trim()) || 1
+     const parts = content.split(/<!--\s*endtab\s*-->/g)
+     let idx = 0
+     const headers = []
+     const panels = []
+     parts.forEach(block => {
+       const m = block.match(/<!--\s*tab\s+(.*?)\s*-->([\s\S]*)/)
+       if (!m) return
+       idx++
+       const title = m[1].trim()
+       const body = m[2].replace(/^ +/gm, "").trim() + "\n"
+       const isActive = idx === active
+       headers.push(`<button class="tab-btn${isActive ? " active" : ""}" data-tab="${idx - 1}">${title}</button>`)
+       panels.push(`<div class="tab-panel${isActive ? " active" : ""}" data-tab="${idx - 1}">\n\n${body}\n</div>`)
+     })
+     if (headers.length === 0) return ""
+     return `<div class="tag-plugin tabs">\n<div class="tab-nav">\n${headers.join("\n")}\n</div>\n${panels.join("\n")}\n</div>`
+   }],
 
   // image: {% image url description %}
   //         → ![description](url)

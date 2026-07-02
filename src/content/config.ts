@@ -20,6 +20,7 @@ const postsCollection = defineCollection({
 				return [val];
 			}),
 		lang: z.string().optional().default(""),
+		abbrlink: z.string().optional(),
 
 		/* For internal use */
 		prevTitle: z.string().default(""),

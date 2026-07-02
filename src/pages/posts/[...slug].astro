@@ -7,6 +7,7 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { computeAbbrlink } from "@utils/abbrlink-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
@@ -17,10 +18,21 @@ import TwikooComments from "@components/TwikooComments.svelte";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
-	return blogEntries.map((entry) => ({
+	const abbrConfig = siteConfig.abbrlink || {};
+	const alg = abbrConfig.alg || "crc16";
+	const rep = abbrConfig.rep || "dec";
+	const paths = blogEntries.map((entry) => ({
 		params: { slug: entry.slug },
 		props: { entry },
 	}));
+	for (const entry of blogEntries) {
+		const abbrlink = entry.data.abbrlink || computeAbbrlink(entry.data.title, entry.data.published, alg, rep);
+		paths.push({
+			params: { slug: abbrlink },
+			props: { entry },
+		});
+	}
+	return paths;
 }
 
 const { entry } = Astro.props;

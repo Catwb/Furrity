@@ -44,6 +44,7 @@ export type SiteConfig = {
 		components: SidebarComponent[];
 	};
 	custom?: CustomCodeConfig;
+	abbrlink?: AbbrlinkConfig;
 };
 
 export type TwikooConfig = {
@@ -65,6 +66,11 @@ export type FontConfig = {
 export type FooterConfig = {
 	enable: boolean;
 	content?: string[];
+};
+
+export type AbbrlinkConfig = {
+	alg?: "crc16" | "crc32";
+	rep?: "dec" | "hex";
 };
 
 export type SidebarComponent = {

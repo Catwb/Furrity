@@ -1,4 +1,5 @@
 import type {
+	AbbrlinkConfig,
 	ExpressiveCodeConfig,
 	LicenseConfig,
 	NavBarConfig,

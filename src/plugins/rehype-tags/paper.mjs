@@ -1,7 +1,8 @@
 import { h } from "hastscript"
 import { shouldInject } from "./_registry.js"
 
-const STYLE = `.tag-plugin.paper {
+const STYLE = `/* paper-v2 */
+.tag-plugin.paper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,9 +10,9 @@ const STYLE = `.tag-plugin.paper {
   padding-bottom: 1rem;
 }
 .tag-plugin.paper > .content {
-  border-left: 1px dashed var(--text-meta);
-  border-right: 1px dashed var(--text-meta);
-  border-bottom: 1px dashed var(--text-meta);
+  border-left: 1px dashed oklch(0.8 0.02 var(--hue));
+  border-right: 1px dashed oklch(0.8 0.02 var(--hue));
+  border-bottom: 1px dashed oklch(0.8 0.02 var(--hue));
   border-bottom-left-radius: 0.75rem;
   border-bottom-right-radius: 0.75rem;
   padding: 1rem;
@@ -27,7 +28,7 @@ const STYLE = `.tag-plugin.paper {
   top: -4px;
   right: -16px;
   border-radius: 4px;
-  background: var(--block);
+  background: var(--primary);
 }
 .tag-plugin.paper > .content > .title {
   font-weight: 500;
@@ -42,7 +43,7 @@ const STYLE = `.tag-plugin.paper {
   top: calc(-1rem - 4px);
   right: calc(100% + 1rem - 6px);
   border-radius: 4px;
-  background: var(--accent);
+  background: var(--primary);
 }
 .tag-plugin.paper > .content > .title::after {
   content: '';
@@ -52,22 +53,27 @@ const STYLE = `.tag-plugin.paper {
   top: calc(-1rem - 4px);
   left: calc(100% + 1rem - 6px);
   border-radius: 4px;
-  background: var(--accent);
+  background: var(--primary);
 }
 .tag-plugin.paper > .content > .body > .paragraph {
   text-indent: 2em;
 }
 .tag-plugin.paper > .content > .body > .section > .section-title {
   text-align: center;
+  font-weight: 500;
+  margin: 0.5rem 0;
 }
 .tag-plugin.paper > .content > .body > .section > .section-content {
   text-indent: 2em;
+}
+.tag-plugin.paper > .content > .body > .line.right > p {
+  text-align: right;
 }
 .tag-plugin.paper > .content > .body .tag-plugin {
   margin: 0;
 }
 .tag-plugin.paper > .content > .footer {
-  color: var(--text-p4);
+  color: oklch(0.6 0.01 var(--hue));
   font-size: 0.75rem;
   text-align: right;
 }
@@ -75,7 +81,7 @@ const STYLE = `.tag-plugin.paper {
   text-align: right;
 }
 .tag-plugin.paper > .content > .footer > .author-date > span {
-  color: var(--text-p2);
+  color: oklch(0.55 0.02 var(--hue));
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -87,7 +93,7 @@ const STYLE = `.tag-plugin.paper {
 .tag-plugin.paper > .content.underline > .author-date,
 .tag-plugin.paper > .content.underline > .footer,
 .tag-plugin.paper > .content.underline > .body {
-  background: linear-gradient(transparent 1.5rem, var(--text-meta) 1px);
+  background: linear-gradient(transparent 1.5rem, oklch(0.8 0.02 var(--hue)) 1px);
   background-size: 100% calc(1.5rem + 1px);
   line-height: calc(1.5rem + 1px);
   padding: 0 3px;
@@ -96,7 +102,7 @@ const STYLE = `.tag-plugin.paper {
   margin: 0;
 }
 .tag-plugin.paper > .content.underline > .title {
-  border-top: 1px solid var(--text-meta);
+  border-top: 1px solid oklch(0.8 0.02 var(--hue));
 }`
 
 function extractText(node) {

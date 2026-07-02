@@ -23,7 +23,7 @@ import { NoteComponent } from "./src/plugins/rehype-tags/note.mjs";
 import { FoldingComponent } from "./src/plugins/rehype-tags/folding.mjs";
 import { ButtonComponent } from "./src/plugins/rehype-tags/button.mjs";
 import { FrameComponent } from "./src/plugins/rehype-tags/frame.mjs";
-import { PoetryComponent } from "./src/plugins/rehype-tags/poetry.mjs";
+import { rehypePoetryComponent } from "./src/plugins/rehype-tags/poetry.mjs";
 import { rehypePaperComponent } from "./src/plugins/rehype-tags/paper.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
@@ -135,10 +135,10 @@ export default defineConfig({
 						folding: FoldingComponent,
 						button: ButtonComponent,
 						frame: FrameComponent,
-						poetry: PoetryComponent,
 					},
 				},
 			],
+			rehypePoetryComponent,
 			rehypePaperComponent,
 			[
 				rehypeAutolinkHeadings,

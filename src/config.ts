@@ -46,7 +46,7 @@ export const siteConfig: SiteConfig = {
 	// },
 	// footer: {
 	// 	enable: true,
-	// 	content: "© 2026 **My Blog**. Powered by [Astro](https://astro.build) & [Fuwari](https://github.com/saicaca/fuwari)",
+	// 	content: ["© 2026 **My Blog**", "Powered by [Astro](https://astro.build) & [Fuwari](https://github.com/saicaca/fuwari)"],
 	// },
 	// sidebar: {
 	// 	components: [

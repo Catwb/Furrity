@@ -64,7 +64,7 @@ export type FontConfig = {
 
 export type FooterConfig = {
 	enable: boolean;
-	content?: string;
+	content?: string[];
 };
 
 export type SidebarComponent = {

@@ -20,7 +20,7 @@ const STYLE = `.tag-plugin.poetry {
   top: 4px;
   bottom: 4px;
   border-radius: 4px;
-  background: var(--block);
+  background: var(--primary);
 }
 .tag-plugin.poetry .content > .title {
   font-weight: 500;
@@ -35,10 +35,10 @@ const STYLE = `.tag-plugin.poetry {
   top: 6px;
   bottom: 6px;
   border-radius: 4px;
-  background: var(--accent);
+  background: var(--primary);
 }
 .tag-plugin.poetry .content > .meta {
-  color: var(--text-p2);
+  color: oklch(0.55 0.02 var(--hue));
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -47,44 +47,69 @@ const STYLE = `.tag-plugin.poetry {
 }
 .tag-plugin.poetry .content > .body {
   margin: 0.75rem 0;
-  border-top: 1px dashed var(--block-border);
-  border-bottom: 1px dashed var(--block-border);
+  border-top: 1px dashed oklch(0.85 0.02 var(--hue));
+  border-bottom: 1px dashed oklch(0.85 0.02 var(--hue));
   line-height: 2;
   width: 100%;
+  white-space: pre-line;
 }
 .tag-plugin.poetry .content > .footer {
   font-style: italic;
-  color: var(--text-p4);
+  color: oklch(0.6 0.01 var(--hue));
   margin: 0.75rem 0;
   font-size: 0.875rem;
 }`
 
-export function PoetryComponent(properties, children) {
+function buildPoetry(node) {
+  const props = node.properties || {}
+  const children = (node.children || []).filter(Boolean)
+  const inner = []
+
+  if (props.title) {
+    inner.push(h("div", { class: "title" }, [h("strong", props.title)]))
+  }
+
+  const metaParts = []
+  if (props.author) metaParts.push(h("span", props.author))
+  if (props.date) metaParts.push(h("span", props.date))
+  if (metaParts.length > 0) inner.push(h("div", { class: "meta" }, metaParts))
+
+  if (children.length > 0) {
+    inner.push(h("div", { class: "body" }, children))
+  }
+
+  if (props.footer) {
+    inner.push(h("div", { class: "footer" }, props.footer))
+  }
+
   const nodes = []
   if (shouldInject("poetry")) {
     nodes.push(h("style", { "data-tag-plugin": "poetry" }, STYLE))
   }
-
-  const inner = []
-  if (properties.title) {
-    inner.push(h("div", { class: "title" }, [h("strong", properties.title)]))
-  }
-
-  const metaParts = []
-  if (properties.author) metaParts.push(h("span", properties.author))
-  if (properties.date) metaParts.push(h("span", properties.date))
-  if (metaParts.length > 0) inner.push(h("div", { class: "meta" }, metaParts))
-
-  if (children && children.length > 0) {
-    inner.push(h("div", { class: "body" }, children))
-  }
-
-  if (properties.footer) {
-    inner.push(h("div", { class: "footer" }, properties.footer))
-  }
-
   nodes.push(h("div", { class: "tag-plugin poetry" }, [
     h("div", { class: "content" }, inner),
   ]))
-  return nodes.length === 1 ? nodes[0] : nodes
+  return nodes
+}
+
+function walk(node, fn, parent, index) {
+  if (!node) return
+  fn(node, parent, index)
+  if (node.children && Array.isArray(node.children)) {
+    for (let i = 0; i < node.children.length; i++) {
+      walk(node.children[i], fn, node, i)
+    }
+  }
+}
+
+export function rehypePoetryComponent() {
+  return (tree) => {
+    if (!tree) return
+    walk(tree, (node, parent, index) => {
+      if (index == null || !parent) return
+      if (node.type !== "element" || node.tagName !== "poetry") return
+      const replacement = buildPoetry(node)
+      parent.children.splice(index, 1, ...replacement)
+    })
+  }
 }

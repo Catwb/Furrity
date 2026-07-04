@@ -1,23 +1,6 @@
-# 🍥Fuwari  
-![Node.js >= 20](https://img.shields.io/badge/node.js-%3E%3D20-brightgreen) 
-![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue) 
-[![DeepWiki](https://img.shields.io/badge/DeepWiki-saicaca%2Ffuwari-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/saicaca/fuwari)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsaicaca%2Ffuwari.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsaicaca%2Ffuwari?ref=badge_shield&issueType=license)
+# 龙星划空
 
-A static blog template built with [Astro](https://astro.build).
-
-[**🖥️ Live Demo (Vercel)**](https://fuwari.vercel.app)
-
-![Preview Image](https://raw.githubusercontent.com/saicaca/resource/main/fuwari/home.png)
-
-🌏 README in
-[**中文**](https://github.com/saicaca/fuwari/blob/main/docs/README.zh-CN.md) /
-[**日本語**](https://github.com/saicaca/fuwari/blob/main/docs/README.ja.md) /
-[**한국어**](https://github.com/saicaca/fuwari/blob/main/docs/README.ko.md) /
-[**Español**](https://github.com/saicaca/fuwari/blob/main/docs/README.es.md) /
-[**ไทย**](https://github.com/saicaca/fuwari/blob/main/docs/README.th.md) /
-[**Tiếng Việt**](https://github.com/saicaca/fuwari/blob/main/docs/README.vi.md) /
-[**Bahasa Indonesia**](https://github.com/saicaca/fuwari/blob/main/docs/README.id.md) (Provided by the community and may not always be up-to-date)
+基于 [Fuwari](https://github.com/saicaca/fuwari) 定制，融合 Stellar 标签插件生态的 Astro 静态博客模板。
 
 ## ✨ Features
 
@@ -27,28 +10,21 @@ A static blog template built with [Astro](https://astro.build).
 - [x] Customizable theme colors & banner
 - [x] Responsive design
 - [x] Search functionality with [Pagefind](https://pagefind.app/)
-- [x] Markdown extended features (admonitions, enhanced code blocks)
+- [x] Stellar tag-plugin compatibility (box, note, folding, button, frame, poetry, paper, tabs)
+- [x] Pinned posts
+- [x] Abbrlink support (CRC16/CRC32)
+- [x] Multi-level dropdown navbar
 - [x] Table of contents
 - [x] RSS feed
-- [x] **Novel / Fiction support** — dedicated content type with chapters, series, characters, and reading mode
+- [x] Novel / Fiction support — dedicated content type with chapters, series, characters, and reading mode
 
 ## 🚀 Getting Started
 
-1. Create your blog repository:
-    - [Generate a new repository](https://github.com/saicaca/fuwari/generate) from this template or fork this repository.
-    - Or run one of the following commands:
-       ```sh
-       npm create fuwari@latest
-       yarn create fuwari
-       pnpm create fuwari@latest
-       bun create fuwari@latest
-       deno run -A npm:create-fuwari@latest
-       ```
-2. To edit your blog locally, clone your repository, run `pnpm install` to install dependencies.
-    - Install [pnpm](https://pnpm.io) `npm install -g pnpm` if you haven't.
-3. Edit the config file `src/config.ts` to customize your blog.
-4. Run `pnpm new-post <filename>` to create a new post and edit it in `src/content/posts/`.
-5. Deploy your blog to Vercel, Netlify, GitHub Pages, etc. following [the guides](https://docs.astro.build/en/guides/deploy/). You need to edit the site configuration in `astro.config.mjs` before deployment.
+1. Install [pnpm](https://pnpm.io): `npm install -g pnpm`
+2. Install dependencies: `pnpm install`
+3. Edit config file `src/config.ts` to customize your blog
+4. Run `pnpm new-post <filename>` to create a new post
+5. Start dev server: `pnpm dev`
 
 ## 📝 Frontmatter of Posts
 
@@ -61,112 +37,111 @@ image: ./cover.jpg
 tags: [Foo, Bar]
 category: Front-end
 draft: false
-lang: jp      # Set only if the post's language differs from the site's language in `config.ts`
+pinned: true        # Pin to top of list
+abbrlink: 12345     # Optional custom short link ID
+lang: jp            # Set only if post language differs from site language
 ---
 ```
 
-## 🧩 Markdown Extended Syntax
+## 🧩 Stellar Tag Plugins
 
-In addition to Astro's default support for [GitHub Flavored Markdown](https://github.github.com/gfm/), several extra Markdown features are included:
+Use triple-colon container directives in markdown:
 
-- Admonitions ([Preview and Usage](https://fuwari.vercel.app/posts/markdown-extended/#admonitions))
-- Enhanced code blocks with Expressive Code ([Preview](https://fuwari.vercel.app/posts/expressive-code/) / [Docs](https://expressive-code.com/))
+### Box — colored block with optional title
+```markdown
+:::box{color="blue" title="Info"}
+Content here
+:::
+```
+
+### Note — styled note with color accent
+```markdown
+:::note{color="cyan" title="Note"}
+Note content
+:::
+```
+
+### Folding — collapsible section
+```markdown
+:::folding{title="Click to expand" color="yellow" open=true}
+Hidden content
+:::
+```
+
+### Button
+```markdown
+::button{color="red" text="Click Me" url="https://example.com"}
+```
+
+### Frame — bordered image frame
+```markdown
+:::frame
+![alt](image.jpg)
+:::
+```
+
+### Poetry — verse block
+```markdown
+:::poetry{title="静夜思" author="李白"}
+床前明月光，
+疑是地上霜。
+:::
+```
+
+### Paper — article with delimiters
+```markdown
+:::paper{style="underline"}
+---
+Body content
+---
+## Notes
+Footer notes
+:::
+```
+
+### Tabs — raw HTML (use directly in markdown)
+```html
+<div class="tag-plugin tabs" data-tabs-name="example" data-tabs-active="0">
+  <div class="nav-tabs raw">
+    <button class="tab active">Tab 1</button>
+    <button class="tab">Tab 2</button>
+  </div>
+  <div class="tab-panel" data-active>
+    Content for tab 1
+  </div>
+  <div class="tab-panel">
+    Content for tab 2
+  </div>
+</div>
+```
 
 ## 📖 Writing Novels / Fiction
 
-This theme supports novels and fiction as a dedicated content type, separate from blog posts.
-
 ### Directory Structure
-
 ```
 src/content/
 ├── novels/
 │   └── your-novel-slug/
-│       ├── index.md          # Novel overview (metadata only, no chapter field)
+│       ├── index.md          # Novel overview
 │       ├── 01-chapter.md     # Chapter 1
 │       └── 02-chapter.md     # Chapter 2
 └── characters/
     └── character-name.md     # Character profile
 ```
 
-### Novel Overview (`index.md`)
-
-```yaml
----
-title: 剑起风云       # Chapter or novel title
-novel: your-novel-slug    # Unique slug grouping all chapters
-novelTitle: 剑起风云       # Display name (shown in the novel list)
-description: 少年陈墨...   # Synopsis / description
-series: 仙剑奇谭            # Optional: group novels into a series
-seriesOrder: 1              # Order within the series
-published: 2026-06-01
----
-```
-
-### Chapter (any `.md` file with a `chapter` field)
-
-```yaml
----
-title: 清晨
-novel: your-novel-slug
-novelTitle: 剑起风云
-chapter: 1                  # Chapter number (controls sorting)
-published: 2026-06-01
-characters:                 # Optional: link characters appearing in this chapter
-  - chen-mo
-  - su-yun-er
-wordCount: 1560             # Manual word count (displayed in chapter list)
----
-```
-
-### Character Profile
-
-```yaml
----
-name: 陈墨
-novel: your-novel-slug
-role: protagonist           # protagonist / antagonist / supporting / minor / guest
-description: 青云宗外门杂役...
-alias:
-  - 小墨
----
-```
-
-### Generated Routes
-
-| Route | Content |
-|---|---|
-| `/novels/` | List of all novels (grouped by series) |
-| `/novels/<novel-slug>/` | Novel overview page (description, characters, chapter list) |
-| `/novels/<novel-slug>/<chapter>/` | Chapter reading page with prev/next navigation |
-| `/characters/` | Character list grouped by novel |
-
-### Reading Mode
-
-Each chapter page has a "Reading Mode" toggle button that hides the sidebar and expands the content area for distraction-free reading. The preference is saved in `localStorage`.
+See existing novels in `src/content/novels/` for examples.
 
 ## ⚡ Commands
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                    | Action                                              |
-|:---------------------------|:----------------------------------------------------|
-| `pnpm install`             | Installs dependencies                               |
-| `pnpm dev`                 | Starts local dev server at `localhost:4321`         |
-| `pnpm build`               | Build your production site to `./dist/`             |
-| `pnpm preview`             | Preview your build locally, before deploying        |
-| `pnpm check`               | Run checks for errors in your code                  |
-| `pnpm format`              | Format your code using Biome                        |
-| `pnpm new-post <filename>` | Create a new post                                   |
-| `pnpm astro ...`           | Run CLI commands like `astro add`, `astro check`    |
-| `pnpm astro --help`        | Get help using the Astro CLI                        |
-
-## ✏️ Contributing
-
-Check out the [Contributing Guide](https://github.com/saicaca/fuwari/blob/main/CONTRIBUTING.md) for details on how to contribute to this project.
+| Command | Action |
+|:---|---|
+| `pnpm install` | Install dependencies |
+| `pnpm dev` | Start dev server at `localhost:4321` |
+| `pnpm build` | Build to `./dist/` |
+| `pnpm preview` | Preview production build |
+| `pnpm new-post <filename>` | Create a new post |
+| `pnpm astro ...` | Run Astro CLI commands |
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsaicaca%2Ffuwari.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsaicaca%2Ffuwari?ref=badge_large&issueType=license)
+MIT

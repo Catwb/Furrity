@@ -36,20 +36,42 @@ const TAG_MAP = [
      const p = []; if (color) p.push(`color=${color}`); if (title) p.push(`title="${title}"`)
      return `:::box${p.length ? `{${p.join(" ")}}` : ""}\n${body.replace(/^ +/gm, "").trim()}\n:::`
    }],
-  [/{%\s*folding\s+(.*?)\s*%}([\s\S]*?){%\s*endfolding\s*%}/g,
-   (_, title, body) => `:::folding{title="${title.trim()}"}\n${body.replace(/^ +/gm, "").trim()}\n:::`],
+  [/{%\s*folding\s+([\s\S]*?)%}([\s\S]*?){%\s*endfolding\s*%}/g,
+   (_, raw, body) => {
+     const open = raw.includes("open:true")
+     const color = raw.match(/color:(\S+)/)?.[1]
+     const title = raw.replace(/open:true\s*/g, "").replace(/color:\S+\s*/g, "").trim()
+     const p = [`title="${title}"`]
+     if (color) p.push(`color=${color}`)
+     if (open) p.push("open=true")
+     return `:::folding{${p.join(" ")}}\n${body.replace(/^ +/gm, "").trim()}\n:::`
+   }],
   [/{%\s*gallery\s*%}([\s\S]*?){%\s*endgallery\s*%}/g,
    (_, body) => body.replace(/^ +/gm, "").trim()],
+  // note: {% note color:xxx %}...{% endnote %}
+  //        → :::stnote{color=xxx}\n...\n:::
+  [/{%\s*note\s+(.*?)\s*%}([\s\S]*?){%\s*endnote\s*%}/g,
+   (_, raw, body) => {
+     const color = raw.match(/color:(\S+)/)?.[1]
+     const p = color ? `{color=${color}}` : ""
+     return `:::stnote${p}\n${body.replace(/^ +/gm, "").trim()}\n:::`
+   }],
   [/{%\s*note\s*%}([\s\S]*?){%\s*endnote\s*%}/g,
    (_, body) => `:::stnote\n${body.replace(/^ +/gm, "").trim()}\n:::`],
-  [/{%\s*checkbox\s+(checked:true\s+)?(.*?)\s*%}/g,
-   (_, checked, text) => `- ${checked ? "[x]" : "[ ]"} ${text.trim()}`],
+  // checkbox: {% checkbox checked:true color:green text %}
+  //            → :::check{checked color="green"}\ntext\n:::
+  [/{%\s*checkbox\s+symbol:\w+\s+color:(\S+)\s+checked:true\s+(.*?)\s*%}/g,
+   (_, color, text) => `:::check{checked color="${color}"}\n${text.trim()}\n:::`],
+  [/{%\s*checkbox\s+color:(\S+)\s+checked:true\s+(.*?)\s*%}/g,
+   (_, color, text) => `:::check{checked color="${color}"}\n${text.trim()}\n:::`],
+  [/{%\s*checkbox\s+checked:true\s+color:(\S+)\s+(.*?)\s*%}/g,
+   (_, color, text) => `:::check{checked color="${color}"}\n${text.trim()}\n:::`],
   [/{%\s*checkbox\s+checked:true\s+(.*?)\s*%}/g,
-   (_, text) => `- [x] ${text.trim()}`],
-  [/{%\s*checkbox\s+symbol:\w+\s+color:\w+\s+checked:true\s+(.*?)\s*%}/g,
-   (_, text) => `- [x] ${text.trim()}`],
-  [/{%\s*checkbox\s+color:\w+\s+checked:true\s+(.*?)\s*%}/g,
-   (_, text) => `- [x] ${text.trim()}`],
+   (_, text) => `:::check{checked}\n${text.trim()}\n:::`],
+  [/{%\s*checkbox\s+color:(\S+)\s+(.*?)\s*%}/g,
+   (_, color, text) => `:::check{color="${color}"}\n${text.trim()}\n:::`],
+  [/{%\s*checkbox\s+(.*?)\s*%}/g,
+   (_, text) => `:::check\n${text.trim()}\n:::`],
   [/{%\s*quot\s+(.*?)\s*%}/g, (_, text) => `> ${text.trim()}`],
   [/{%\s*timeline\s*%}([\s\S]*?){%\s*endtimeline\s*%}/g,
    (_, body) => body.replace(/^ +/gm, "").trim()],

@@ -18,6 +18,7 @@ import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config.ts";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
+import { CheckboxComponent } from "./src/plugins/rehype-tags/checkbox.mjs";
 import { BoxComponent } from "./src/plugins/rehype-tags/box.mjs";
 import { NoteComponent } from "./src/plugins/rehype-tags/note.mjs";
 import { FoldingComponent } from "./src/plugins/rehype-tags/folding.mjs";
@@ -125,12 +126,13 @@ export default defineConfig({
 				rehypeComponents,
 				{
 					components: {
-						note: (x, y) => AdmonitionComponent(x, y, "note"),
+						note: NoteComponent, // Stellar-style note with color support
 						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
 						important: (x, y) => AdmonitionComponent(x, y, "important"),
 						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
 						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
 						box: BoxComponent,
+						check: CheckboxComponent,
 						stnote: NoteComponent,
 						folding: FoldingComponent,
 						button: ButtonComponent,

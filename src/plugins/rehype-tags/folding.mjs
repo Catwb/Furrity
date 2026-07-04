@@ -34,7 +34,7 @@ export function FoldingComponent(properties, children) {
 
   const attrs = { class: "tag-plugin colorful folding" }
   if (properties.color) attrs.color = properties.color
-  if (properties.open === "true") attrs.open = ""
+  if (properties.open === "true" || properties.open === true) attrs.open = ""
 
   const inner = []
   if (properties.title) {

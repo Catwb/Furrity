@@ -19,11 +19,18 @@ const TAG_MAP = [
      return `:::box${ps}\n${body.replace(/^ +/gm, "").trim()}\n:::`
    }],
 
-  // folding: {% folding title %}...{% endfolding %}
-  //          → :::folding{title="title"}\n...\n:::
-  [/{%\s*folding\s+(.*?)\s*%}([\s\S]*?){%\s*endfolding\s*%}/g,
-   (_, title, body) =>
-     `:::folding{title="${title.trim()}"}\n${body.replace(/^ +/gm, "").trim()}\n:::`],
+  // folding: {% folding title open:true color:xxx %}...{% endfolding %}
+  //          → :::folding{title="title" open=true color=xxx}\n...\n:::
+  [/{%\s*folding\s+([\s\S]*?)%}([\s\S]*?){%\s*endfolding\s*%}/g,
+   (_, raw, body) => {
+     const open = raw.includes("open:true")
+     const color = raw.match(/color:(\S+)/)?.[1]
+     const title = raw.replace(/open:true\s*/g, "").replace(/color:\S+\s*/g, "").trim()
+     const p = [`title="${title}"`]
+     if (color) p.push(`color=${color}`)
+     if (open) p.push("open=true")
+     return `:::folding{${p.join(" ")}}\n${body.replace(/^ +/gm, "").trim()}\n:::`
+   }],
 
   // poetry: {% poetry title author:name %}body{% endpoetry %}
   //          → :::poetry{title=title author="name"}\nbody\n:::
@@ -34,8 +41,14 @@ const TAG_MAP = [
      return `:::poetry{${p.join(" ")}}\n${body.replace(/^ +/gm, "").trim()}\n:::`
    }],
 
-  // note: {% note %}...{% endnote %}
-  //        → :::stnote\n...\n:::
+  // note: {% note color:xxx %}...{% endnote %}
+  //        → :::stnote{color=xxx}\n...\n:::
+  [/{%\s*note\s+(.*?)\s*%}([\s\S]*?){%\s*endnote\s*%}/g,
+   (_, raw, body) => {
+     const color = raw.match(/color:(\S+)/)?.[1]
+     const p = color ? `{color=${color}}` : ""
+     return `:::stnote${p}\n${body.replace(/^ +/gm, "").trim()}\n:::`
+   }],
   [/{%\s*note\s*%}([\s\S]*?){%\s*endnote\s*%}/g,
    (_, body) => `:::stnote\n${body.replace(/^ +/gm, "").trim()}\n:::`],
 
@@ -60,9 +73,9 @@ const TAG_MAP = [
    (_, title, url) => `[${title.trim()}](${url.trim()})`],
 
   // checkbox: {% checkbox checked(optional) text %}
-  //            → - [x] text or - [ ] text
+  //            → :::check{checked}\ntext\n:::
   [/{%\s*checkbox\s+(checked\s+)?(.*?)\s*%}/g,
-   (_, checked, text) => `- ${checked ? "[x]" : "[ ]"} ${text.trim()}`],
+   (_, checked, text) => `:::check${checked ? "{checked}" : ""}\n${text.trim()}\n:::`],
 
   // emoji: {% emoji name %}
   //         → :name:

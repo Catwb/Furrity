@@ -5,59 +5,32 @@ import { siteConfig } from "../config";
 const twikooConfig = siteConfig.twikoo;
 const TWIKOO_CDN = twikooConfig?.cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
 
+let containerEl: HTMLDivElement | undefined = $state();
 let loaded = $state(false);
-let cssLoaded = $state(false);
-let twikooReady = $state(false);
+let cssLoaded = false;
+let scriptLoaded = false;
+let cleanupHook: (() => void) | null = null;
 
 function getDarkMode(): boolean {
 	return document.documentElement.classList.contains("dark");
 }
 
-function loadTwikooScript(): Promise<void> {
+function loadScript(src: string): Promise<void> {
 	return new Promise((resolve, reject) => {
-		if ((window as any).twikoo) {
+		if (scriptLoaded) {
 			resolve();
 			return;
 		}
 		const script = document.createElement("script");
-		script.src = TWIKOO_CDN;
+		script.src = src;
 		script.async = true;
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error("Failed to load Twikoo"));
+		script.onload = () => { scriptLoaded = true; resolve(); };
+		script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
 		document.head.appendChild(script);
 	});
 }
 
-function destroyTwikoo() {
-	const el = document.getElementById("tcomment");
-	if (el) el.innerHTML = "";
-}
-
-async function initTwikoo(path?: string) {
-	if (!twikooConfig?.envId) return;
-	const twikoo = (window as any).twikoo;
-	if (!twikoo) return;
-
-	const el = document.getElementById("tcomment");
-	if (!el) return;
-
-	el.innerHTML = "";
-
-	try {
-		await twikoo.init({
-			envId: twikooConfig.envId,
-			el: "#tcomment",
-			path: path || window.location.pathname,
-			region: twikooConfig.region || "",
-			lang: twikooConfig.lang || "",
-			dark: getDarkMode(),
-		});
-	} catch (e) {
-		console.error("Twikoo init error:", e);
-	}
-}
-
-function loadCustomCSS(url: string): Promise<void> {
+function loadCSS(url: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		if (cssLoaded) {
 			resolve();
@@ -66,54 +39,74 @@ function loadCustomCSS(url: string): Promise<void> {
 		const link = document.createElement("link");
 		link.rel = "stylesheet";
 		link.href = url;
-		link.onload = () => {
-			cssLoaded = true;
-			resolve();
-		};
+		link.onload = () => { cssLoaded = true; resolve(); };
 		link.onerror = () => reject(new Error(`Failed to load CSS: ${url}`));
 		document.head.appendChild(link);
 	});
 }
 
-async function setup() {
-	if (!twikooConfig?.enable || !twikooConfig?.envId) return;
+async function initTwikoo(el: HTMLElement, path?: string) {
+	if (!twikooConfig?.envId) return;
+	const twikoo = (window as any).twikoo;
+	if (!twikoo) return;
+
+	el.innerHTML = "";
 
 	try {
-		if (twikooConfig.css) {
-			await loadCustomCSS(twikooConfig.css);
-		}
-		await loadTwikooScript();
-		twikooReady = true;
-		await initTwikoo();
+		await twikoo.init({
+			envId: twikooConfig.envId,
+			el,
+			path: path || window.location.pathname,
+			region: twikooConfig.region || "",
+			lang: twikooConfig.lang || "",
+			dark: getDarkMode(),
+		});
 		loaded = true;
 	} catch (e) {
-		console.error("Twikoo init failed:", e);
+		console.error("Twikoo init error:", e);
 	}
 }
 
-onMount(async () => {
-	await setup();
+async function setup(el: HTMLElement) {
+	if (!twikooConfig?.enable || !twikooConfig?.envId || !el) return;
 
-	// Swup contentReplaced fires after new content is in the DOM
-	const onContentReplaced = async () => {
-		destroyTwikoo();
-		loaded = false;
-		if (twikooReady) {
-			await initTwikoo();
-			loaded = true;
+	try {
+		if (twikooConfig.css) {
+			await loadCSS(twikooConfig.css);
 		}
+		await loadScript(TWIKOO_CDN);
+		await initTwikoo(el);
+	} catch (e) {
+		console.error("Twikoo setup failed:", e);
+	}
+}
+
+onMount(() => {
+	if (!containerEl) return;
+	setup(containerEl);
+
+	const onContentReplaced = async () => {
+		if (!containerEl) return;
+		loaded = false;
+		await initTwikoo(containerEl);
 	};
 
-	window.addEventListener("swup:contentReplaced", onContentReplaced);
-
-	return () => {
-		window.removeEventListener("swup:contentReplaced", onContentReplaced);
-	};
+	if (window?.swup?.hooks) {
+		window.swup.hooks.on("content:replace", onContentReplaced);
+		cleanupHook = () => { window.swup.hooks.off("content:replace", onContentReplaced); };
+	} else {
+		const onEnabled = () => {
+			window.swup.hooks.on("content:replace", onContentReplaced);
+			cleanupHook = () => { window.swup.hooks.off("content:replace", onContentReplaced); };
+		};
+		document.addEventListener("swup:enable", onEnabled);
+		cleanupHook = () => { document.removeEventListener("swup:enable", onEnabled); };
+	}
 });
 
 onDestroy(() => {
-	destroyTwikoo();
+	cleanupHook?.();
 });
 </script>
 
-<div id="tcomment" class="twikoo-comments"></div>
+<div bind:this={containerEl} id="tcomment" class="twikoo"></div>

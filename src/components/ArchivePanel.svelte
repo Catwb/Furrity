@@ -14,15 +14,16 @@ tags = params.has("tag") ? params.getAll("tag") : [];
 categories = params.has("category") ? params.getAll("category") : [];
 const uncategorized = params.get("uncategorized");
 
-interface Post {
-	slug: string;
-	data: {
-		title: string;
-		tags: string[];
-		category?: string[];
-		published: Date;
-	};
-}
+	interface Post {
+		slug: string;
+		data: {
+			title: string;
+			tags: string[];
+			category?: string[];
+			published: Date;
+			abbrlink?: string;
+		};
+	}
 
 interface Group {
 	year: number;
@@ -111,7 +112,7 @@ onMount(async () => {
 
             {#each group.posts as post}
                 <a
-                        href={getPostUrlBySlug(post.slug)}
+                        href={getPostUrlBySlug(post.data.abbrlink || post.slug)}
                         aria-label={post.data.title}
                         class="group btn-plain !block h-10 w-full rounded-lg hover:text-[initial]"
                 >

@@ -28,6 +28,7 @@ import { rehypePoetryComponent } from "./src/plugins/rehype-tags/poetry.mjs";
 import { rehypePaperComponent } from "./src/plugins/rehype-tags/paper.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
+import { remarkAbbrlink } from "./src/plugins/remark-abbrlink";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 
@@ -111,6 +112,7 @@ export default defineConfig({
 	],
 	markdown: {
 		remarkPlugins: [
+			remarkAbbrlink,
 			remarkMath,
 			remarkReadingTime,
 			remarkExcerpt,

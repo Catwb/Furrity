@@ -3,7 +3,7 @@ import { onMount, onDestroy } from "svelte";
 import { siteConfig } from "../config";
 
 const twikooConfig = siteConfig.twikoo;
-const TWIKOO_CDN = twikooConfig?.cdn || "https://cdn.jsdelivr.net/npm/twikoo@1.6.43/dist/twikoo.all.min.js";
+const TWIKOO_CDN = twikooConfig?.cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
 
 let loaded = $state(false);
 

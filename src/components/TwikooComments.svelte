@@ -6,6 +6,9 @@ const twikooConfig = siteConfig.twikoo;
 const TWIKOO_CDN = twikooConfig?.cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
 
 let loaded = $state(false);
+let cssLoaded = $state(false);
+let twikooReady = $state(false);
+let observer: MutationObserver | null = null;
 
 function getDarkMode(): boolean {
 	return document.documentElement.classList.contains("dark");
@@ -34,6 +37,19 @@ function loadTwikooScript(): Promise<void> {
 	});
 }
 
+function destroyTwikoo() {
+	const twikoo = (window as any).twikoo;
+	if (twikoo && twikoo.destroy) {
+		try {
+			twikoo.destroy();
+		} catch (e) {
+			// ignore
+		}
+	}
+	const el = document.getElementById("tcomment");
+	if (el) el.innerHTML = "";
+}
+
 async function initTwikoo(path?: string) {
 	if (!twikooConfig?.envId) return;
 	const twikoo = (window as any).twikoo;
@@ -56,16 +72,23 @@ async function initTwikoo(path?: string) {
 
 function loadCustomCSS(url: string): Promise<void> {
 	return new Promise((resolve, reject) => {
+		if (cssLoaded) {
+			resolve();
+			return;
+		}
 		const link = document.createElement("link");
 		link.rel = "stylesheet";
 		link.href = url;
-		link.onload = () => resolve();
+		link.onload = () => {
+			cssLoaded = true;
+			resolve();
+		};
 		link.onerror = () => reject(new Error(`Failed to load CSS: ${url}`));
 		document.head.appendChild(link);
 	});
 }
 
-onMount(async () => {
+async function setup() {
 	if (!twikooConfig?.enable || !twikooConfig?.envId) return;
 
 	try {
@@ -73,16 +96,42 @@ onMount(async () => {
 			await loadCustomCSS(twikooConfig.css);
 		}
 		await loadTwikooScript();
+		twikooReady = true;
 		await initTwikoo();
 		loaded = true;
 	} catch (e) {
 		console.error("Twikoo init failed:", e);
 	}
+}
+
+onMount(async () => {
+	await setup();
+
+	// Listen for Swup navigation events
+	const onTransitionStart = () => {
+		destroyTwikoo();
+		loaded = false;
+	};
+
+	const onTransitionEnd = async () => {
+		if (twikooReady) {
+			await initTwikoo();
+			loaded = true;
+		}
+	};
+
+	window.addEventListener("swup:transitionStart", onTransitionStart);
+	window.addEventListener("swup:transitionEnd", onTransitionEnd);
+
+	return () => {
+		window.removeEventListener("swup:transitionStart", onTransitionStart);
+		window.removeEventListener("swup:transitionEnd", onTransitionEnd);
+	};
 });
 
 onDestroy(() => {
-	const el = document.getElementById("tcomment");
-	if (el) el.innerHTML = "";
+	destroyTwikoo();
+	observer?.disconnect();
 });
 </script>
 

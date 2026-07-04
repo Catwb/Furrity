@@ -44,10 +44,16 @@ export const siteConfig: SiteConfig = {
 	footer: {
 		enable: true,
 		content: [
-			"本站由 [绮曜](/) 创建。",
+			"本站由 [绮曜](/) 使用 [Stellar](https://github.com/xaoxuu/hexo-theme-stellar) 主题（略微由我更改）创建。",
 			"本博客所有文章除特别声明外，均采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议，转载请注明出处。",
-			"Copyright © 2024-2025 绮曜",
-			"Powered by [Astro](https://astro.build) & [Fuwari](https://github.com/saicaca/fuwari)",
+			"[Copyright © since 2024-2025 绮曜](/)",
+			'<div id="StaticBadge"><a target="_blank" rel="noopener" href="https://icp.gov.moe/?keyword=20240822"><img alt="Static Badge" src="https://img.shields.io/badge/萌ICP备-20240822号-green?style=for-the-badge&logo=https%3A%2F%2Ficp.gov.moe%2Fmoe-icon.zip&logoSize=auto&labelColor=FF1485&link=https%3A%2F%2Ficp.gov.moe%2F%3Fkeyword%3D20240822"></a> <a target="_blank" rel="noopener" href="https://astro.build/"><img alt="Static Badge" src="https://img.shields.io/badge/Powered_By-Astro-blue?style=for-the-badge"></a> <a target="_blank" rel="noopener" href="https://github.com/saicaca/fuwari"><img alt="Static Badge" src="https://img.shields.io/badge/Theme-Furrity_by_Qiyao-blue?style=for-the-badge"></a> <a target="_blank" rel="noopener" href="https://www.netlify.com/"><img alt="Static Badge" src="https://img.shields.io/badge/C_D_N-Netlify-green?style=for-the-badge&logo=netlify&logoSize=auto"></a></div>',
+			'<a title="无聊湾 🥱 The Boring Bay" href="https://boringbay.com"><img height="50px" src="https://boringbay.com/api/badge/blog.245179.xyz"></a>',
+			"![Netlify Status](https://api.netlify.com/api/v1/badges/c669c5a6-ac66-4f4d-9813-0edd3ed59146/deploy-status)",
+			"**感谢访问我的网站**",
+			'<div style="font-size: 0.85rem"><span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="https://cdn.245179.xyz/js/runtime.js"></script></div>',
+			'<a style="text-decoration:none;color:#51c4d3;" href="https://travel.moe/go.html" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" target="_blank"><img src="https://travel.moe/images/icon/icon64.png" style="width:24px;height:24px">异次元之旅</a> | <a href="https://www.travellings.cn/go.html" target="_blank" rel="noopener" title="开往-友链接力"><img src="https://www.travellings.cn/assets/logo.gif" alt="开往-友链接力" width="100"></a>',
+			"![count](https://count.getloli.com/@Qiyao?name=Qiyao&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto)",
 		],
 	},
 	sidebar: {

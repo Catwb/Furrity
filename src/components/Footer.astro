@@ -13,7 +13,12 @@ const md = new MarkdownIt({ html: true });
 
 {hasCustomFooter
 ? <div class="card-base py-6 px-6 mt-8 mb-8 flex flex-col items-center justify-center markdown-footer">
-    {footerLines!.map((line) => <p set:html={md.renderInline(line)} />)}
+    {footerLines!.map((line) => {
+        if (line.startsWith("<")) {
+            return <div set:html={line} />;
+        }
+        return <p set:html={md.renderInline(line)} />;
+    })}
 </div>
 : <div class="card-base py-6 px-6 mt-8 mb-8 flex flex-col items-center justify-center">
     <div class="transition text-50 text-sm text-center">
@@ -22,7 +27,7 @@ const md = new MarkdownIt({ html: true });
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
         Powered by
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>
+        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Furrity</a>
     </div>
 </div>
 }
@@ -32,6 +37,15 @@ const md = new MarkdownIt({ html: true });
         @apply text-[var(--primary)] font-medium;
     }
     .markdown-footer p {
-        @apply text-sm text-center;
+        @apply text-center my-2;
+    }
+    .markdown-footer > div {
+        @apply text-center my-2;
+    }
+    .markdown-footer #StaticBadge {
+        @apply flex flex-wrap justify-center gap-2 my-3;
+    }
+    .markdown-footer #StaticBadge img {
+        @apply h-auto;
     }
 </style>

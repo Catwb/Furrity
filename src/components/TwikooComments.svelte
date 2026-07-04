@@ -8,18 +8,9 @@ const TWIKOO_CDN = twikooConfig?.cdn || "https://registry.npmmirror.com/twikoo/1
 let loaded = $state(false);
 let cssLoaded = $state(false);
 let twikooReady = $state(false);
-let observer: MutationObserver | null = null;
 
 function getDarkMode(): boolean {
 	return document.documentElement.classList.contains("dark");
-}
-
-function observeDarkMode(callback: (dark: boolean) => void): MutationObserver {
-	const observer = new MutationObserver(() => {
-		callback(getDarkMode());
-	});
-	observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-	return observer;
 }
 
 function loadTwikooScript(): Promise<void> {
@@ -38,14 +29,6 @@ function loadTwikooScript(): Promise<void> {
 }
 
 function destroyTwikoo() {
-	const twikoo = (window as any).twikoo;
-	if (twikoo && twikoo.destroy) {
-		try {
-			twikoo.destroy();
-		} catch (e) {
-			// ignore
-		}
-	}
 	const el = document.getElementById("tcomment");
 	if (el) el.innerHTML = "";
 }
@@ -60,14 +43,18 @@ async function initTwikoo(path?: string) {
 
 	el.innerHTML = "";
 
-	await twikoo.init({
-		envId: twikooConfig.envId,
-		el: "#tcomment",
-		path: path || window.location.pathname,
-		region: twikooConfig.region || "",
-		lang: twikooConfig.lang || "",
-		dark: getDarkMode(),
-	});
+	try {
+		await twikoo.init({
+			envId: twikooConfig.envId,
+			el: "#tcomment",
+			path: path || window.location.pathname,
+			region: twikooConfig.region || "",
+			lang: twikooConfig.lang || "",
+			dark: getDarkMode(),
+		});
+	} catch (e) {
+		console.error("Twikoo init error:", e);
+	}
 }
 
 function loadCustomCSS(url: string): Promise<void> {
@@ -107,31 +94,25 @@ async function setup() {
 onMount(async () => {
 	await setup();
 
-	// Listen for Swup navigation events
-	const onTransitionStart = () => {
+	// Swup contentReplaced fires after new content is in the DOM
+	const onContentReplaced = async () => {
 		destroyTwikoo();
 		loaded = false;
-	};
-
-	const onTransitionEnd = async () => {
 		if (twikooReady) {
 			await initTwikoo();
 			loaded = true;
 		}
 	};
 
-	window.addEventListener("swup:transitionStart", onTransitionStart);
-	window.addEventListener("swup:transitionEnd", onTransitionEnd);
+	window.addEventListener("swup:contentReplaced", onContentReplaced);
 
 	return () => {
-		window.removeEventListener("swup:transitionStart", onTransitionStart);
-		window.removeEventListener("swup:transitionEnd", onTransitionEnd);
+		window.removeEventListener("swup:contentReplaced", onContentReplaced);
 	};
 });
 
 onDestroy(() => {
 	destroyTwikoo();
-	observer?.disconnect();
 });
 </script>
 

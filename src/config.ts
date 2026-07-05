@@ -36,15 +36,15 @@ export const siteConfig: SiteConfig = {
 			src: "/favicon/favicon.webp",
 		},
 	],
-	// fonts: {
-	// 	heading: "'LXGW WenKai', system-ui, sans-serif",
-	// 	body: "'LXGW WenKai', system-ui, sans-serif",
-	// 	code: "'LXGW WenKai', Menlo, monospace",
-	// },
+	 fonts: {
+		heading: "'LXGW WenKai', system-ui, sans-serif",
+		body: "'LXGW WenKai', system-ui, sans-serif",
+		code: "'LXGW WenKai', Menlo, monospace",
+	},
 	footer: {
 		enable: true,
 		content: [
-			"本站由 [绮曜](/) 使用 [Stellar](https://github.com/xaoxuu/hexo-theme-stellar) 主题（略微由我更改）创建。",
+			"本站由 [绮曜](/) 使用 Furrity 主题（略微由我更改）创建。",
 			"本博客所有文章除特别声明外，均采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议，转载请注明出处。",
 			"[Copyright © since 2024-2025 绮曜](/)",
 			'<div id="StaticBadge"><a target="_blank" rel="noopener" href="https://icp.gov.moe/?keyword=20240822"><img alt="Static Badge" src="https://img.shields.io/badge/萌ICP备-20240822号-green?style=for-the-badge&logo=https%3A%2F%2Ficp.gov.moe%2Fmoe-icon.zip&logoSize=auto&labelColor=FF1485&link=https%3A%2F%2Ficp.gov.moe%2F%3Fkeyword%3D20240822"></a> <a target="_blank" rel="noopener" href="https://astro.build/"><img alt="Static Badge" src="https://img.shields.io/badge/Powered_By-Astro-blue?style=for-the-badge"></a> <a target="_blank" rel="noopener" href="https://github.com/saicaca/fuwari"><img alt="Static Badge" src="https://img.shields.io/badge/Theme-Furrity_by_Qiyao-blue?style=for-the-badge"></a> <a target="_blank" rel="noopener" href="https://www.netlify.com/"><img alt="Static Badge" src="https://img.shields.io/badge/C_D_N-Netlify-green?style=for-the-badge&logo=netlify&logoSize=auto"></a></div>',
@@ -71,16 +71,16 @@ export const siteConfig: SiteConfig = {
 		cdn: "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js",
 		css: "https://cdn.245179.xyz/css/twikoo.css",
 	},
-	// custom: {
-	// 	head: [
-	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" />',
-	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" />',
+	 custom: {
+	 	head: [
+			'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" />',
+			'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" />',
 	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/css/b.css">',
 	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/ChillRoundFRegular/result.css" />',
 	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/ChillRoundFBold/result.css" />',
-	// 		'<script defer src="https://umami.245179.xyz/script.js" data-website-id="abd4c32a-198e-44de-859f-715cfc95725d"></script>',
-	// 	],
-	// },
+	 		'<script defer src="https://umami.245179.xyz/script.js" data-website-id="abd4c32a-198e-44de-859f-715cfc95725d"></script>',
+	 	],
+	 },
 };
 
 export const navBarConfig: NavBarConfig = {

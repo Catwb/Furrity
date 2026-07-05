@@ -1,59 +1,164 @@
-/* This is a script to create a new post markdown file with front-matter */
+/* 脚本：快速创建文章/页面 */
 
 import fs from "fs"
 import path from "path"
+import readline from "readline"
 
-function getDate() {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, "0")
-  const day = String(today.getDate()).padStart(2, "0")
-
-  return `${year}-${month}-${day}`
+function getDateTime() {
+  const now = new Date()
+  return now.toISOString().replace("T", " ").slice(0, 19)
 }
 
-const args = process.argv.slice(2)
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+})
 
-if (args.length === 0) {
-  console.error(`Error: No filename argument provided
-Usage: npm run new-post -- <filename>`)
-  process.exit(1) // Terminate the script and return error code 1
+function ask(question) {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      resolve(answer.trim())
+    })
+  })
 }
 
-let fileName = args[0]
-
-// Add .md extension if not present
-const fileExtensionRegex = /\.(md|mdx)$/i
-if (!fileExtensionRegex.test(fileName)) {
-  fileName += ".md"
+function toSlug(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff]+/g, "-")
+    .replace(/^-+|-+$/g, "")
 }
 
-const targetDir = "./src/content/posts/"
-const fullPath = path.join(targetDir, fileName)
-
-if (fs.existsSync(fullPath)) {
-  console.error(`Error: File ${fullPath} already exists `)
-  process.exit(1)
+function parseArgs(args) {
+  const result = { flags: {} }
+  let i = 0
+  while (i < args.length) {
+    if (args[i].startsWith("--")) {
+      const key = args[i].slice(2)
+      if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+        result.flags[key] = args[i + 1]
+        i += 2
+      } else {
+        result.flags[key] = true
+        i++
+      }
+    } else {
+      if (!result.type) result.type = args[i]
+      else if (!result.title) result.title = args[i]
+      i++
+    }
+  }
+  return result
 }
 
-// recursive mode creates multi-level directories
-const dirPath = path.dirname(fullPath)
-if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true })
-}
+async function main() {
+  const args = process.argv.slice(2)
+  const parsed = parseArgs(args)
 
-const content = `---
-title: ${args[0]}
-published: ${getDate()}
-description: ''
-image: ''
-tags: []
-category: ''
-draft: false 
-lang: ''
+  let postType = parsed.type || ""
+  if (!["post", "page", "p", "w"].includes(postType)) {
+    console.log("\n📝 选择类型：")
+    console.log("  1) post  - 创建文章")
+    console.log("  2) page  - 创建页面")
+    console.log("")
+    const choice = await ask("请选择 (1/2): ")
+    postType = choice === "2" || choice === "page" ? "page" : "post"
+  }
+
+  const isPost = postType === "post" || postType === "p"
+  const targetDir = isPost ? "./src/content/posts/" : "./src/content/spec/"
+
+  // 获取标题
+  let title = parsed.title || ""
+  if (!title) {
+    title = await ask(`\n📌 ${isPost ? "文章" : "页面"}标题: `)
+  }
+  if (!title) {
+    console.error("❌ 标题不能为空")
+    process.exit(1)
+  }
+
+  // 获取标签（仅文章）
+  let tags = parsed.flags.tags || ""
+  if (isPost && !tags) {
+    tags = await ask("🏷️  标签 (逗号分隔，可留空): ")
+  }
+
+  // 获取分类（仅文章）
+  let category = parsed.flags.category || ""
+  if (isPost && !category) {
+    category = await ask("📁 分类 (可留空): ")
+  }
+
+  // 获取描述
+  let description = parsed.flags.desc || ""
+  if (!description) {
+    description = await ask("📝 描述 (可留空): ")
+  }
+
+  // 创建文件
+  const slug = toSlug(title)
+  const frontmatter = getDateTime()
+
+  const tagsArray = tags
+    ? `[${tags.split(",").map((t) => `"${t.trim()}"`).join(", ")}]`
+    : "[]"
+
+  const categoryValue = category ? `"${category}"` : ""
+
+  const content = `---
+title: ${title}
+published: ${frontmatter}
+description: ${description || ""}
+image: ""
+tags: ${tagsArray}
+category: ${categoryValue}
+draft: false
+lang: ""
 ---
 `
 
-fs.writeFileSync(path.join(targetDir, fileName), content)
+  // 确定文件路径
+  let filePath
+  if (isPost) {
+    const parts = slug.split("/")
+    if (parts.length > 1) {
+      const dir = path.join(targetDir, path.dirname(slug))
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+      }
+      filePath = path.join(targetDir, slug, "index.md")
+    } else {
+      filePath = path.join(targetDir, `${slug}.md`)
+    }
+  } else {
+    filePath = path.join(targetDir, `${slug}.md`)
+  }
 
-console.log(`Post ${fullPath} created`)
+  if (fs.existsSync(filePath)) {
+    console.error(`\n❌ 文件已存在: ${filePath}`)
+    process.exit(1)
+  }
+
+  const dirPath = path.dirname(filePath)
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true })
+  }
+
+  fs.writeFileSync(filePath, content)
+
+  console.log(`\n✅ 创建成功: ${filePath}`)
+
+  if (isPost) {
+    console.log(`\n💡 提示:`)
+    console.log(`   - 在 public/images/ 下放文章封面图`)
+    console.log(`   - 图片名与文章 slug 相同即可自动匹配`)
+  }
+
+  rl.close()
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

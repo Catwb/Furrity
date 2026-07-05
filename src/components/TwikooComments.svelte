@@ -5,7 +5,7 @@ import { siteConfig } from "../config";
 const twikooConfig = siteConfig.twikoo;
 const TWIKOO_CDN = twikooConfig?.cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
 
-let containerEl: HTMLDivElement | undefined = $state();
+let containerEl: HTMLDivElement;
 let loaded = $state(false);
 let cssLoaded = false;
 let scriptLoaded = false;
@@ -91,13 +91,13 @@ onMount(() => {
 		await initTwikoo(containerEl);
 	};
 
-	if (window?.swup?.hooks) {
-		window.swup.hooks.on("content:replace", onContentReplaced);
-		cleanupHook = () => { window.swup.hooks.off("content:replace", onContentReplaced); };
+	if ((window as any).swup?.hooks) {
+		(window as any).swup.hooks.on("content:replace", onContentReplaced);
+		cleanupHook = () => { (window as any).swup.hooks.off("content:replace", onContentReplaced); };
 	} else {
 		const onEnabled = () => {
-			window.swup.hooks.on("content:replace", onContentReplaced);
-			cleanupHook = () => { window.swup.hooks.off("content:replace", onContentReplaced); };
+			(window as any).swup.hooks.on("content:replace", onContentReplaced);
+			cleanupHook = () => { (window as any).swup.hooks.off("content:replace", onContentReplaced); };
 		};
 		document.addEventListener("swup:enable", onEnabled);
 		cleanupHook = () => { document.removeEventListener("swup:enable", onEnabled); };

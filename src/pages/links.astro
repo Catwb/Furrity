@@ -39,18 +39,24 @@ const { Content } = friendsPost ? await render(friendsPost) : { Content: undefin
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-5 pb-4">
                         {group.links.map((link) => (
                             <a href={link.url} target="_blank" rel="noopener"
-                               class="flex items-start gap-4 p-4 rounded-xl transition active:scale-[0.98]"
+                               class:list={[
+                                   "flex items-start gap-4 p-4 rounded-xl transition active:scale-[0.98] relative overflow-hidden",
+                                   !link.color && "border border-black/5 dark:border-white/10"
+                               ]}
                                style={link.color ? `background-color: ${link.color}` : undefined}>
+                                {link.color && (
+                                    <div class="absolute inset-0 bg-black/0 dark:bg-black/40 transition-colors pointer-events-none" />
+                                )}
                                 {link.avatar ? (
                                     <img src={link.avatar} alt={link.name}
-                                         class="w-12 h-12 rounded-full object-cover shrink-0" />
+                                         class="w-12 h-12 rounded-full object-cover shrink-0 relative z-10" />
                                 ) : (
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white"
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white relative z-10"
                                          style={link.color ? `background-color: ${link.color}` : 'background-color: var(--primary)'}>
                                         {link.name[0]}
                                     </div>
                                 )}
-                                <div class="min-w-0 flex-1">
+                                <div class="min-w-0 flex-1 relative z-10">
                                     <div class="font-bold text-black/85 dark:text-white/85 flex items-center gap-1 text-sm">
                                         {link.name}
                                         <Icon name="fa6-solid:arrow-up-right-from-square"

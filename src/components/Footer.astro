@@ -34,13 +34,21 @@ const md = new MarkdownIt({ html: true });
 
 <style is:global>
     .markdown-footer a {
-        @apply text-[var(--primary)] font-medium;
+        @apply text-[var(--primary)] font-medium transition;
     }
     .markdown-footer p {
         @apply text-center my-2;
+        color: rgb(0 0 0 / 0.5);
+    }
+    .dark .markdown-footer p {
+        color: rgb(255 255 255 / 0.5);
     }
     .markdown-footer > div {
         @apply text-center my-2;
+        color: rgb(0 0 0 / 0.5);
+    }
+    .dark .markdown-footer > div {
+        color: rgb(255 255 255 / 0.5);
     }
     .markdown-footer #StaticBadge {
         @apply flex flex-wrap justify-center gap-2 my-3;

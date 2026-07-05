@@ -14,7 +14,7 @@ export const siteConfig: SiteConfig = {
 	lang: "zh_CN",
 	background: "url(https://api.furry.ist/furry-img/?mode=auto)",
 	themeColor: {
-		hue: 192,
+		hue: 250,
 		fixed: false,
 	},
 	banner: {
@@ -96,7 +96,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "朋友圈",
-					url: "/page/fcircle/",
+					url: "/fcircle/",
 				},
 				{
 					name: "关于",
@@ -104,11 +104,17 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "加密",
-					url: "/page/encrypt/",
+					url: "/encrypt/",
 				},
 				{
-					name: "更多",
-					url: "/page/more/",
+					name: "状态面板",
+					url: "https://status.245179.xyz/",
+					external: true,
+				},
+				{
+					name: "音乐馆",
+					url: "https://qymusic.netlify.app/",
+					external: true,
 				},
 			],
 		},

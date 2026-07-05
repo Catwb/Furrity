@@ -1,0 +1,103 @@
+/* ===== Tag Plugin Dark Mode Overrides ===== */
+
+/* --- Box & Note (share same color scheme) --- */
+.dark .tag-plugin.colorful.box,
+.dark .tag-plugin.colorful.note {
+  background: var(--block-bg, oklch(0.25 0.02 var(--hue)));
+}
+.dark .tag-plugin.colorful.box[color="red"],
+.dark .tag-plugin.colorful.note[color="red"] { --block-bg: oklch(0.28 0.06 20); }
+.dark .tag-plugin.colorful.box[color="orange"],
+.dark .tag-plugin.colorful.note[color="orange"] { --block-bg: oklch(0.28 0.06 50); }
+.dark .tag-plugin.colorful.box[color="yellow"],
+.dark .tag-plugin.colorful.note[color="yellow"] { --block-bg: oklch(0.28 0.06 80); }
+.dark .tag-plugin.colorful.box[color="green"],
+.dark .tag-plugin.colorful.note[color="green"] { --block-bg: oklch(0.28 0.06 140); }
+.dark .tag-plugin.colorful.box[color="cyan"],
+.dark .tag-plugin.colorful.note[color="cyan"] { --block-bg: oklch(0.28 0.06 190); }
+.dark .tag-plugin.colorful.box[color="blue"],
+.dark .tag-plugin.colorful.note[color="blue"] { --block-bg: oklch(0.28 0.06 240); }
+.dark .tag-plugin.colorful.box[color="purple"],
+.dark .tag-plugin.colorful.note[color="purple"] { --block-bg: oklch(0.28 0.06 290); }
+
+/* --- Button --- */
+.dark .tag-plugin.colorful.button {
+  background: var(--btn-bg, oklch(0.3 0.03 var(--hue)));
+}
+.dark .tag-plugin.colorful.button:hover {
+  background: var(--btn-bg-hover, oklch(0.35 0.04 var(--hue)));
+}
+.dark .tag-plugin.colorful.button[color="red"] { --btn-bg: oklch(0.3 0.08 20); --btn-bg-hover: oklch(0.35 0.1 20); }
+.dark .tag-plugin.colorful.button[color="green"] { --btn-bg: oklch(0.3 0.08 140); --btn-bg-hover: oklch(0.35 0.1 140); }
+.dark .tag-plugin.colorful.button[color="blue"] { --btn-bg: oklch(0.3 0.08 240); --btn-bg-hover: oklch(0.35 0.1 240); }
+.dark .tag-plugin.colorful.button[color="yellow"] { --btn-bg: oklch(0.32 0.08 80); --btn-bg-hover: oklch(0.37 0.1 80); }
+.dark .tag-plugin.colorful.button[color="purple"] { --btn-bg: oklch(0.3 0.08 290); --btn-bg-hover: oklch(0.35 0.1 290); }
+
+/* --- Checkbox --- */
+.dark .tag-plugin.checkbox .icon.unchecked {
+  background: #555;
+}
+
+/* --- Folding --- */
+.dark .tag-plugin.colorful.folding {
+  background: var(--block-bg, oklch(0.22 0.01 var(--hue)));
+  border-color: var(--block-border, oklch(0.35 0.02 var(--hue)));
+}
+.dark .tag-plugin.colorful.folding > summary {
+  background: var(--block-bg, oklch(0.25 0.02 var(--hue)));
+}
+.dark .tag-plugin.colorful.folding[color="red"] { --block-bg: oklch(0.28 0.06 20); --block-border: oklch(0.35 0.08 20); }
+.dark .tag-plugin.colorful.folding[color="yellow"] { --block-bg: oklch(0.28 0.06 80); --block-border: oklch(0.35 0.08 80); }
+.dark .tag-plugin.colorful.folding[color="green"] { --block-bg: oklch(0.28 0.06 140); --block-border: oklch(0.35 0.08 140); }
+.dark .tag-plugin.colorful.folding[color="blue"] { --block-bg: oklch(0.28 0.06 240); --block-border: oklch(0.35 0.08 240); }
+.dark .tag-plugin.colorful.folding[color="purple"] { --block-bg: oklch(0.28 0.06 290); --block-border: oklch(0.35 0.08 290); }
+
+/* --- Paper --- */
+.dark .tag-plugin.paper > .content {
+  border-color: oklch(0.35 0.02 var(--hue));
+}
+.dark .tag-plugin.paper > .content > .footer {
+  color: oklch(0.55 0.01 var(--hue));
+}
+.dark .tag-plugin.paper > .content > .footer > .author-date > span {
+  color: oklch(0.5 0.02 var(--hue));
+}
+.dark .tag-plugin.paper > .content.underline > .title,
+.dark .tag-plugin.paper > .content.underline > .meta,
+.dark .tag-plugin.paper > .content.underline > .author-date,
+.dark .tag-plugin.paper > .content.underline > .footer,
+.dark .tag-plugin.paper > .content.underline > .body {
+  background: linear-gradient(transparent 1.5rem, oklch(0.35 0.02 var(--hue)) 1px);
+  background-size: 100% calc(1.5rem + 1px);
+}
+.dark .tag-plugin.paper > .content.underline > .title {
+  border-top-color: oklch(0.35 0.02 var(--hue));
+}
+
+/* --- Poetry --- */
+.dark .tag-plugin.poetry .content > .meta {
+  color: oklch(0.5 0.02 var(--hue));
+}
+.dark .tag-plugin.poetry .content > .body {
+  border-color: oklch(0.35 0.02 var(--hue));
+}
+.dark .tag-plugin.poetry .content > .footer {
+  color: oklch(0.55 0.01 var(--hue));
+}
+
+/* --- Tabs --- */
+.dark .tag-plugin.tabs .tab-btn {
+  color: oklch(0.6 0.02 var(--hue));
+}
+.dark .tag-plugin.tabs .tab-btn:hover {
+  background: oklch(0.25 0.02 var(--hue));
+  color: var(--primary, oklch(0.6 0.15 var(--hue)));
+}
+.dark .tag-plugin.tabs .tab-btn.active {
+  background: var(--primary, oklch(0.5 0.15 var(--hue)));
+  color: white;
+}
+.dark .tag-plugin.tabs .tab-panel {
+  background: oklch(0.2 0.01 var(--hue));
+  border-color: oklch(0.35 0.02 var(--hue));
+}

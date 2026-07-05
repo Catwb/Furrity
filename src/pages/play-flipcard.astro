@@ -1,23 +1,11 @@
----
-import { getCollection, render } from "astro:content";
+﻿---
+import { getEntry, render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
-export async function getStaticPaths() {
-  const pages = await getCollection("spec");
-  const exclude = new Set(["about.md", "friends.md"]);
-  return pages
-    .filter(p => !exclude.has(p.id))
-    .map(page => {
-      const slug = page.id.replace(/\.md$/, "");
-      return {
-        params: { slug },
-        props: { page },
-      };
-    });
-}
+const page = await getEntry("spec", "play-flipcard");
+if (!page) throw new Error("Page not found: play-flipcard");
 
-const { page } = Astro.props;
 const { Content } = await render(page);
 const title = page.data.title || page.id;
 ---

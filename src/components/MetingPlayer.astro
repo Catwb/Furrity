@@ -1,0 +1,102 @@
+---
+import { siteConfig } from "../config";
+const meting = siteConfig.meting;
+if (!meting?.enable) return;
+const f = meting.fixed;
+const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+---
+
+<link rel="stylesheet" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" />
+<style is:global>
+.dark .aplayer {
+  background: oklch(0.22 0.01 var(--hue, 250));
+  color: oklch(0.8 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-info {
+  border-color: oklch(0.35 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-title,
+.dark .aplayer .aplayer-author {
+  color: oklch(0.8 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-time {
+  color: oklch(0.55 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-list {
+  background: oklch(0.22 0.01 var(--hue, 250));
+  border-color: oklch(0.35 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-list ol li {
+  color: oklch(0.7 0.01 var(--hue, 250));
+  border-color: oklch(0.3 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-list ol li:hover {
+  background: oklch(0.28 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-list ol li.aplayer-list-light {
+  background: oklch(0.3 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-cur {
+  background: var(--primary, oklch(0.65 0.2 var(--hue, 250)));
+}
+.dark .aplayer .aplayer-list ol li .aplayer-list-index {
+  color: oklch(0.5 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-bar-wrap .aplayer-bar {
+  background: oklch(0.35 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
+  background: oklch(0.4 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-bar-wrap .aplayer-bar .aplayer-played {
+  background: var(--primary, oklch(0.65 0.2 var(--hue, 250)));
+}
+.dark .aplayer .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb {
+  background: var(--primary, oklch(0.65 0.2 var(--hue, 250)));
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+.dark .aplayer .aplayer-icon path {
+  fill: oklch(0.7 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-icon:hover path {
+  fill: oklch(0.9 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-volume-wrap .aplayer-volume-bar-wrap .aplayer-volume-bar {
+  background: oklch(0.35 0.02 var(--hue, 250));
+}
+.dark .aplayer .aplayer-volume-wrap .aplayer-volume-bar-wrap .aplayer-volume-bar .aplayer-volume {
+  background: var(--primary, oklch(0.65 0.2 var(--hue, 250)));
+}
+.dark .aplayer .aplayer-lrc p {
+  color: oklch(0.7 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-lrc p.aplayer-lrc-current {
+  color: oklch(0.9 0.01 var(--hue, 250));
+}
+.dark .aplayer.aplayer-fixed .aplayer-lrc-current {
+  color: oklch(0.9 0.01 var(--hue, 250));
+}
+.dark .aplayer.aplayer-fixed .aplayer-body {
+  background: oklch(0.22 0.01 var(--hue, 250));
+}
+.dark .aplayer .aplayer-pic {
+  border-color: oklch(0.35 0.02 var(--hue, 250));
+}
+</style>
+<script is:inline>window.meting_api = {JSON.stringify(api)};</script>
+<script is:inline src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script is:inline src="https://unpkg.com/meting@2.0.1/dist/Meting.min.js"></script>
+{f?.enable && <meting-js
+  server={f.server}
+  type={f.type}
+  id={f.id}
+  fixed="true"
+  autoplay={String(f.autoplay ?? false)}
+  volume={String(f.volume ?? 0.7)}
+  theme={f.theme ?? "#1BCDFC"}
+  loop={f.loop ?? "all"}
+  order={f.order ?? "list"}
+  list-max-height={f["list-max-height"] ?? "320px"}
+  list-folded={String(f["list-folded"] ?? true)}
+  api={api}
+></meting-js>}

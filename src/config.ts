@@ -2,6 +2,7 @@ import type {
 	AbbrlinkConfig,
 	ExpressiveCodeConfig,
 	LicenseConfig,
+	MetingConfig,
 	NavBarConfig,
 	ProfileConfig,
 	SiteConfig,
@@ -69,6 +70,23 @@ export const siteConfig: SiteConfig = {
 		lang: "zh-CN",
 		cdn: "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js",
 		css: "https://cdn.245179.xyz/css/twikoo.css",
+	},
+	meting: {
+		enable: true,
+		api: "https://meting.furwolf.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r",
+		fixed: {
+			enable: true,
+			server: "netease",
+			type: "playlist",
+			id: "6851447315",
+			autoplay: false,
+			volume: 0.8,
+			theme: "#1BCDFC",
+			loop: "all",
+			order: "list",
+			"list-max-height": "320px",
+			"list-folded": true,
+		},
 	},
 	 custom: {
 	 	head: [

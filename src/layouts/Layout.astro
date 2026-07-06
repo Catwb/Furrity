@@ -4,6 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import MetingPlayer from "@components/MetingPlayer.astro";
 import { profileConfig, siteConfig } from "@/config";
 import {
 	AUTO_MODE,
@@ -186,6 +187,7 @@ const fontCode = siteConfig.fonts?.code || "inherit";
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
 
 		{siteConfig.custom?.js?.map((item) => <script is:inline>{item}</script>)}
+		{siteConfig.meting?.enable && <MetingPlayer />}
 	</body>
 </html>
 

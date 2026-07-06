@@ -40,6 +40,7 @@ export type SiteConfig = {
 	fonts?: FontConfig;
 	footer?: FooterConfig;
 	twikoo?: TwikooConfig;
+	meting?: MetingConfig;
 	sidebar?: {
 		components: SidebarComponent[];
 	};
@@ -71,6 +72,24 @@ export type FooterConfig = {
 export type AbbrlinkConfig = {
 	alg?: "crc16" | "crc32";
 	rep?: "dec" | "hex";
+};
+
+export type MetingConfig = {
+	enable: boolean;
+	api?: string;
+	fixed: {
+		enable: boolean;
+		server: string;
+		type: string;
+		id: string;
+		autoplay?: boolean;
+		volume?: number;
+		theme?: string;
+		loop?: string;
+		order?: string;
+		"list-max-height"?: string;
+		"list-folded"?: boolean;
+	};
 };
 
 export type SidebarComponent = {

@@ -50,6 +50,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				color: "#D4F2FD",
 			},
 			{
+				name: "缎金SatinAuの主页",
+				url: "https://satinau.cn",
+				avatar: "https://satinau.cn/public/favicon.ico",
+				description: "一只雪狐的摸鱼小站",
+			},
+			{
 				name: "fishcpy的小破站",
 				url: "https://blog.fis.ink",
 				avatar: "https://www.fis.ink/img/logo.png",

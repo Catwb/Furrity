@@ -17,7 +17,6 @@ title: 友链
 <button class="tab-btn" data-tab="3">友链状态</button>
 </div>
 <div class="tab-panel active" data-tab="0">
-
 **欢迎和我交换友链**
 
 **博客信息：**
@@ -39,6 +38,7 @@ title: 友链
 ```
 
 </div>
+
 <div class="tab-panel" data-tab="1">
 
 **友链申请条件：**
@@ -71,14 +71,16 @@ title: 友链
 
 **友链申请格式：**
 
-```yaml
-- title:
-  url:
-  description:
-  avatar:
-  screenshot(可选):
-  color(可选):
+````yaml
+```			
+			{
+				name: "xxx",
+				url: "xxx",
+				avatar: "xxx",
+				description: "xxx",
+			},
 ```
+````
 
 :::folding{title="免责声明" color="yellow"}
 本博客遵守中华人民共和国相关法律。本页内容仅作为方便学习而产生的快速链接的链接方式，对与友情链接中存在的链接、好文推荐链接等均为其他网站。我本人能力有限无法逐个甄别每篇文章的每个字，并无法获知是否在收录后原作者是否对链接增加了违反法律甚至其他破坏用户计算机等行为。友链网站均可能存在风险，请你须知。

@@ -36,7 +36,7 @@ title: about
 
 **联系方式**：
 
-- :email:hualaozhe#qq.com（将`#`换为`@`）
+- :email: `hualaozhe@qq.com`
 
 **My Github**:
 

@@ -36,10 +36,9 @@ export const siteConfig: SiteConfig = {
 			src: "/favicon/favicon.webp",
 		},
 	],
-	 fonts: {
+ fonts: {
 		heading: "'LXGW WenKai', system-ui, sans-serif",
 		body: "'LXGW WenKai', system-ui, sans-serif",
-		code: "'LXGW WenKai', Menlo, monospace",
 	},
 	footer: {
 		enable: true,

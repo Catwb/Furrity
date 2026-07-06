@@ -71,6 +71,10 @@ const bannerOffsetByPosition = {
 };
 const bannerOffset =
 	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+
+const fontHeading = siteConfig.fonts?.heading || "inherit";
+const fontBody = siteConfig.fonts?.body || "inherit";
+const fontCode = siteConfig.fonts?.code || "inherit";
 ---
 
 <!DOCTYPE html>
@@ -111,12 +115,13 @@ const bannerOffset =
 
 		{siteConfig.custom?.css?.map((item) => <style is:global>{item}</style>)}
 
+		<script is:inline define:vars={{ fontHeading, fontBody, fontCode }}>
+			document.documentElement.style.setProperty('--font-heading', fontHeading);
+			document.documentElement.style.setProperty('--font-body', fontBody);
+			document.documentElement.style.setProperty('--font-code', fontCode);
+		</script>
+
 		{siteConfig.fonts && <style is:global>
-			:root {
-				--font-heading: {siteConfig.fonts.heading || 'inherit'};
-				--font-body: {siteConfig.fonts.body || 'inherit'};
-				--font-code: {siteConfig.fonts.code || 'inherit'};
-			}
 			h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading) !important; }
 			body, p, div, span, li { font-family: var(--font-body) !important; }
 			code, pre, kbd { font-family: var(--font-code) !important; }

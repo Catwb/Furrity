@@ -121,8 +121,15 @@ const mainPanelTop = siteConfig.banner.enable
             {"toc-hide": siteConfig.banner.enable}]}
         >
             <div id="toc-inner-wrapper" class="fixed top-14 w-[var(--toc-width)] max-h-[calc(100vh_-_20rem)] overflow-y-scroll overflow-x-hidden hide-scrollbar">
-                <div id="toc" class="w-full transition-swup-fade card-base py-6 px-2">
-                    <TOC headings={headings}></TOC>
+                <div id="toc" class="w-full">
+                    {headings.length > 0 && <div class="transition-swup-fade card-base py-4 px-0">
+                        <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
+                            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+                            before:absolute before:left-[-16px] before:top-[5.5px]">目录</div>
+                        <div class="px-2">
+                            <TOC headings={headings}></TOC>
+                        </div>
+                    </div>}
                 </div>
             </div>
         </div>}

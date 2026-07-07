@@ -5,7 +5,8 @@ published: 2026-07-07 07:29:18
 description: ""
 image: ""
 tags: []
-category: "教程"
+category: 
+  - 教程
 draft: true
 lang: ""
 ---

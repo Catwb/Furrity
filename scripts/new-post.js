@@ -29,6 +29,34 @@ function toSlug(text) {
     .replace(/^-+|-+$/g, "")
 }
 
+function crc16(str) {
+  let crc = 0xffff
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i)
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xa001 : 0)
+    }
+  }
+  return (crc ^ 0xffff) & 0xffff
+}
+
+function computeAbbrlink(title, dateStr, alg = "crc16", rep = "dec") {
+  const raw = title + dateStr
+  const hash = alg === "crc32" ? crc32(raw) : crc16(raw)
+  return rep === "hex" ? hash.toString(16) : hash.toString(10)
+}
+
+function crc32(str) {
+  let crc = 0xffffffff
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i)
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0)
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0
+}
+
 function parseArgs(args) {
   const result = { flags: {} }
   let i = 0
@@ -106,9 +134,14 @@ async function main() {
 
   const categoryValue = category ? `"${category}"` : ""
 
+  const dateObj = new Date(frontmatter)
+  const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`
+  const abbrlink = computeAbbrlink(title, dateStr)
+
   const content = `---
 title: ${title}
 published: ${frontmatter}
+abbrlink: '${abbrlink}'
 description: ${description || ""}
 image: ""
 tags: ${tagsArray}

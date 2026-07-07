@@ -260,6 +260,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "醉后不知天在水，满船清梦压星河",
 			},
 			{
+				name: "学游渊的世界",
+				url: "https://blog.xyy.world",
+				avatar: "https://blog.xyy.world/me.avif",
+				description: "一方世界，一块学渊。",
+			},
+			{
 				name: "Yang's Blog",
 				url: "https://kaeshi.top/",
 				avatar: "http://q.qlogo.cn/headimg_dl?dst_uin=2958445350&spec=640&img_type=jpg",

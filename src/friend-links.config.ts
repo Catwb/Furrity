@@ -90,7 +90,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			},
 			{
 				name: "竟何",
-				url: "https://lylelove.top/",
+				url: "https://blog.lylelove.top/",
 				avatar: "https://s2.loli.net/2021/12/04/8pQyDdjPbmZO5rv.png",
 				description: "写给你的长信",
 			},
@@ -111,12 +111,6 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				url: "https://www.linzekai.cn/",
 				avatar: "https://www.linzekai.cn/img/favi.png",
 				description: "阳光开朗大狼狼",
-			},
-			{
-				name: "陆小启Kairo",
-				url: "https://blog.zonox.top/",
-				avatar: "https://bu.dusays.com/2025/03/14/67d3fbedaa1c6.webp",
-				description: "往者不谏，来者可追",
 			},
 			{
 				name: "LynxCatTheThird",
@@ -144,11 +138,6 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				avatar: "https://blog.xiowo.net/img/avatar.png",
 				description: "万年鸽王，哈哈OvO",
 				color: "#F8AA54",
-			},
-			{
-				name: "Moziの魔法小屋",
-				url: "http://mozi-ai.xyz/",
-				description: "如果你遇到太阳而落泪,你也将错过群星",
 			},
 			{
 				name: "沫泽的小站",
@@ -226,13 +215,6 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				avatar: "https://watermelonabc.top/asset/icon/Avatar.png",
 				description: "需要记点什么东西",
 				color: "rgb(5, 163, 173)",
-			},
-			{
-				name: "雾林博客",
-				url: "https://www.baiwulin.com",
-				avatar: "https://cravatar.cn/avatar/6069656389d12d0741da383e40f82e8f?s=400",
-				description: "不敢奢求活在梦中，但依然向往梦中世界",
-				color: "#4CCAFA",
 			},
 			{
 				name: "无名博客",

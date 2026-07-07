@@ -110,9 +110,26 @@ title: 友链
 
 **所有失效博客均会留档**
 
-| 博客 | 失效原因 | 日期 |
-| ---- | -------- | ---- |
-|      |          |      |
+```json
+			{
+				name: "陆小启Kairo",
+				url: "https://blog.zonox.top/",
+				avatar: "https://bu.dusays.com/2025/03/14/67d3fbedaa1c6.webp",
+				description: "往者不谏，来者可追",
+			},
+			{
+				name: "Moziの魔法小屋",
+				url: "http://mozi-ai.xyz/",
+				description: "如果你遇到太阳而落泪,你也将错过群星",
+			},
+			{
+				name: "雾林博客",
+				url: "https://www.baiwulin.com",
+				avatar: "https://cravatar.cn/avatar/6069656389d12d0741da383e40f82e8f?s=400",
+				description: "不敢奢求活在梦中，但依然向往梦中世界",
+				color: "#4CCAFA",
+			},
+```
 
 </div>
 <div class="tab-panel" data-tab="3">

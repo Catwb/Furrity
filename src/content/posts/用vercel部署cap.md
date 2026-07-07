@@ -2,13 +2,9 @@
 title: 用Vercel部署Cap
 abbrlink: '38308'
 published: 2026-07-07 07:29:18
-description: ""
-image: ""
-tags: []
 category: 
   - 教程
 draft: true
-lang: ""
 ---
 
 

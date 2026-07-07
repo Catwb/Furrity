@@ -9,6 +9,7 @@ const postsCollection = defineCollection({
 		pinned: z.boolean().optional().default(false),
 		description: z.string().optional().default(""),
 		image: z.string().optional().default(""),
+		plugins: z.array(z.string()).optional().default([]),
 		tags: z.array(z.string()).optional().default([]),
 		category: z
 			.union([z.string(), z.array(z.string())])

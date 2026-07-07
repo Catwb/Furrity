@@ -48,7 +48,7 @@ const { Content } = friendsPost ? await render(friendsPost) : { Content: undefin
                                     <div class="absolute inset-0 bg-black/0 dark:bg-black/40 transition-colors pointer-events-none" />
                                 )}
                                 {link.avatar ? (
-                                    <img src={link.avatar} alt={link.name}
+                                    <img src={link.avatar} alt={link.name} width={48} height={48}
                                          class="w-12 h-12 rounded-full object-cover shrink-0 relative z-10" />
                                 ) : (
                                     <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white relative z-10"

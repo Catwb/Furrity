@@ -17,11 +17,5 @@ title: 朋友圈
 - 周六至周日：每4小时一次获取
 :::
 
-<script src="https://cdn.245179.xyz/js/fclite.load.js"></script>
-
 <div id="friend-circle-lite-root"></div>
-
-<script src="https://cdn.245179.xyz/js/fclite.min.js"></script>
-
-<link rel="stylesheet" href="https://cdn.245179.xyz/css/fclite.min.css">
 

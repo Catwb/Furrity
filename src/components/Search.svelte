@@ -31,7 +31,30 @@ const fakeResult: SearchResult[] = [
 	},
 ];
 
+let pagefindLoading = false;
+
+async function loadPagefind() {
+	if (pagefindLoaded || pagefindLoading) return;
+	pagefindLoading = true;
+	try {
+		const resp = await fetch(url("/pagefind/pagefind.js"), { method: "HEAD" });
+		if (!resp.ok) throw new Error(`Pagefind not found: ${resp.status}`);
+		const pf = await import(/* @vite-ignore */ url("/pagefind/pagefind.js"));
+		await pf.options({ excerptLength: 20 });
+		window.pagefind = pf;
+		pagefindLoaded = true;
+		document.dispatchEvent(new CustomEvent("pagefindready"));
+	} catch (e) {
+		console.error("Failed to load Pagefind:", e);
+		window.pagefind = { search: () => Promise.resolve({ results: [] }), options: () => Promise.resolve() };
+		document.dispatchEvent(new CustomEvent("pagefindloaderror"));
+	} finally {
+		pagefindLoading = false;
+	}
+}
+
 const togglePanel = () => {
+	loadPagefind();
 	const panel = document.getElementById("search-panel");
 	panel?.classList.toggle("float-panel-closed");
 };
@@ -87,41 +110,9 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 };
 
 onMount(() => {
-	const initializeSearch = () => {
-		initialized = true;
-		pagefindLoaded =
-			typeof window !== "undefined" &&
-			!!window.pagefind &&
-			typeof window.pagefind.search === "function";
-		console.log("Pagefind status on init:", pagefindLoaded);
-		if (keywordDesktop) search(keywordDesktop, true);
-		if (keywordMobile) search(keywordMobile, false);
-	};
-
+	initialized = true;
 	if (import.meta.env.DEV) {
-		console.log(
-			"Pagefind is not available in development mode. Using mock data.",
-		);
-		initializeSearch();
-	} else {
-		document.addEventListener("pagefindready", () => {
-			console.log("Pagefind ready event received.");
-			initializeSearch();
-		});
-		document.addEventListener("pagefindloaderror", () => {
-			console.warn(
-				"Pagefind load error event received. Search functionality will be limited.",
-			);
-			initializeSearch(); // Initialize with pagefindLoaded as false
-		});
-
-		// Fallback in case events are not caught or pagefind is already loaded by the time this script runs
-		setTimeout(() => {
-			if (!initialized) {
-				console.log("Fallback: Initializing search after timeout.");
-				initializeSearch();
-			}
-		}, 2000); // Adjust timeout as needed
+		console.log("Pagefind is not available in development mode. Using mock data.");
 	}
 });
 
@@ -144,7 +135,8 @@ $: if (initialized && keywordMobile) {
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-    <input placeholder="{i18n(I18nKey.search)}" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
+    <input placeholder="{i18n(I18nKey.search)}" bind:value={keywordDesktop}
+           on:focus={() => { loadPagefind(); search(keywordDesktop, true); }}
            class="transition-all pl-10 text-sm bg-transparent outline-0
          h-full w-40 active:w-60 focus:w-60 text-black/50 dark:text-white/50"
     >
@@ -167,6 +159,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
   ">
         <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
         <input placeholder="Search" bind:value={keywordMobile}
+               on:focus={loadPagefind}
                class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"
         >

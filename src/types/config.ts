@@ -45,6 +45,7 @@ export type SiteConfig = {
 		components: SidebarComponent[];
 	};
 	custom?: CustomCodeConfig;
+	preconnect?: string[];
 	abbrlink?: AbbrlinkConfig;
 };
 
@@ -93,7 +94,7 @@ export type MetingConfig = {
 };
 
 export type SidebarComponent = {
-	type: "profile" | "categories" | "tags" | "text";
+	type: "profile" | "categories" | "tags" | "site-status" | "text";
 	title?: string;
 	content?: string;
 	sticky?: boolean;

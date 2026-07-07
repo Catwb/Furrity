@@ -4,6 +4,7 @@ import type { MarkdownHeading } from "astro";
 import { siteConfig } from "../../config";
 import Categories from "./Categories.astro";
 import Profile from "./Profile.astro";
+import SiteStatus from "./SiteStatus.astro";
 import Tag from "./Tags.astro";
 import WidgetLayout from "./WidgetLayout.astro";
 
@@ -41,6 +42,7 @@ if (hasCustomSidebar) {
             comp.type === "profile" ? <Profile />
             : comp.type === "categories" ? <Categories class="onload-animation" style={`animation-delay: ${i * 50}ms`} />
             : comp.type === "tags" ? <Tag class="onload-animation" style={`animation-delay: ${i * 50}ms`} />
+            : comp.type === "site-status" ? <SiteStatus class="onload-animation" style={`animation-delay: ${i * 50}ms`} />
             : comp.type === "text" && comp.content ? (
                 <WidgetLayout name={comp.title || ""} id={`sidebar-text-${i}`} class="onload-animation" style={`animation-delay: ${i * 50}ms`}>
                     <Fragment set:html={renderedComponents[i].html} />

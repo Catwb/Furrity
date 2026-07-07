@@ -8,6 +8,7 @@ import ButtonTag from "../control/ButtonTag.astro";
 import WidgetLayout from "./WidgetLayout.astro";
 
 const tags = await getTagList();
+if (tags.length === 0) return;
 
 const COLLAPSED_HEIGHT = "7.5rem";
 

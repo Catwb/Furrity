@@ -6,7 +6,8 @@ const f = meting.fixed;
 const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
 ---
 
-<link rel="stylesheet" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" />
+<link rel="preload" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" /></noscript>
 <style is:global>
 .dark .aplayer {
   background: oklch(0.22 0.01 var(--hue, 250));
@@ -83,9 +84,9 @@ const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:t
   border-color: oklch(0.35 0.02 var(--hue, 250));
 }
 </style>
-<script is:inline>window.meting_api = {JSON.stringify(api)};</script>
-<script is:inline src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>
-<script is:inline src="https://unpkg.com/meting@2.0.1/dist/Meting.min.js"></script>
+<script is:inline data-swup-ignore-script data-meting-api={api}>window.meting_api = document.currentScript.getAttribute('data-meting-api');</script>
+<script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js" data-swup-ignore-script></script>
+<script src="https://unpkg.com/meting@2.0.1/dist/Meting.min.js" data-swup-ignore-script></script>
 {f?.enable && <meting-js
   server={f.server}
   type={f.type}

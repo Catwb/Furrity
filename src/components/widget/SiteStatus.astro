@@ -1,0 +1,50 @@
+---
+import WidgetLayout from "./WidgetLayout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
+
+const postCount = allPosts.length;
+const totalChars = allPosts.reduce((sum, post) => sum + (post.body ? post.body.length : 0), 0);
+
+function formatChars(n: number): string {
+  if (n >= 10000) return (n / 1000).toFixed(1) + "k";
+  return String(n);
+}
+
+const latest = allPosts.reduce((latest, post) => {
+  const d = post.data.updated || post.data.published;
+  return d > latest ? d : latest;
+}, new Date(0));
+
+const y = latest.getFullYear();
+const m = String(latest.getMonth() + 1).padStart(2, "0");
+const d = String(latest.getDate()).padStart(2, "0");
+const latestStr = `${y}-${m}-${d}`;
+
+const start = new Date("2024/08/31 10:05:30");
+const days = Math.floor((Date.now() - start.getTime()) / 86400000);
+---
+
+<WidgetLayout name="站点状态" id="site-status" class="onload-animation" style="animation-delay: 50ms">
+  <div class="flex flex-col gap-2 py-1">
+    <div class="flex justify-between items-center text-sm px-2 py-1 rounded-lg hover:bg-[var(--primary)]/5 transition-colors">
+      <span class="text-neutral-500 dark:text-neutral-400">文章数目</span>
+      <span class="font-semibold text-[var(--primary)]">{postCount}</span>
+    </div>
+    <div class="flex justify-between items-center text-sm px-2 py-1 rounded-lg hover:bg-[var(--primary)]/5 transition-colors">
+      <span class="text-neutral-500 dark:text-neutral-400">运行天数</span>
+      <span class="font-semibold text-[var(--primary)]">{days} 天</span>
+    </div>
+    <div class="flex justify-between items-center text-sm px-2 py-1 rounded-lg hover:bg-[var(--primary)]/5 transition-colors">
+      <span class="text-neutral-500 dark:text-neutral-400">本站总字数</span>
+      <span class="font-semibold text-[var(--primary)]">{formatChars(totalChars)}</span>
+    </div>
+    <div class="flex justify-between items-center text-sm px-2 py-1 rounded-lg hover:bg-[var(--primary)]/5 transition-colors">
+      <span class="text-neutral-500 dark:text-neutral-400">最后更新</span>
+      <span class="font-semibold text-[var(--primary)]">{latestStr}</span>
+    </div>
+  </div>
+</WidgetLayout>

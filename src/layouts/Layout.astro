@@ -482,6 +482,8 @@ if (window?.swup?.hooks) {
 	setup()
 } else {
 	document.addEventListener('swup:enable', setup)
+	const tryInit = () => { if (window?.swup?.hooks) { setup() } else { setTimeout(tryInit, 300) } }
+	setTimeout(tryInit, 600)
 }
 
 let backToTopBtn = document.getElementById('back-to-top-btn');
@@ -593,5 +595,7 @@ if (window.swup) {
 	setup()
 } else {
 	document.addEventListener("swup:enable", setup)
+	const tryInit = () => { if (window.swup) { setup() } else { setTimeout(tryInit, 300) } }
+	setTimeout(tryInit, 600)
 }
 </script>

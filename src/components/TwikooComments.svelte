@@ -85,19 +85,19 @@ onMount(() => {
 	if (!containerEl) return;
 	setup(containerEl);
 
-	const onContentReplaced = async () => {
-		if (!containerEl) return;
+	const onPageView = async () => {
+		if (!containerEl || !document.contains(containerEl)) return;
 		loaded = false;
 		await initTwikoo(containerEl);
 	};
 
 	if ((window as any).swup?.hooks) {
-		(window as any).swup.hooks.on("content:replace", onContentReplaced);
-		cleanupHook = () => { (window as any).swup.hooks.off("content:replace", onContentReplaced); };
+		(window as any).swup.hooks.on("page:view", onPageView);
+		cleanupHook = () => { (window as any).swup.hooks.off("page:view", onPageView); };
 	} else {
 		const onEnabled = () => {
-			(window as any).swup.hooks.on("content:replace", onContentReplaced);
-			cleanupHook = () => { (window as any).swup.hooks.off("content:replace", onContentReplaced); };
+			(window as any).swup.hooks.on("page:view", onPageView);
+			cleanupHook = () => { (window as any).swup.hooks.off("page:view", onPageView); };
 		};
 		document.addEventListener("swup:enable", onEnabled);
 		cleanupHook = () => { document.removeEventListener("swup:enable", onEnabled); };

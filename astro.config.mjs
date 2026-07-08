@@ -32,7 +32,7 @@ import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkAbbrlink } from "./src/plugins/remark-abbrlink";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
-import { rehypeSpacing } from "./src/plugins/rehype-spacing";
+import { rehypeSpacing } from "./src/plugins/rehype-spacing.mjs";
 
 // https://astro.build/config
 export default defineConfig({

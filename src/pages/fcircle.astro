@@ -17,8 +17,26 @@ const title = page.data.title || page.id;
       </Markdown>
     </div>
   </div>
+  <link rel="stylesheet" href="https://cdn.245179.xyz/css/fclite.min.css">
+  <script data-swup-reload-script>
+    (function() {
+      var css = "https://cdn.245179.xyz/css/fclite.min.css";
+      if (!document.querySelector('link[href="' + css + '"]')) {
+        var l = document.createElement("link");
+        l.rel = "stylesheet"; l.href = css;
+        document.head.appendChild(l);
+      }
+      var root = document.getElementById("friend-circle-lite-root");
+      if (root) root.innerHTML = "";
+      function load(src, cb) {
+        var s = document.createElement("script");
+        s.src = src;
+        s.onload = cb;
+        document.head.appendChild(s);
+      }
+      load("https://cdn.245179.xyz/js/fclite.load.js", function() {
+        load("https://cdn.245179.xyz/js/fclite.min.js");
+      });
+    })();
+  </script>
 </MainGridLayout>
-
-<link rel="stylesheet" href="https://cdn.245179.xyz/css/fclite.min.css">
-<script src="https://cdn.245179.xyz/js/fclite.load.js" data-swup-reload-script></script>
-<script src="https://cdn.245179.xyz/js/fclite.min.js" data-swup-reload-script></script>

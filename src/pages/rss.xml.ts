@@ -3,6 +3,7 @@ import { render } from "astro:content";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { getSortedPosts } from "@utils/content-utils";
 import { url } from "@utils/url-utils";
+import { computeAbbrlink } from "@utils/abbrlink-utils";
 import type { APIContext } from "astro";
 import sanitizeHtml from "sanitize-html";
 import { siteConfig } from "@/config";
@@ -10,6 +11,9 @@ import { siteConfig } from "@/config";
 export async function GET(context: APIContext) {
 	const blog = await getSortedPosts();
 	const container = await AstroContainer.create();
+	const abbrConfig = siteConfig.abbrlink || {};
+	const alg = abbrConfig.alg || "crc16";
+	const rep = abbrConfig.rep || "dec";
 
 	const items = await Promise.all(
 		blog.map(async (post) => {
@@ -19,19 +23,21 @@ export async function GET(context: APIContext) {
 				const content = sanitizeHtml(rawHtml, {
 					allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
 				});
+				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
 				return {
 					title: post.data.title,
 					pubDate: post.data.published,
 					description: post.data.description || "",
-					link: url(`/posts/${post.slug}/`),
+					link: url(`/posts/${linkSlug}/`),
 					content,
 				};
 			} catch {
+				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
 				return {
 					title: post.data.title,
 					pubDate: post.data.published,
 					description: post.data.description || "",
-					link: url(`/posts/${post.slug}/`),
+					link: url(`/posts/${linkSlug}/`),
 					content: post.data.description || "",
 				};
 			}

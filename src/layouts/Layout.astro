@@ -590,9 +590,7 @@ const setup = () => {
 		{ before: true },
 	)
 
-	window.swup.hooks.on("fetchError", (visit) => {
-		window.location.href = visit?.to?.url || window.location.href
-	})
+
 }
 
 if (window.swup) {

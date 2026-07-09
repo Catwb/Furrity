@@ -69,7 +69,7 @@ export const siteConfig: SiteConfig = {
 		envId: "https://twikoo.245179.xyz/.netlify/functions/twikoo",
 		region: "",
 		lang: "zh-CN",
-		cdn: "https://registry.npmmirror.com/twikoo/1.7.14/files/dist/twikoo.all.min.js",
+		cdn: "../../twikoo/twikoo.all.min.js", //"https://registry.npmmirror.com/twikoo/1.7.14/files/dist/twikoo.all.min.js",
 		css: "https://cdn.245179.xyz/css/twikoo.css",
 	},
 	meting: {

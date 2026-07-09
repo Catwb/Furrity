@@ -40,13 +40,17 @@ const { Content } = friendsPost ? await render(friendsPost) : { Content: undefin
                         {group.links.map((link) => (
                             <a href={link.url} target="_blank" rel="noopener"
                                class:list={[
-                                   "flex items-start gap-4 p-4 rounded-xl transition active:scale-[0.98] relative overflow-hidden",
-                                   !link.color && "border border-black/5 dark:border-white/10"
+                                   "flex items-start gap-4 p-4 pl-7 rounded-[var(--radius-large)] transition active:scale-[0.98] relative overflow-hidden",
+                                   link.color
+                                     ? "border border-black/10 dark:border-white/10"
+                                     : "bg-[var(--card-bg)] border border-black/5 dark:border-white/10 hover:border-[var(--primary)]/30 hover:shadow-sm"
                                ]}
                                style={link.color ? `background-color: ${link.color}` : undefined}>
                                 {link.color && (
                                     <div class="absolute inset-0 bg-black/0 dark:bg-black/40 transition-colors pointer-events-none" />
                                 )}
+                                <div class="absolute left-2 inset-y-2 w-1 rounded-md pointer-events-none z-10"
+                                     style={`background-color: ${link.color || 'var(--primary)'}`} />
                                 {link.avatar ? (
                                     <img src={link.avatar} alt={link.name} width={48} height={48}
                                          class="w-12 h-12 rounded-full object-cover shrink-0 relative z-10" />

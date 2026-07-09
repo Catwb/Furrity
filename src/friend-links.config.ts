@@ -241,6 +241,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "欲望以提升热忱，毅力以磨平高山",
 			},
 			{
+			name: "小林笔记",
+			url: "https://m.senlinm.cn",
+			avatar: "https://esaimg.cdn1.vip/i/6a37e4ac53fc2_1782047916.webp",
+			description: "轻生活，秒上签",
+			},
+			{
 				name: "XingJiのBlog",
 				url: "https://love.xingji.fun/",
 				avatar: "https://i.p-i.vip/47/20240920-66ed7b168c38c.jpg",

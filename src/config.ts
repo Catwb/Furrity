@@ -87,7 +87,13 @@ export const siteConfig: SiteConfig = {
 			order: "list",
 			"list-max-height": "320px",
 			"list-folded": true,
+			preload: "none",
 		},
+	},
+	lazyload: {
+		enable: true,
+		cdn: "https://unpkg.com/vanilla-lazyload@19.1.3/dist/lazyload.iife.js",
+		threshold: 200,
 	},
 	preconnect: [
 		"https://cdn.245179.xyz",

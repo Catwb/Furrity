@@ -44,6 +44,11 @@ export type SiteConfig = {
 	sidebar?: {
 		components: SidebarComponent[];
 	};
+	lazyload?: {
+		enable?: boolean;
+		cdn?: string;
+		threshold?: number;
+	};
 	custom?: CustomCodeConfig;
 	preconnect?: string[];
 	abbrlink?: AbbrlinkConfig;
@@ -90,6 +95,7 @@ export type MetingConfig = {
 		order?: string;
 		"list-max-height"?: string;
 		"list-folded"?: boolean;
+		preload?: string;
 	};
 };
 

@@ -97,7 +97,8 @@ const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:t
   theme={f.theme ?? "#1BCDFC"}
   loop={f.loop ?? "all"}
   order={f.order ?? "list"}
-  list-max-height={f["list-max-height"] ?? "320px"}
-  list-folded={String(f["list-folded"] ?? true)}
-  api={api}
+   list-max-height={f["list-max-height"] ?? "320px"}
+   list-folded={String(f["list-folded"] ?? true)}
+   preload={f.preload ?? "none"}
+   api={api}
 ></meting-js>}

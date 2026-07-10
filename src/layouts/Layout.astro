@@ -225,6 +225,8 @@ const fontCode = siteConfig.fonts?.code || "inherit";
 		</style>
 		<script is:inline>
 			(function() {
+				if (window.__loaderShown) return;
+				window.__loaderShown = true;
 				var loader = document.getElementById("page-loader");
 				if (!loader) return;
 				var textEl = loader.querySelector(".loader-text");

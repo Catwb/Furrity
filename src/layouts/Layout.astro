@@ -15,7 +15,6 @@ import {
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
-import "katex/dist/katex.css";
 import "../styles/tag-plugins-dark.css";
 
 interface Props {
@@ -111,6 +110,8 @@ const fontCode = siteConfig.fonts?.code || "inherit";
 		</>}
 
 		{siteConfig.custom?.head?.map((item) => <Fragment set:html={item} />)}
+
+		{plugins?.includes("katex") && <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css" />}
 
 		{siteConfig.custom?.css?.map((item) => <style is:global>{item}</style>)}
 

@@ -101,8 +101,8 @@ export const siteConfig: SiteConfig = {
 	],
 	 custom: {
 	 	head: [
-			'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" />',
-			'<link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" />',
+			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" /></noscript>',
+			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" /></noscript>',
 			'<script defer src="https://analyse.245179.xyz/tracker.min.js" data-website-id="blog.245179.xyz"></script>'
 	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/css/b.css">',
 	// 		'<link rel="stylesheet" href="https://cdn.245179.xyz/ChillRoundFRegular/result.css" />',

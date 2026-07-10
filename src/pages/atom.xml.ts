@@ -66,6 +66,6 @@ export async function GET(context: APIContext) {
 }
 
 function escapeXml(s: unknown): string {
-	if (typeof s !== "string") s = String(s ?? "");
-	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+	const str = typeof s === "string" ? s : String(s ?? "");
+	return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }

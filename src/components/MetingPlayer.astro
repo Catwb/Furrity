@@ -85,6 +85,10 @@ const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:t
 }
 </style>
 <script is:inline data-swup-ignore-script data-meting-api={api}>window.meting_api = document.currentScript.getAttribute('data-meting-api');</script>
+<script is:inline data-swup-ignore-script>
+(function(){var origDefine=customElements.define.bind(customElements);customElements.define=function(name,Ctor,opts){if(name==='meting-js'&&Ctor.prototype.disconnectedCallback){var orig=Ctor.prototype.disconnectedCallback;Ctor.prototype.disconnectedCallback=function(){try{orig.call(this)}catch(e){}}}
+return origDefine(name,Ctor,opts)}})()
+</script>
 <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js" defer data-swup-ignore-script></script>
 <script src="https://unpkg.com/meting@2.0.1/dist/Meting.min.js" defer data-swup-ignore-script></script>
 {f?.enable && <meting-js

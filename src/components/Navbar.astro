@@ -21,10 +21,10 @@ let links: NavBarLink[] = navBarConfig.links.map(
 );
 
 type FlatNavItem = { name: string; url: string; external?: boolean; depth: number };
-function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] {
+function flattenNavItems(items: NavBarLink[], depth = 0): FlatNavItem[] {
 	const result: FlatNavItem[] = [];
 	for (const item of items) {
-		result.push({ name: item.name, url: item.url, external: item.external, depth });
+		result.push({ name: item.name, url: item.url ?? "/", external: item.external, depth });
 		if (item.children && item.children.length > 0) {
 			result.push(...flattenNavItems(item.children, depth + 1));
 		}
@@ -78,7 +78,7 @@ const linkChildren = links.map((l) =>
                         </div>
                     </div>;
                 }
-                return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
+                return <a aria-label={l.name} href={l.external ? l.url ?? "/" : url(l.url ?? "/")} target={l.external ? "_blank" : null}
                           class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95"
                 >
                     <div class="flex items-center">

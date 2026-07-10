@@ -8,6 +8,8 @@ import {
 	getStoredTheme,
 	setTheme,
 } from "@utils/setting-utils.ts";
+
+let _props = $props();
 import { onMount } from "svelte";
 import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 

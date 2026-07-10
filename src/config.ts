@@ -44,7 +44,7 @@ export const siteConfig: SiteConfig = {
 	footer: {
 		enable: true,
 		content: [
-			"本站由 [绮曜](/) 使用 Furrity 主题（略微由我更改）创建。",
+			"本站由 [绮曜](/) 使用 Furrity 主题（基于 Fuwari 主题）创建。",
 			"本博客所有文章除特别声明外，均采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议，转载请注明出处。",
 			"[Copyright © since 2024-2025 绮曜](/)",
 			'<div id="StaticBadge"><a target="_blank" rel="noopener" href="https://icp.gov.moe/?keyword=20240822"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/萌ICP备-20240822号-green?style=for-the-badge&cacheSeconds=31536000&logo=https%3A%2F%2Ficp.gov.moe%2Fmoe-icon.zip&logoSize=auto&labelColor=FF1485&link=https%3A%2F%2Ficp.gov.moe%2F%3Fkeyword%3D20240822"></a> <a target="_blank" rel="noopener" href="https://astro.build/"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/Powered_By-Astro-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://github.com/saicaca/fuwari"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/Theme-Furrity_by_Qiyao-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://www.netlify.com/"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/C_D_N-Netlify-green?style=for-the-badge&cacheSeconds=31536000&logo=netlify&logoSize=auto"></a></div>',

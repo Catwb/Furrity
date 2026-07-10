@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { siteConfig } from "../config";
+import { siteConfig } from "../config/site";
 
 const { envId, region, lang, cdn, css } = siteConfig.twikoo || {};
 

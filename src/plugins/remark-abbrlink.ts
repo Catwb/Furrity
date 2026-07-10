@@ -1,5 +1,5 @@
 import { computeAbbrlink, type AbbrlinkAlg, type AbbrlinkRep } from "../utils/abbrlink-utils";
-import { siteConfig } from "../config";
+import { siteConfig } from "../config/site";
 
 /**
  * Remark plugin that automatically adds abbrlink to posts that don't have one.

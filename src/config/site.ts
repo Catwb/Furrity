@@ -6,8 +6,8 @@ import type {
 	NavBarConfig,
 	ProfileConfig,
 	SiteConfig,
-} from "./types/config";
-import { LinkPreset } from "./types/config";
+} from "../types/config";
+import { LinkPreset } from "../types/config";
 
 export const siteConfig: SiteConfig = {
 	title: "龙星划空",

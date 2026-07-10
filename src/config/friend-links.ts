@@ -1,4 +1,4 @@
-import type { FriendLinkGroup } from "./types/config";
+import type { FriendLinkGroup } from "../types/config";
 
 export const friendLinkGroups: FriendLinkGroup[] = [
 	{

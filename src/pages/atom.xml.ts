@@ -5,7 +5,7 @@ import { url } from "@utils/url-utils";
 import { computeAbbrlink } from "@utils/abbrlink-utils";
 import type { APIContext } from "astro";
 import sanitizeHtml from "sanitize-html";
-import { siteConfig } from "@/config";
+import { siteConfig } from "@/config/site";
 
 export async function GET(context: APIContext) {
 	const blog = await getSortedPosts();

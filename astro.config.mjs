@@ -32,6 +32,7 @@ import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkAbbrlink } from "./src/plugins/remark-abbrlink";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
+import { rehypeMermaidComponent } from "./src/plugins/rehype-tags/mermaid.mjs";
 import { rehypeSpacing } from "./src/plugins/rehype-spacing.mjs";
 
 // https://astro.build/config
@@ -124,6 +125,7 @@ export default defineConfig({
 			parseDirectiveNode,
 		],
 		rehypePlugins: [
+			rehypeMermaidComponent,
 			rehypeKatex,
 			rehypeSlug,
 			[

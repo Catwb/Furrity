@@ -210,6 +210,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "Never drown the flame of hope",
 			},
 			{
+				name: "UpXuu’s blog",
+				url: "https://upxuu.com",
+				avatar: "https://upxuu.com/images/me.jpg",
+				description: "逐光而上"
+			},
+			{
 				name: "Watermelonabc的Blog",
 				url: "https://watermelonabc.top/",
 				avatar: "https://watermelonabc.top/asset/icon/Avatar.png",

@@ -1,3 +1,4 @@
+import compress from "@playform/compress";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
@@ -112,6 +113,7 @@ export default defineConfig({
 		}),
         svelte(),
 		sitemap(),
+		compress(),
 	],
 	markdown: {
 		remarkPlugins: [

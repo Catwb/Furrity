@@ -144,7 +144,7 @@ title: 友链
 
   const regList = config.map(d => new RegExp(`(^|\\.)${d.replace(/\./g, '\\.')}$`, 'i'));
 
-  const data = await fetch('https://cdn.245179.xyz/link-checker').then(r => r.json());
+  const data = await fetch('https://link-checker.245179.xyz/').then(r => r.json());
   const colors = { online: '#52c41a', offline: '#ff4d4f', timeout: '#faad14' };
 
   const list = data.map(item => {

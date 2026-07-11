@@ -94,6 +94,7 @@ const managerConfigStr = JSON.stringify({
 
     var audio = document.createElement('audio');
     audio.crossOrigin = 'anonymous';
+    audio.preload = 'none';
     audio.style.display = 'none';
     document.body.appendChild(audio);
 

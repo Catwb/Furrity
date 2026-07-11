@@ -58,6 +58,7 @@ export const siteConfig: SiteConfig = {
 	sidebar: {
 		components: [
 			{ type: "profile" },
+			{ type: "music" },
 			{ type: "site-status" },
 			{ type: "categories" },
 			{ type: "tags" },

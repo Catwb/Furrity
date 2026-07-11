@@ -100,7 +100,7 @@ export type MetingConfig = {
 };
 
 export type SidebarComponent = {
-	type: "profile" | "categories" | "tags" | "site-status" | "text";
+	type: "profile" | "categories" | "tags" | "site-status" | "text" | "music";
 	title?: string;
 	content?: string;
 	sticky?: boolean;

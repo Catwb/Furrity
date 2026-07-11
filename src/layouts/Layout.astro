@@ -1,6 +1,6 @@
 ---
 import ConfigCarrier from "@components/ConfigCarrier.astro";
-import MetingPlayer from "@components/MetingPlayer.astro";
+import MusicManager from "@components/features/MusicManager.astro";
 import { profileConfig, siteConfig } from "@/config/site";
 import {
 	AUTO_MODE,
@@ -278,13 +278,13 @@ const fontCode = siteConfig.fonts?.code || "inherit";
 			})();
 		</script>
 		<ConfigCarrier></ConfigCarrier>
+		<MusicManager />
 		<slot />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
 
 		{siteConfig.custom?.js?.map((item) => <script is:inline>{item}</script>)}
-		{siteConfig.meting?.enable && <MetingPlayer />}
 		{siteConfig.lazyload?.enable && <>
 			<script src={siteConfig.lazyload.cdn}></script>
 			<script define:vars={{ threshold: siteConfig.lazyload.threshold ?? 200 }}>

@@ -1,16 +1,12 @@
 ---
-name: Wolven
-species: 北极狼
+name: 绮曜
+species: 龙
 color: "#6c5ce7"
 avatar: /images/oc/wolven-avatar.png
 banner: /images/oc/wolven-banner.png
-images:
-  - src: /images/oc/wolven-1.png
-    alt: 正装设定
-  - src: /images/oc/wolven-2.png
-    alt: 日常立绘
-alias: [狼狼, 沃文]
-intro: 一只来自北地的北极狼，霜狼部落的最后一代守护者
+# images:
+# alias:
+intro: 一只龙，但是来自科技时代，拥有洞察一切的眼镜。
 ---
 
 Wolven 诞生于极北之地的永冻冰原，是霜狼部落的最后一代守护者。

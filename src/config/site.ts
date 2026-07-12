@@ -137,6 +137,10 @@ export const navBarConfig: NavBarConfig = {
 					url: "/novels/",
 				},
 				{
+					name: "说说",
+					url: "/shuoshuo/",
+				},
+				{
 					name: "加密",
 					url: "/encrypt/",
 				},

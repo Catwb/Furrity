@@ -6,7 +6,7 @@ import readline from "readline"
 
 function getDateTime() {
   const now = new Date()
-  return now.toISOString().replace("T", " ").slice(0, 19)
+  return now.toISOString()
 }
 
 const rl = readline.createInterface({
@@ -132,24 +132,23 @@ async function main() {
     ? `[${tags.split(",").map((t) => `"${t.trim()}"`).join(", ")}]`
     : "[]"
 
-  const categoryValue = category ? `"${category}"` : ""
-
   const dateObj = new Date(frontmatter)
   const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`
   const abbrlink = computeAbbrlink(title, dateStr)
 
-  const content = `---
-title: ${title}
-published: ${frontmatter}
-abbrlink: '${abbrlink}'
-description: ${description || ""}
-image: ""
-tags: ${tagsArray}
-category: ${categoryValue}
-draft: false
-lang: ""
----
-`
+  const lines = [`---`, `title: ${title}`, `published: ${frontmatter}`, `abbrlink: '${abbrlink}'`]
+  if (description) lines.push(`description: ${description}`)
+  if (tags) lines.push(`tags: ${tagsArray}`)
+  if (category) {
+    const cats = category.split(",").map((c) => c.trim()).filter(Boolean)
+    if (cats.length === 1) {
+      lines.push(`category: "${cats[0]}"`)
+    } else {
+      lines.push(`category:`, ...cats.map((c) => `  - ${c}`))
+    }
+  }
+  lines.push(`draft: false`, `pinned: false`, `---`, ``)
+  const content = lines.join("\n")
 
   // 确定文件路径
   let filePath

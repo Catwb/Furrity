@@ -1,0 +1,120 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Markdown from "@components/misc/Markdown.astro";
+import MainGridLayout from "../../../layouts/MainGridLayout.astro";
+
+export async function getStaticPaths() {
+	const fursonas = await getCollection("fursonas");
+	return fursonas.map((oc) => ({
+		params: { slug: oc.id },
+		props: { entry: oc },
+	}));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<"fursonas"> };
+const oc = entry.data;
+const { Content } = await render(entry);
+
+const themeColor = oc.color || "var(--primary)";
+---
+
+<MainGridLayout title={oc.name} description={oc.intro || oc.name}>
+
+    <article class="card-base rounded-[var(--radius-large)] overflow-hidden">
+        {oc.banner && (
+            <div class="w-full h-48 md:h-64 overflow-hidden">
+                <img src={oc.banner} alt={`${oc.name} banner`} class="w-full h-full object-cover" loading="eager" />
+            </div>
+        )}
+
+        <div class="px-6 py-5 space-y-5">
+
+            <!-- Header: Avatar + Name + Species -->
+            <div class="flex items-center gap-4">
+                {oc.avatar ? (
+                    <img src={oc.avatar} alt={oc.name} width={80} height={80} class="w-20 h-20 rounded-2xl object-cover shrink-0 ring-2" style={`ring-color: ${themeColor}`} />
+                ) : (
+                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold shrink-0" style={`background-color: color-mix(in srgb, ${themeColor} 20%, transparent); color: ${themeColor}`}>
+                        {oc.name.charAt(0)}
+                    </div>
+                )}
+                <div>
+                    <h1 class="text-2xl font-bold text-black/80 dark:text-white/80">{oc.name}</h1>
+                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                        <span class="text-sm px-3 py-0.5 rounded-full" style={`background-color: color-mix(in srgb, ${themeColor} 15%, transparent); color: ${themeColor}`}>
+                            {oc.species}
+                        </span>
+                        {oc.alias.map((a) => (
+                            <span class="text-xs text-black/40 dark:text-white/40">/ {a}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description (from markdown body) -->
+            <div class="custom-md text-black/70 dark:text-white/70 leading-relaxed">
+                <Content />
+            </div>
+
+            <!-- Gallery -->
+            {oc.images.length > 0 && (
+                <div>
+                    <h2 class="text-lg font-bold text-black/80 dark:text-white/80 mb-3">画廊</h2>
+                    <div class="fursona-gallery grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {oc.images.map((img, i) => (
+                            <a
+                                href={img.src}
+                                data-pswp-src={img.src}
+                                data-pswp-width="0"
+                                data-pswp-height="0"
+                                class="block rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 hover:opacity-90 transition-opacity"
+                            >
+                                <img
+                                    src={img.src}
+                                    alt={img.alt || `${oc.name} ${i + 1}`}
+                                    class="w-full h-40 object-cover"
+                                    loading="lazy"
+                                />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    </article>
+</MainGridLayout>
+
+<script>
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+
+const gallery = document.querySelector(".fursona-gallery");
+if (gallery) {
+	const lightbox = new PhotoSwipeLightbox({
+		gallery: ".fursona-gallery",
+		children: "a",
+		pswpModule: () => import("photoswipe"),
+		padding: { top: 20, bottom: 20, left: 20, right: 20 },
+		wheelToZoom: true,
+		imageClickAction: "close",
+		tapAction: "close",
+		doubleTapAction: "zoom",
+	});
+
+	lightbox.addFilter("domItemData", (itemData, element) => {
+		if (element instanceof HTMLAnchorElement) {
+			const img = element.querySelector("img");
+			if (img) {
+				itemData.src = img.src;
+				itemData.w = img.naturalWidth || window.innerWidth;
+				itemData.h = img.naturalHeight || window.innerHeight;
+				itemData.msrc = img.src;
+			}
+		}
+		return itemData;
+	});
+
+	lightbox.init();
+}
+</script>

@@ -1,0 +1,65 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import MainGridLayout from "../../../layouts/MainGridLayout.astro";
+
+const allFursonas: CollectionEntry<"fursonas">[] = await getCollection("fursonas");
+
+function getInitial(name: string): string {
+	return name.charAt(0) || "?";
+}
+---
+
+<MainGridLayout title="我的兽设" description="我的原创角色们">
+    {allFursonas.length === 0 && (
+        <div class="card-base rounded-[var(--radius-large)] p-12 text-center text-black/40 dark:text-white/40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-5xl mx-auto mb-4 opacity-50 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            <p>还没有添加兽设呢</p>
+        </div>
+    )}
+
+    {allFursonas.length > 0 && (
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {allFursonas.map((oc) => (
+                <a
+                    href={`/about/furryoc/${oc.id}/`}
+                    class="card-base rounded-[var(--radius-large)] p-5 flex gap-4 hover:scale-[1.01] transition-all duration-300 group no-underline cursor-pointer"
+                >
+                    {oc.data.avatar ? (
+                        <img
+                            src={oc.data.avatar}
+                            alt={oc.data.name}
+                            width={80}
+                            height={80}
+                            class="w-20 h-20 rounded-2xl object-cover shrink-0"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <div
+                            class="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold shrink-0"
+                            style={`background-color: color-mix(in srgb, ${oc.data.color || "var(--primary)"} 20%, transparent); color: ${oc.data.color || "var(--primary)"}`}
+                        >
+                            {getInitial(oc.data.name)}
+                        </div>
+                    )}
+                    <div class="flex flex-col justify-center min-w-0">
+                        <h3 class="text-lg font-bold text-black/80 dark:text-white/80 group-hover:text-[var(--primary)] transition-colors truncate">
+                            {oc.data.name}
+                        </h3>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/60">
+                                {oc.data.species}
+                            </span>
+                            {oc.data.alias.length > 0 && (
+                                <span class="text-xs text-black/40 dark:text-white/40 truncate">{oc.data.alias.join("、")}</span>
+                            )}
+                        </div>
+                        {oc.data.intro && (
+                            <p class="text-sm text-black/50 dark:text-white/50 mt-2 line-clamp-2 leading-relaxed">{oc.data.intro}</p>
+                        )}
+                    </div>
+                </a>
+            ))}
+        </div>
+    )}
+</MainGridLayout>

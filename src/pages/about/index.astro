@@ -1,0 +1,26 @@
+---
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+---
+
+<MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <a href="/about/me/" class="card-base rounded-[var(--radius-large)] p-10 flex flex-col items-center justify-center gap-5 text-center hover:scale-[1.02] transition-all duration-300 group cursor-pointer no-underline">
+            <div class="w-24 h-24 rounded-full bg-[var(--primary)]/10 flex items-center justify-center group-hover:bg-[var(--primary)]/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[var(--primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-black/80 dark:text-white/80">关于我</h2>
+            <p class="text-sm text-black/50 dark:text-white/50 leading-relaxed max-w-xs">了解站点主人，看看我的故事</p>
+            <span class="text-sm text-[var(--primary)] font-medium group-hover:underline">了解更多 →</span>
+        </a>
+        <a href="/about/furryoc/" class="card-base rounded-[var(--radius-large)] p-10 flex flex-col items-center justify-center gap-5 text-center hover:scale-[1.02] transition-all duration-300 group cursor-pointer no-underline">
+            <div class="w-24 h-24 rounded-full bg-[var(--primary)]/10 flex items-center justify-center group-hover:bg-[var(--primary)]/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[var(--primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-black/80 dark:text-white/80">我的兽设</h2>
+            <p class="text-sm text-black/50 dark:text-white/50 leading-relaxed max-w-xs">展示我的原创角色们</p>
+            <span class="text-sm text-[var(--primary)] font-medium group-hover:underline">去看看 →</span>
+        </a>
+    </div>
+</MainGridLayout>

@@ -71,9 +71,31 @@ const charactersCollection = defineCollection({
 	}),
 });
 
+const fursonaCollection = defineCollection({
+	schema: z.object({
+		name: z.string(),
+		species: z.string(),
+		color: z.string().optional(),
+		avatar: z.string().optional(),
+		banner: z.string().optional(),
+		images: z
+			.array(
+				z.object({
+					src: z.string(),
+					alt: z.string().optional(),
+				}),
+			)
+			.optional()
+			.default([]),
+		alias: z.array(z.string()).optional().default([]),
+		intro: z.string().optional().default(""),
+	}),
+});
+
 export const collections = {
 	posts: postsCollection,
 	spec: specCollection,
 	novels: novelsCollection,
 	characters: charactersCollection,
+	fursonas: fursonaCollection,
 };

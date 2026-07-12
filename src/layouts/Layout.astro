@@ -516,6 +516,23 @@ function init() {
 /* Load settings when entering the site */
 init();
 
+/* Dynamic analytics - non-blocking for swup */
+const analytics = siteConfig.analytics;
+if (analytics?.enable) {
+	const inject = () => {
+		const s = document.createElement('script');
+		s.defer = true;
+		s.src = analytics.url;
+		s.setAttribute('data-website-id', analytics.websiteId);
+		document.head.appendChild(s);
+	};
+	if (document.readyState === 'complete') {
+		inject();
+	} else {
+		window.addEventListener('load', inject);
+	}
+}
+
 const setup = () => {
 	// TODO: temp solution to change the height of the banner
 /*

@@ -1,4 +1,5 @@
 ---
+import path from "node:path";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
@@ -8,7 +9,7 @@ import MainGridLayout from "../../../layouts/MainGridLayout.astro";
 export async function getStaticPaths() {
 	const fursonas = await getCollection("fursonas");
 	return fursonas.map((oc) => ({
-		params: { slug: oc.id },
+		params: { slug: path.parse(oc.id).name },
 		props: { entry: oc },
 	}));
 }
@@ -54,9 +55,9 @@ const themeColor = oc.color || "var(--primary)";
             </div>
 
             <!-- Description (from markdown body) -->
-            <div class="custom-md text-black/70 dark:text-white/70 leading-relaxed">
+            <Markdown class="mt-2">
                 <Content />
-            </div>
+            </Markdown>
 
             <!-- Gallery -->
             {oc.images.length > 0 && (
@@ -66,9 +67,6 @@ const themeColor = oc.color || "var(--primary)";
                         {oc.images.map((img, i) => (
                             <a
                                 href={img.src}
-                                data-pswp-src={img.src}
-                                data-pswp-width="0"
-                                data-pswp-height="0"
                                 class="block rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 hover:opacity-90 transition-opacity"
                             >
                                 <img
@@ -101,20 +99,20 @@ if (gallery) {
 		tapAction: "close",
 		doubleTapAction: "zoom",
 	});
-
-	lightbox.addFilter("domItemData", (itemData, element) => {
-		if (element instanceof HTMLAnchorElement) {
-			const img = element.querySelector("img");
-			if (img) {
-				itemData.src = img.src;
-				itemData.w = img.naturalWidth || window.innerWidth;
-				itemData.h = img.naturalHeight || window.innerHeight;
-				itemData.msrc = img.src;
-			}
-		}
-		return itemData;
-	});
-
 	lightbox.init();
 }
+
+document.querySelectorAll(".fursona-gallery img").forEach(function (img) {
+	img.addEventListener("error", function () {
+		this.onerror = null;
+		this.style.display = "none";
+		var parent = this.parentElement;
+		if (parent && !parent.querySelector(".img-error-placeholder")) {
+			var placeholder = document.createElement("div");
+			placeholder.className = "img-error-placeholder flex items-center justify-center h-40 text-black/30 dark:text-white/30 text-sm";
+			placeholder.textContent = "加载失败";
+			parent.appendChild(placeholder);
+		}
+	});
+});
 </script>

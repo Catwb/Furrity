@@ -1,4 +1,5 @@
 ---
+import path from "node:path";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import MainGridLayout from "../../../layouts/MainGridLayout.astro";
@@ -22,7 +23,7 @@ function getInitial(name: string): string {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             {allFursonas.map((oc) => (
                 <a
-                    href={`/about/furryoc/${oc.id}/`}
+                    href={`/about/furryoc/${path.parse(oc.id).name}/`}
                     class="card-base rounded-[var(--radius-large)] p-5 flex gap-4 hover:scale-[1.01] transition-all duration-300 group no-underline cursor-pointer"
                 >
                     {oc.data.avatar ? (

@@ -44,6 +44,7 @@ export type SiteConfig = {
 	sidebar?: {
 		components: SidebarComponent[];
 	};
+	analytics?: AnalyticsConfig;
 	lazyload?: {
 		enable?: boolean;
 		cdn?: string;
@@ -104,6 +105,12 @@ export type SidebarComponent = {
 	title?: string;
 	content?: string;
 	sticky?: boolean;
+};
+
+export type AnalyticsConfig = {
+	enable: boolean;
+	url: string;
+	websiteId: string;
 };
 
 export type CustomCodeConfig = {

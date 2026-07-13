@@ -57,15 +57,24 @@ const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.lengt
                 <p class="text-black/60 dark:text-white/60 mb-6 leading-relaxed">{entry.data.description}</p>
             )}
 
-            <div class="text-xs text-black/40 dark:text-white/40 flex gap-4 mb-6 pb-6 border-b border-dashed border-black/10 dark:border-white/10">
-                <span class="flex items-center gap-1">
-                    <Icon name="material-symbols:notes-rounded" class="text-sm" />
-                    {chapters.reduce((s, c) => s + (c.data.wordCount ?? 0), 0).toLocaleString()} {i18n(I18nKey.totalWords)}
-                </span>
-                <span class="flex items-center gap-1">
-                    <Icon name="material-symbols:library-books-rounded" class="text-sm" />
-                    {chapters.length} {i18n(chapters.length === 1 ? I18nKey.chapterCount : I18nKey.chaptersCount)}
-                </span>
+            <div class="text-xs text-black/40 dark:text-white/40 flex justify-between mb-6 pb-6 border-b border-dashed border-black/10 dark:border-white/10">
+                <div class="flex gap-4">
+                    <span class="flex items-center gap-1">
+                        <Icon name="material-symbols:notes-rounded" class="text-sm" />
+                        {chapters.reduce((s, c) => s + (c.data.wordCount ?? 0), 0).toLocaleString()} {i18n(I18nKey.totalWords)}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <Icon name="material-symbols:library-books-rounded" class="text-sm" />
+                        {chapters.length} {i18n(chapters.length === 1 ? I18nKey.chapterCount : I18nKey.chaptersCount)}
+                    </span>
+                </div>
+                <a href={`/novels/${novelSlug}/rss.xml/`}
+                   class="btn-card rounded-xl px-3 py-2 flex items-center gap-1.5 text-sm active:scale-[0.98]"
+                   target="_blank"
+                   title="RSS 订阅">
+                    <Icon name="material-symbols:rss-feed-rounded" class="text-base text-[var(--primary)]" />
+                    <span class="font-medium">RSS</span>
+                </a>
             </div>
 
             {characters.length > 0 && (

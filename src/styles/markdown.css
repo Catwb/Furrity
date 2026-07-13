@@ -91,7 +91,13 @@
     }
 
 
-    ul, ol {
+    ul {
+        li::marker {
+            content: "🐾";
+            font-size: 0.8em;
+        }
+    }
+    ol {
         li::marker {
             @apply text-[var(--primary)];
         }

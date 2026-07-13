@@ -15,7 +15,7 @@ export const siteConfig: SiteConfig = {
 	lang: "zh_CN",
 	background: "url(https://api.furry.ist/furry-img/?mode=auto)",
 	themeColor: {
-		hue: 250,
+		hue: 35,
 		fixed: false,
 	},
 	banner: {

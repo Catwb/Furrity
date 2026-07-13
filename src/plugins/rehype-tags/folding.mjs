@@ -1,5 +1,6 @@
 import { h } from "hastscript"
 import { shouldInject } from "./_registry.js"
+import { parseTitleProps } from "./_parse-title.mjs"
 
 const STYLE = `.tag-plugin.colorful.folding {
   margin: 1em 0;
@@ -32,13 +33,14 @@ export function FoldingComponent(properties, children) {
     nodes.push(h("style", { "data-tag-plugin": "folding" }, STYLE))
   }
 
+  const props = parseTitleProps(properties || {})
   const attrs = { class: "tag-plugin colorful folding" }
-  if (properties.color) attrs.color = properties.color
-  if (properties.open === "true" || properties.open === true) attrs.open = ""
+  if (props.color) attrs.color = props.color
+  if (props.open === "true" || props.open === true) attrs.open = ""
 
   const inner = []
-  if (properties.title) {
-    inner.push(h("summary", properties.title))
+  if (props.title) {
+    inner.push(h("summary", props.title))
   }
   if (children && children.length > 0) {
     inner.push(h("div", { class: "body" }, children))

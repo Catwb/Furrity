@@ -34,8 +34,9 @@ export function CheckboxComponent(properties, children) {
     nodes.push(h("style", { "data-tag-plugin": "checkbox" }, STYLE))
   }
 
-  const checked = properties.checked === "true" || properties.checked === true
-  const color = properties.color || ""
+  const props = properties || {}
+  const checked = props.checked === "true" || props.checked === true
+  const color = props.color || ""
 
   const colorMap = {
     green: "oklch(0.6 0.15 140)",

@@ -1,5 +1,6 @@
 import { h } from "hastscript"
 import { shouldInject } from "./_registry.js"
+import { parseTitleProps } from "./_parse-title.mjs"
 
 const STYLE = `.tag-plugin.colorful.box {
   position: relative;
@@ -26,12 +27,13 @@ export function BoxComponent(properties, children) {
     nodes.push(h("style", { "data-tag-plugin": "box" }, STYLE))
   }
 
+  const props = parseTitleProps(properties || {})
   const attrs = { class: "tag-plugin colorful box" }
-  if (properties.color) attrs.color = properties.color
+  if (props.color) attrs.color = props.color
 
   const inner = []
-  if (properties.title) {
-    inner.push(h("div", { class: "title" }, [h("strong", properties.title)]))
+  if (props.title) {
+    inner.push(h("div", { class: "title" }, [h("strong", props.title)]))
   }
   if (children && children.length > 0) {
     inner.push(h("div", { class: "body" }, children))

@@ -604,6 +604,12 @@ const setup = () => {
             if (toc) {
                 toc.classList.remove('toc-not-ready')
             }
+
+            // Clean up novel reading mode when leaving a chapter page
+            const mainGrid = document.getElementById('main-grid');
+            if (mainGrid && !document.getElementById('reading-mode-toggle')) {
+                mainGrid.classList.remove('reading-mode');
+            }
         }, 200)
 	});
 }

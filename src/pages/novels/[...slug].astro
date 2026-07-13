@@ -196,7 +196,8 @@ function applyReadingMode(enabled: boolean) {
     mainGrid.classList.toggle("reading-mode", enabled);
 }
 
-if (toggle) {
+if (toggle && !toggle.dataset.readingModeInit) {
+    toggle.dataset.readingModeInit = "true";
     const saved = localStorage.getItem("novel-reading-mode") === "true";
     applyReadingMode(saved);
     toggle.classList.toggle("text-[var(--primary)]", saved);

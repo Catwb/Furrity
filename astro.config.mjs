@@ -41,6 +41,9 @@ export default defineConfig({
 	site: "https://blog.245179.xyz/",
 	base: "/",
 	trailingSlash: "always",
+	build: {
+		inlineStylesheets: "auto",
+	},
 	integrations: [
 		tailwind({
 			nesting: true,

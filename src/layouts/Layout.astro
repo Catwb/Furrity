@@ -510,10 +510,9 @@ function showBanner() {
 }
 
 function init() {
-	// disableAnimation()()		// TODO
 	loadTheme();
 	loadHue();
-	initCustomScrollbar();
+	requestAnimationFrame(() => initCustomScrollbar());
 	showBanner();
 }
 

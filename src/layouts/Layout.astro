@@ -512,7 +512,9 @@ function showBanner() {
 function init() {
 	loadTheme();
 	loadHue();
-	requestAnimationFrame(() => initCustomScrollbar());
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => initCustomScrollbar());
+	});
 	showBanner();
 }
 
@@ -563,7 +565,11 @@ const setup = () => {
 		// Write after reads
 		document.documentElement.style.setProperty('--content-delay', '0ms')
 	})
-	window.swup.hooks.on('content:replace', initCustomScrollbar)
+	window.swup.hooks.on('content:replace', () => {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => initCustomScrollbar());
+		});
+	})
 	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
 		// change banner height immediately when a link is clicked
 		const bodyElement = document.querySelector('body')

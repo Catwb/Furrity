@@ -69,6 +69,7 @@ export type FontConfig = {
 	heading?: string;
 	body?: string;
 	code?: string;
+	bold?: string;
 };
 
 export type FooterConfig = {

@@ -53,7 +53,7 @@ const { Content } = friendsPost ? await render(friendsPost) : { Content: undefin
                                      style={`background-color: ${link.color || 'var(--primary)'}`} />
                                 {link.avatar ? (
                                     <img src={link.avatar} alt={link.name} width={48} height={48}
-                                         class="w-12 h-12 rounded-full object-cover shrink-0 relative z-10" />
+                                         class="w-12 h-12 rounded-full object-cover shrink-0 relative z-10" loading="lazy" decoding="async" />
                                 ) : (
                                     <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white relative z-10"
                                          style={link.color ? `background-color: ${link.color}` : 'background-color: var(--primary)'}>

@@ -37,9 +37,10 @@ export const siteConfig: SiteConfig = {
 			src: "/favicon/favicon.webp",
 		},
 	],
- fonts: {
-		heading: "'LXGW WenKai', system-ui, sans-serif",
+	fonts: {
+		heading: "'LXGW WenKai Medium', 'LXGW WenKai', system-ui, sans-serif",
 		body: "'LXGW WenKai', system-ui, sans-serif",
+		bold: "'LXGW WenKai Medium', 'LXGW WenKai', system-ui, sans-serif",
 	},
 	footer: {
 		enable: true,
@@ -47,12 +48,12 @@ export const siteConfig: SiteConfig = {
 			"本站由 [绮曜](/) 使用 Furrity 主题（基于 Fuwari 主题）创建。",
 			"本博客所有文章除特别声明外，均采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议，转载请注明出处。",
 			"[Copyright © since 2024-2025 绮曜](/)",
-			'<div id="StaticBadge"><a target="_blank" rel="noopener" href="https://icp.gov.moe/?keyword=20240822"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/萌ICP备-20240822号-green?style=for-the-badge&cacheSeconds=31536000&logo=https%3A%2F%2Ficp.gov.moe%2Fmoe-icon.zip&logoSize=auto&labelColor=FF1485&link=https%3A%2F%2Ficp.gov.moe%2F%3Fkeyword%3D20240822"></a> <a target="_blank" rel="noopener" href="https://astro.build/"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/Powered_By-Astro-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://github.com/saicaca/fuwari"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/Theme-Furrity_by_Qiyao-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://www.netlify.com/"><img alt="Static Badge" loading="eager" src="https://img.shields.io/badge/C_D_N-Netlify-green?style=for-the-badge&cacheSeconds=31536000&logo=netlify&logoSize=auto"></a></div>',
-			'<a title="无聊湾 🥱 The Boring Bay" href="https://boringbay.com"><img alt="无聊湾 Badge" width="300" height="59" loading="eager" src="https://boringbay.com/api/badge/blog.245179.xyz"></a>',
+			'<div id="StaticBadge"><a target="_blank" rel="noopener" href="https://icp.gov.moe/?keyword=20240822"><img alt="Static Badge" loading="lazy" src="https://img.shields.io/badge/萌ICP备-20240822号-green?style=for-the-badge&cacheSeconds=31536000&logo=https%3A%2F%2Ficp.gov.moe%2Fmoe-icon.zip&logoSize=auto&labelColor=FF1485&link=https%3A%2F%2Ficp.gov.moe%2F%3Fkeyword%3D20240822"></a> <a target="_blank" rel="noopener" href="https://astro.build/"><img alt="Static Badge" loading="lazy" src="https://img.shields.io/badge/Powered_By-Astro-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://github.com/saicaca/fuwari"><img alt="Static Badge" loading="lazy" src="https://img.shields.io/badge/Theme-Furrity_by_Qiyao-blue?style=for-the-badge&cacheSeconds=31536000"></a> <a target="_blank" rel="noopener" href="https://www.netlify.com/"><img alt="Static Badge" loading="lazy" src="https://img.shields.io/badge/C_D_N-Netlify-green?style=for-the-badge&cacheSeconds=31536000&logo=netlify&logoSize=auto"></a></div>',
+			'<a title="无聊湾 🥱 The Boring Bay" href="https://boringbay.com"><img alt="无聊湾 Badge" width="300" height="59" loading="lazy" src="https://boringbay.com/api/badge/blog.245179.xyz"></a>',
 			"**感谢访问我的网站**",
 			'<div style="font-size: 0.85rem"><span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="https://cdn.245179.xyz/js/runtime.js"></script></div>',
-			'<a style="text-decoration:none;color:#51c4d3;" href="https://travel.moe/go.html" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" target="_blank"><img alt="异次元之旅" src="https://travel.moe/images/icon/icon64.png" loading="eager" style="width:24px;height:24px">异次元之旅</a> | <a href="https://www.travellings.cn/go.html" target="_blank" rel="noopener" title="开往-友链接力"><img src="https://www.travellings.cn/assets/logo.gif" alt="开往-友链接力" loading="eager" width="160" height="40"></a>',
-			'<img alt="count" loading="eager" src="https://count.getloli.com/@Qiyao?name=Qiyao&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" />',
+			'<a style="text-decoration:none;color:#51c4d3;" href="https://travel.moe/go.html" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" target="_blank"><img alt="异次元之旅" src="https://travel.moe/images/icon/icon64.png" loading="lazy" style="width:24px;height:24px">异次元之旅</a> | <a href="https://www.travellings.cn/go.html" target="_blank" rel="noopener" title="开往-友链接力"><img src="https://www.travellings.cn/assets/logo.gif" alt="开往-友链接力" loading="lazy" width="160" height="40"></a>',
+			'<img alt="count" loading="lazy" src="https://count.getloli.com/@Qiyao?name=Qiyao&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" />',
 		],
 	},
 	sidebar: {
@@ -99,13 +100,12 @@ export const siteConfig: SiteConfig = {
 		"https://cdn.245179.xyz",
 		"https://unpkg.com",
 	],
-	 custom: {
-	 	head: [
+	custom: {
+		head: [
 			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" /></noscript>',
 			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" /></noscript>',
-			'<link rel="preload" href="https://cdn.245179.xyz/css/b.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/css/b.css" /></noscript>',
-	 	],
-	 },
+		],
+	},
 	analytics: {
 		enable: true,
 		url: "https://analyse.245179.xyz/tracker.min.js",

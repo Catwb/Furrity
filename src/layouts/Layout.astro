@@ -72,6 +72,7 @@ const bannerOffset =
 const fontHeading = siteConfig.fonts?.heading || "inherit";
 const fontBody = siteConfig.fonts?.body || "inherit";
 const fontCode = siteConfig.fonts?.code || "inherit";
+const fontBold = siteConfig.fonts?.bold || "inherit";
 ---
 
 <!DOCTYPE html>
@@ -115,16 +116,18 @@ const fontCode = siteConfig.fonts?.code || "inherit";
 
 		{siteConfig.custom?.css?.map((item) => <style is:global>{item}</style>)}
 
-		<script is:inline define:vars={{ fontHeading, fontBody, fontCode }}>
+		<script is:inline define:vars={{ fontHeading, fontBody, fontCode, fontBold }}>
 			document.documentElement.style.setProperty('--font-heading', fontHeading);
 			document.documentElement.style.setProperty('--font-body', fontBody);
 			document.documentElement.style.setProperty('--font-code', fontCode);
+			document.documentElement.style.setProperty('--font-bold', fontBold);
 		</script>
 
 		{siteConfig.fonts && <style is:global>
 			h1,h2,h3,h4,h5,h6 { font-family: var(--font-heading) !important; }
 			body, p, div, span, li { font-family: var(--font-body) !important; }
 			code, pre, kbd { font-family: var(--font-code) !important; }
+			b, strong, [class*="title"], [class*="name"], .friend-name { font-family: var(--font-bold) !important; }
 		</style>}
 
 		<meta name="viewport" content="width=device-width" />

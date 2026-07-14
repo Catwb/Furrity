@@ -341,9 +341,9 @@ const widgetId =
             ui.cover.alt = cfg.i18n.noCover;
         }
 
-        ui.cover.classList.remove('animate-spin-slow');
-        void ui.cover.offsetWidth;
-        ui.cover.classList.add('animate-spin-slow');
+		ui.cover.classList.remove('animate-spin-slow');
+		getComputedStyle(ui.cover).animation;
+		ui.cover.classList.add('animate-spin-slow');
         ui.cover.style.animationPlayState = 'paused';
 
         ui.progressBar.style.width = '0%';
@@ -416,13 +416,13 @@ const widgetId =
         return clone;
     }
 
-    function vsCommitRange() {
-        var vs = local.vs;
-        if (vs.playlist.length === 0 || !vs.drawerOpen) return;
+	function vsCommitRange(scrollTop, viewHeight) {
+		var vs = local.vs;
+		if (vs.playlist.length === 0 || !vs.drawerOpen) return;
 
-        var container = ui.playlistContainer;
-        var scrollTop = container.scrollTop;
-        var viewHeight = container.clientHeight;
+		var container = ui.playlistContainer;
+		scrollTop = scrollTop !== undefined ? scrollTop : container.scrollTop;
+		viewHeight = viewHeight !== undefined ? viewHeight : container.clientHeight;
         var start = Math.max(0, Math.floor(scrollTop / ITEM_H) - OVERSCAN);
         var end = Math.min(vs.playlist.length, Math.ceil((scrollTop + viewHeight) / ITEM_H) + OVERSCAN);
 
@@ -482,20 +482,26 @@ const widgetId =
         ui.playlistContainer.style.height = (local.vs.playlist.length * ITEM_H) + 'px';
     }
 
-    function renderPlaylist(playlist, currentIndex) {
-        var vs = local.vs;
-        vs.playlist = playlist;
-        vs.currentIndex = currentIndex;
-        vs.renderedStart = -1;
-        vs.renderedEnd = -1;
-        vs.renderedEls = {};
-        vs.drawerOpen = ui.playlistDrawer.style.gridTemplateRows === '1fr';
-        ui.playlistContainer.innerHTML = '';
-        if (vs.drawerOpen) {
-            vsSetContainerHeight();
-            vsCommitRange();
-        }
-    }
+	function renderPlaylist(playlist, currentIndex) {
+		var vs = local.vs;
+		vs.playlist = playlist;
+		vs.currentIndex = currentIndex;
+		vs.renderedStart = -1;
+		vs.renderedEnd = -1;
+		vs.renderedEls = {};
+		vs.drawerOpen = ui.playlistDrawer.style.gridTemplateRows === '1fr';
+		// Read geometry before DOM writes
+		var scrollTop, clientHeight;
+		if (vs.drawerOpen) {
+			scrollTop = ui.playlistContainer.scrollTop;
+			clientHeight = ui.playlistContainer.clientHeight;
+		}
+		ui.playlistContainer.innerHTML = '';
+		if (vs.drawerOpen) {
+			vsSetContainerHeight();
+			vsCommitRange(scrollTop, clientHeight);
+		}
+	}
 
     function updatePlaylistActiveUI(currentIndex) {
         var vs = local.vs;
@@ -506,11 +512,12 @@ const widgetId =
             vsApplyActiveStyle(vs.renderedEls[oldIndex], false);
         }
 
-        if (currentIndex >= 0 && currentIndex < vs.playlist.length) {
-            if (currentIndex < vs.renderedStart || currentIndex >= vs.renderedEnd) {
-                ui.playlistContainer.scrollTop = currentIndex * ITEM_H;
-                vsCommitRange();
-            }
+		if (currentIndex >= 0 && currentIndex < vs.playlist.length) {
+			if (currentIndex < vs.renderedStart || currentIndex >= vs.renderedEnd) {
+				var targetScrollTop = currentIndex * ITEM_H;
+				ui.playlistContainer.scrollTop = targetScrollTop;
+				vsCommitRange(targetScrollTop);
+			}
             if (vs.renderedEls[currentIndex]) {
                 vsApplyActiveStyle(vs.renderedEls[currentIndex], true);
             }
@@ -546,32 +553,40 @@ const widgetId =
         });
     }
 
-    function updateLrcHighlight(index) {
-        if (index === local.currentLrcIndex) return;
-        local.currentLrcIndex = index;
+	function updateLrcHighlight(index) {
+		if (index === local.currentLrcIndex) return;
+		local.currentLrcIndex = index;
 
-        var lines = ui.lrcContainer.querySelectorAll('.lrc-line');
-        lines.forEach(function (line, i) {
-            if (i === index) {
-                line.classList.add('text-[var(--primary)]', 'font-bold', 'text-base');
-                line.classList.remove('text-neutral-400', 'text-sm');
-            } else {
-                line.classList.remove('text-[var(--primary)]', 'font-bold', 'text-base');
-                line.classList.add('text-neutral-400', 'text-sm');
-            }
-        });
+		// Read geometry before classList writes
+		var containerHeight, lineOffset, lineHeight;
+		if (index !== -1 && !local.isUserScrolling) {
+			var line = ui.lrcContainer.querySelector('.lrc-line[data-index="' + index + '"]');
+			if (line) {
+				containerHeight = ui.lrcContainer.clientHeight;
+				lineOffset = line.offsetTop;
+				lineHeight = line.offsetHeight;
+			}
+		}
 
-        if (index !== -1 && !local.isUserScrolling) {
-            var line = ui.lrcContainer.querySelector('.lrc-line[data-index="' + index + '"]');
-            if (line) {
-                var containerHeight = ui.lrcContainer.clientHeight;
-                var lineOffset = line.offsetTop;
-                var lineHeight = line.offsetHeight;
-                var targetScroll = lineOffset - (containerHeight / 2) + (lineHeight / 2);
-                ui.lrcContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
-            }
-        }
-    }
+		var lines = ui.lrcContainer.querySelectorAll('.lrc-line');
+		lines.forEach(function (line, i) {
+			if (i === index) {
+				line.classList.add('text-[var(--primary)]', 'font-bold', 'text-base');
+				line.classList.remove('text-neutral-400', 'text-sm');
+			} else {
+				line.classList.remove('text-[var(--primary)]', 'font-bold', 'text-base');
+				line.classList.add('text-neutral-400', 'text-sm');
+			}
+		});
+
+		if (index !== -1 && !local.isUserScrolling) {
+			var line = ui.lrcContainer.querySelector('.lrc-line[data-index="' + index + '"]');
+			if (line) {
+				var targetScroll = lineOffset - (containerHeight / 2) + (lineHeight / 2);
+				ui.lrcContainer.scrollTo({ top: targetScroll, behavior: 'smooth' });
+			}
+		}
+	}
 
     function syncAll() {
         var s = mgr.getState();

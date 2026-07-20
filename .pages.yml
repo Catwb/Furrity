@@ -4,7 +4,7 @@ content:
     label: 文章
     type: collection
     path: src/content/posts
-    format: frontmatter
+    format: yaml-frontmatter
     fields:
       - name: title
         type: string
@@ -37,12 +37,12 @@ content:
         label: 封面图
       - name: tags
         type: string
-        list: true
         label: 标签
+        list: true
       - name: category
         type: string
-        list: true
         label: 分类
+        list: true
       - name: lang
         type: string
         label: 语言
@@ -60,7 +60,7 @@ content:
     label: 单页
     type: collection
     path: src/content/spec
-    format: frontmatter
+    format: yaml-frontmatter
     fields:
       - name: title
         type: string
@@ -74,7 +74,8 @@ content:
     label: 小说
     type: collection
     path: src/content/novels
-    format: frontmatter
+    format: yaml-frontmatter
+    subfolders: true
     fields:
       - name: title
         type: string
@@ -123,8 +124,8 @@ content:
         label: 卷名
       - name: characters
         type: string
-        list: true
         label: 出场角色
+        list: true
       - name: wordCount
         type: number
         label: 字数
@@ -142,7 +143,7 @@ content:
     label: 兽设
     type: collection
     path: src/content/fursonas
-    format: frontmatter
+    format: yaml-frontmatter
     fields:
       - name: name
         type: string
@@ -163,11 +164,11 @@ content:
         label: 横幅图
       - name: images
         type: object
+        label: 图集
         list:
           collapsible:
             collapsed: true
             summary: "{src}"
-        label: 图集
         fields:
           - name: src
             type: image
@@ -177,8 +178,8 @@ content:
             label: 描述
       - name: alias
         type: string
-        list: true
         label: 别名
+        list: true
       - name: intro
         type: text
         label: 简介
@@ -201,12 +202,12 @@ content:
           time: true
       - name: content
         type: text
-        list: true
         label: 内容
+        list: true
       - name: images
         type: image
-        list: true
         label: 图片
+        list: true
       - name: pinned
         type: boolean
         label: 置顶

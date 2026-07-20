@@ -1,20 +1,20 @@
 ﻿---
-import { getEntry, render } from "astro:content";
-import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-
-const page = await getEntry("spec", "shuoshuo");
-if (!page) throw new Error("Page not found: shuoshuo");
-
-const { Content } = await render(page);
-const title = page.data.title || page.id;
+import ShuoshuoTimeline from "@components/features/ShuoshuoTimeline.svelte";
+import { profileConfig } from "../config/site";
+import avatarSrc from "@assets/images/avatar.jpg";
 ---
-<MainGridLayout title={title}>
-  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-    <div class="card-base z-10 px-9 py-6 relative w-full">
-      <Markdown class="mt-2">
-        <Content />
-      </Markdown>
+
+<MainGridLayout title="说说">
+  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
+    <div class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
+      <h1 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-6
+        before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
+        before:inline-block before:mr-3 before:align-middle">
+        动态
+      </h1>
+
+      <ShuoshuoTimeline avatar={avatarSrc.src} name={profileConfig.name} client:load />
     </div>
   </div>
 </MainGridLayout>

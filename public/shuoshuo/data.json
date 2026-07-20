@@ -1,0 +1,33 @@
+[
+  {
+    "date": "2026-07-20T15:00:00+08:00",
+    "content": [
+      "新增了说说功能 🎉",
+      "以后就在这里记录日常了。支持 **粗体**、*斜体* 和 [链接](https://example.com)"
+    ],
+    "pinned": true
+  },
+  {
+    "date": "2026-07-19T10:30:00+08:00",
+    "content": [
+      "今天天气真好",
+      "出门散步了一圈"
+    ]
+  },
+  {
+    "date": "2026-07-18T20:00:00+08:00",
+    "content": "一段简单的说说，只有一句话"
+  },
+  {
+    "date": "2026-07-17T12:00:00+08:00",
+    "content": [
+      "分享一些照片"
+    ],
+    "images": [
+      "https://picsum.photos/seed/a/400/300",
+      "https://picsum.photos/seed/b/400/400",
+      "https://picsum.photos/seed/c/300/400",
+      "https://picsum.photos/seed/d/400/300"
+    ]
+  }
+]

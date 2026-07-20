@@ -184,6 +184,16 @@ content:
         type: rich-text
         label: 详细介绍
 
+  - name: site-config
+    label: 站点配置
+    type: file
+    path: src/config/site.ts
+
+  - name: friend-links
+    label: 友链
+    type: file
+    path: src/config/friend-links.ts
+
   - name: shuoshuo
     label: 说说
     type: file

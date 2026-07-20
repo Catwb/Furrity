@@ -44,8 +44,8 @@ const novelsCollection = defineCollection({
 	schema: z.object({
 		title: z.string(),
 		description: z.string().optional().default(""),
-		published: z.date().optional(),
-		updated: z.date().optional(),
+		published: z.coerce.date().optional(),
+		updated: z.coerce.date().optional(),
 		draft: z.boolean().optional().default(false),
 
 		novel: z.string(),

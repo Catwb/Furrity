@@ -51,7 +51,9 @@ const STYLE = `.tag-plugin.poetry {
   border-bottom: 1px dashed oklch(0.85 0.02 var(--hue));
   line-height: 2;
   width: 100%;
-  white-space: pre-line;
+}
+.tag-plugin.poetry .content > .body p {
+  margin: 0;
 }
 .tag-plugin.poetry .content > .footer {
   font-style: italic;
@@ -59,6 +61,19 @@ const STYLE = `.tag-plugin.poetry {
   margin: 0.75rem 0;
   font-size: 0.875rem;
 }`
+
+function extractText(nodes) {
+  let text = ""
+  function walk(arr) {
+    for (const n of arr) {
+      if (!n) continue
+      if (n.type === "text") text += n.value
+      if (n.children) walk(n.children)
+    }
+  }
+  walk(nodes)
+  return text
+}
 
 function buildPoetry(node) {
   const props = node.properties || {}
@@ -75,7 +90,16 @@ function buildPoetry(node) {
   if (metaParts.length > 0) inner.push(h("div", { class: "meta" }, metaParts))
 
   if (children.length > 0) {
-    inner.push(h("div", { class: "body" }, children))
+    const text = extractText(children).trim()
+    if (text) {
+      const lines = text.split(/(?<=[。？！；])\s+/).filter(Boolean)
+      const bodyChildren = lines.length > 1
+        ? lines.map(line => h("p", {}, [line.trim()]))
+        : children
+      inner.push(h("div", { class: "body" }, bodyChildren))
+    } else {
+      inner.push(h("div", { class: "body" }, children))
+    }
   }
 
   if (props.footer) {

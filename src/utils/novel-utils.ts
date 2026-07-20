@@ -40,7 +40,7 @@ export async function getNovelMetas(): Promise<NovelMeta[]> {
 		const chapters = (grouped.get(key) || []).sort(
 			(a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0),
 		);
-		const wordCount = chapters.reduce((sum, ch) => sum + (ch.data.wordCount ?? 0), 0);
+		const wordCount = chapters.reduce((sum, ch) => sum + computeWordCount(ch.body), 0);
 		metas.push({
 			slug: key,
 			title: idx.data.novelTitle || idx.data.title,
@@ -90,5 +90,6 @@ export function getSeriesList(metas: NovelMeta[]): { name: string; novels: Novel
 		.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+import { computeWordCount } from "./word-count";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";

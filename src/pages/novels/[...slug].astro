@@ -5,6 +5,7 @@ import { Icon } from "astro-icon/components";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { computeWordCount } from "@utils/word-count";
 import { getAllNovelEntries, getNovelChapters, getCharactersByNovel } from "@utils/novel-utils";
 import { getChapterUrl, getNovelUrl } from "@utils/url-utils";
 
@@ -62,7 +63,7 @@ const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.lengt
                 <div class="flex gap-4">
                     <span class="flex items-center gap-1">
                         <Icon name="material-symbols:notes-rounded" class="text-sm" />
-                        {chapters.reduce((s, c) => s + (c.data.wordCount ?? 0), 0).toLocaleString()} {i18n(I18nKey.totalWords)}
+                        {chapters.reduce((s, c) => s + computeWordCount(c.body), 0).toLocaleString()} {i18n(I18nKey.totalWords)}
                     </span>
                     <span class="flex items-center gap-1">
                         <Icon name="material-symbols:library-books-rounded" class="text-sm" />
@@ -111,11 +112,9 @@ const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.lengt
                                 <span class="flex-1 min-w-0 font-medium text-black/80 dark:text-white/80">
                                     {ch.data.title}
                                 </span>
-                                {ch.data.wordCount !== undefined && (
-                                    <span class="text-xs text-black/40 dark:text-white/40 whitespace-nowrap">
-                                        {ch.data.wordCount.toLocaleString()} {i18n(I18nKey.wordCount)}
-                                    </span>
-                                )}
+                                <span class="text-xs text-black/40 dark:text-white/40 whitespace-nowrap">
+                                    {computeWordCount(ch.body).toLocaleString()} {i18n(I18nKey.wordCount)}
+                                </span>
                                 <Icon name="material-symbols:chevron-right-rounded" class="text-xl text-black/30 dark:text-white/30" />
                             </a>
                         ))}
@@ -153,11 +152,9 @@ const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.lengt
                         )}
                         {entry.data.title}
                     </h1>
-                    {entry.data.wordCount !== undefined && (
-                        <div class="text-xs text-black/40 dark:text-white/40 mt-2">
-                            {entry.data.wordCount.toLocaleString()} {i18n(I18nKey.wordsCount)}
-                        </div>
-                    )}
+                    <div class="text-xs text-black/40 dark:text-white/40 mt-2">
+                        {computeWordCount(entry.body).toLocaleString()} {i18n(I18nKey.wordsCount)}
+                    </div>
                     {entry.data.password && (
                         <div class="mt-2">
                             <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50">

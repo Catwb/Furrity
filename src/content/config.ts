@@ -58,7 +58,6 @@ const novelsCollection = defineCollection({
 		chapter: z.number().optional(),
 		part: z.number().optional(),
 		characters: z.array(z.string()).optional().default([]),
-		wordCount: z.number().optional(),
 		password: z.string().optional().default(""),
 		passwordHint: z.string().optional().default(""),
 	}),

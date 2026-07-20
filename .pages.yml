@@ -126,9 +126,6 @@ content:
         type: string
         label: 出场角色
         list: true
-      - name: wordCount
-        type: number
-        label: 字数
       - name: password
         type: string
         label: 访问密码

@@ -315,6 +315,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "一只狐狸敲出的一个奇迹",
 				color: "#F4B569",
 			},
+			{
+				name: "知行间",
+				url: "https://blog.xp6.top",
+				avatar: "https://dl.xp6.top/view.php/e2b4caebe61dcd98846ded5f901a7328.png",
+				description: "一个普通的职高生",
+			},
 		],
 	},
 ];

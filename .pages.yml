@@ -1,0 +1,213 @@
+media: public/uploads
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/posts
+    format: frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+        label: 标题
+      - name: published
+        type: date
+        required: true
+        label: 发布时间
+        options:
+          time: true
+      - name: updated
+        type: date
+        label: 更新时间
+        options:
+          time: true
+      - name: draft
+        type: boolean
+        label: 草稿
+        default: false
+      - name: pinned
+        type: boolean
+        label: 置顶
+        default: false
+      - name: description
+        type: text
+        label: 摘要
+      - name: image
+        type: image
+        label: 封面图
+      - name: tags
+        type: string
+        list: true
+        label: 标签
+      - name: category
+        type: string
+        list: true
+        label: 分类
+      - name: lang
+        type: string
+        label: 语言
+      - name: password
+        type: string
+        label: 访问密码
+      - name: passwordHint
+        type: string
+        label: 密码提示
+      - name: body
+        type: rich-text
+        label: 正文
+
+  - name: spec
+    label: 单页
+    type: collection
+    path: src/content/spec
+    format: frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+        label: 标题
+      - name: body
+        type: rich-text
+        label: 正文
+
+  - name: novels
+    label: 小说
+    type: collection
+    path: src/content/novels
+    format: frontmatter
+    fields:
+      - name: title
+        type: string
+        required: true
+        label: 章节标题
+      - name: novel
+        type: string
+        label: 小说标识
+      - name: novelTitle
+        type: string
+        label: 小说名称
+      - name: description
+        type: text
+        label: 简介
+      - name: published
+        type: date
+        label: 发布时间
+        options:
+          time: true
+      - name: updated
+        type: date
+        label: 更新时间
+        options:
+          time: true
+      - name: draft
+        type: boolean
+        label: 草稿
+        default: false
+      - name: chapter
+        type: number
+        label: 章节号
+      - name: part
+        type: number
+        label: 分节号
+      - name: series
+        type: string
+        label: 系列
+      - name: seriesOrder
+        type: number
+        label: 系列顺序
+      - name: volume
+        type: number
+        label: 卷号
+      - name: volumeTitle
+        type: string
+        label: 卷名
+      - name: characters
+        type: string
+        list: true
+        label: 出场角色
+      - name: wordCount
+        type: number
+        label: 字数
+      - name: password
+        type: string
+        label: 访问密码
+      - name: passwordHint
+        type: string
+        label: 密码提示
+      - name: body
+        type: rich-text
+        label: 正文
+
+  - name: fursonas
+    label: 兽设
+    type: collection
+    path: src/content/fursonas
+    format: frontmatter
+    fields:
+      - name: name
+        type: string
+        required: true
+        label: 名称
+      - name: species
+        type: string
+        required: true
+        label: 物种
+      - name: color
+        type: string
+        label: 代表色
+      - name: avatar
+        type: image
+        label: 头像
+      - name: banner
+        type: image
+        label: 横幅图
+      - name: images
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{src}"
+        label: 图集
+        fields:
+          - name: src
+            type: image
+            label: 图片
+          - name: alt
+            type: string
+            label: 描述
+      - name: alias
+        type: string
+        list: true
+        label: 别名
+      - name: intro
+        type: text
+        label: 简介
+      - name: body
+        type: rich-text
+        label: 详细介绍
+
+  - name: shuoshuo
+    label: 说说
+    type: file
+    path: public/shuoshuo/data.json
+    format: json
+    list: true
+    fields:
+      - name: date
+        type: date
+        required: true
+        label: 时间
+        options:
+          time: true
+      - name: content
+        type: text
+        list: true
+        label: 内容
+      - name: images
+        type: image
+        list: true
+        label: 图片
+      - name: pinned
+        type: boolean
+        label: 置顶
+        default: false

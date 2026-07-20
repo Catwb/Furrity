@@ -17,6 +17,16 @@ export async function GET(context: APIContext) {
 
 	const items = await Promise.all(
 		blog.map(async (post) => {
+			if (post.data.password) {
+				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
+				return {
+					title: post.data.title,
+					pubDate: post.data.published,
+					description: post.data.description || "",
+					link: url(`/posts/${linkSlug}/`),
+					content: "本文已加密保护，请访问网站查看。",
+				};
+			}
 			try {
 				const { Content } = await render(post);
 				const rawHtml = await container.renderToString(Content);

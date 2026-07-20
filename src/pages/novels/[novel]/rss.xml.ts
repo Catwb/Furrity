@@ -36,6 +36,9 @@ export async function GET(context: APIContext) {
 	const novelUrl = `${baseUrl}/novels/${slug}/`;
 
 	async function renderEntry(entry: NovelEntry, title: string, desc: string, link: string) {
+		if (entry.data.password) {
+			return { title, description: desc, link, content: "本章已加密保护，请访问网站查看。" };
+		}
 		try {
 			const { Content } = await render(entry);
 			const rawHtml = await container.renderToString(Content);

@@ -1,0 +1,165 @@
+---
+import { encryptContent } from "@utils/crypto-utils";
+
+interface Props {
+	password: string;
+	slug: string;
+	hint?: string;
+}
+
+const { password, slug, hint = "" } = Astro.props;
+const rawHtml = await Astro.slots.render("default");
+const encryptedData = encryptContent(rawHtml, password, slug);
+---
+
+<div
+  id="encrypted-container"
+  data-encrypted={encryptedData}
+  data-slug={slug}
+>
+  <!-- Lock UI -->
+  <div id="password-ui" class="flex justify-center py-16 px-4">
+    <div class="card-base flex flex-col items-center gap-3 max-w-100 w-full p-8">
+      <svg class="text-7xl text-[var(--primary)]" xmlns="http://www.w3.org/2000/svg" height="64px" viewBox="0 -960 960 960" width="64px" fill="currentColor"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80zm0-80h480v-400H240zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280M360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85zM240-160v-400z"/></svg>
+
+      <h2 class="text-lg font-bold text-black/80 dark:text-white/80 m-0">密码保护</h2>
+      <p class="text-sm text-black/40 dark:text-white/40 text-center m-0">此内容已被密码保护，请输入密码查看。</p>
+
+      {hint && (
+        <p class="text-xs text-black/30 dark:text-white/30 text-center m-0">提示：{hint}</p>
+      )}
+
+      <form id="password-form" class="w-full mt-2 space-y-2">
+        <input
+          id="password-input"
+          name="password"
+          type="password"
+          placeholder="请输入密码"
+          autocomplete="off"
+          class="w-full px-3 py-2 rounded-lg text-sm bg-black/5 dark:bg-white/10
+                 border border-black/8 dark:border-white/8
+                 text-black/80 dark:text-white/80 placeholder-black/25 dark:placeholder-white/25
+                 outline-none focus:border-[var(--primary)] transition"
+        />
+        <button
+          type="submit"
+          class="w-full py-2 rounded-lg text-sm font-medium bg-[var(--primary)] text-white dark:text-black/70
+                 hover:opacity-85 active:scale-[0.98] transition-all"
+        >
+          解锁
+        </button>
+      </form>
+
+      <p id="password-error" class="text-xs text-red-500 dark:text-red-400 m-0 hidden">密码错误，请重试。</p>
+    </div>
+  </div>
+
+  <!-- Decrypted content injected here -->
+  <div id="decrypted-content" class="hidden"></div>
+</div>
+
+<script is:inline>
+(function() {
+  var ITERATIONS = 100000;
+  var SALT_LEN = 16;
+  var IV_LEN = 12;
+  var TAG_LEN = 16;
+
+  var container = document.getElementById('encrypted-container');
+  if (!container) return;
+
+  var encryptedData = container.getAttribute('data-encrypted');
+  var slug = container.getAttribute('data-slug');
+  var cacheKey = 'pw:' + slug;
+
+  var ui = document.getElementById('password-ui');
+  var form = document.getElementById('password-form');
+  var input = document.getElementById('password-input');
+  var errorEl = document.getElementById('password-error');
+  var contentEl = document.getElementById('decrypted-content');
+
+  function showContent(html) {
+    contentEl.innerHTML = html;
+    contentEl.classList.remove('hidden');
+    ui.classList.add('hidden');
+    var scripts = contentEl.querySelectorAll('script');
+    for (var i = 0; i < scripts.length; i++) {
+      var old = scripts[i];
+      var ns = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        ns.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      ns.textContent = old.textContent;
+      old.parentNode.replaceChild(ns, old);
+    }
+    setTimeout(function() {
+      document.dispatchEvent(new CustomEvent('password:decrypted'));
+    }, 50);
+  }
+
+  function showError() {
+    errorEl.classList.remove('hidden');
+  }
+
+  function hideError() {
+    errorEl.classList.add('hidden');
+  }
+
+  function base64ToBytes(b64) {
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) {
+      bytes[i] = bin.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  async function decrypt(pwd) {
+    var raw = base64ToBytes(encryptedData);
+    var salt = raw.slice(0, SALT_LEN);
+    var iv = raw.slice(SALT_LEN, SALT_LEN + IV_LEN);
+    var authTag = raw.slice(SALT_LEN + IV_LEN, SALT_LEN + IV_LEN + TAG_LEN);
+    var ciphertext = raw.slice(SALT_LEN + IV_LEN + TAG_LEN);
+
+    var combined = new Uint8Array(ciphertext.length + TAG_LEN);
+    combined.set(ciphertext);
+    combined.set(authTag, ciphertext.length);
+
+    var enc = new TextEncoder();
+    var keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(pwd), 'PBKDF2', false, ['deriveBits', 'deriveKey']
+    );
+    var key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt, iterations: ITERATIONS, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+    var decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, combined);
+    return new TextDecoder().decode(decrypted);
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var pwd = input.value.trim();
+    if (!pwd) return;
+    hideError();
+    decrypt(pwd).then(function(html) {
+      sessionStorage.setItem(cacheKey, pwd);
+      showContent(html);
+    }).catch(function() {
+      showError();
+    });
+  });
+
+  var cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    decrypt(cached).then(function(html) {
+      showContent(html);
+    }).catch(function() {
+      sessionStorage.removeItem(cacheKey);
+    });
+  }
+})();
+</script>

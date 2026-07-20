@@ -124,6 +124,18 @@ async function main() {
     description = await ask("📝 描述 (可留空): ")
   }
 
+  // 获取密码（仅文章）
+  let password = parsed.flags.password || ""
+  let passwordHint = parsed.flags.hint || ""
+  if (isPost) {
+    if (!password) {
+      password = await ask("🔒 密码 (密码保护，留空则不加密): ")
+    }
+    if (password && !passwordHint) {
+      passwordHint = await ask("💡 密码提示 (可留空): ")
+    }
+  }
+
   // 创建文件
   const slug = toSlug(title)
   const frontmatter = getDateTime()
@@ -138,6 +150,8 @@ async function main() {
 
   const lines = [`---`, `title: ${title}`, `published: ${frontmatter}`, `abbrlink: '${abbrlink}'`]
   if (description) lines.push(`description: ${description}`)
+  if (password) lines.push(`password: ${password}`)
+  if (passwordHint) lines.push(`passwordHint: ${passwordHint}`)
   if (tags) lines.push(`tags: ${tagsArray}`)
   if (category) {
     const cats = category.split(",").map((c) => c.trim()).filter(Boolean)

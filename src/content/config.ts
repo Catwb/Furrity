@@ -23,6 +23,8 @@ const postsCollection = defineCollection({
 			}),
 		lang: z.string().optional().default(""),
 		abbrlink: z.string().optional(),
+		password: z.string().optional().default(""),
+		passwordHint: z.string().optional().default(""),
 
 		/* For internal use */
 		prevTitle: z.string().default(""),
@@ -57,6 +59,8 @@ const novelsCollection = defineCollection({
 		part: z.number().optional(),
 		characters: z.array(z.string()).optional().default([]),
 		wordCount: z.number().optional(),
+		password: z.string().optional().default(""),
+		passwordHint: z.string().optional().default(""),
 	}),
 });
 

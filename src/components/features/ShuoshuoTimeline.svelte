@@ -132,7 +132,7 @@ onMount(async () => {
 {/if}
 
 {#if viewingIdx >= 0}
-	<div class="absolute inset-0 z-50 flex items-center justify-center bg-black/85 rounded-[var(--radius-large)]">
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85">
 		<button onclick={closeViewer} class="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-xl leading-none">&times;</button>
 		{#if viewingImgs.length > 1}
 			<button onclick={prevImg} class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-2xl leading-none">&lsaquo;</button>

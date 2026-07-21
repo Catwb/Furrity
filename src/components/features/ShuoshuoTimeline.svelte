@@ -35,7 +35,7 @@ function parseInline(text: string): string {
 
 function renderContent(entry: ShuoshuoEntry): string {
 	const paragraphs = Array.isArray(entry.content) ? entry.content : [entry.content];
-	return paragraphs.map((p) => `<p class="leading-relaxed mb-2 last:mb-0">${parseInline(p)}</p>`).join("\n");
+	return paragraphs.map((p) => `		<p class="leading-relaxed mb-2 last:mb-0 break-words">${parseInline(p)}</p>`).join("\n");
 }
 
 let viewingImgs: string[] = [];
@@ -99,7 +99,7 @@ onMount(async () => {
 {:else if entries.length === 0}
 	<div class="flex justify-center py-16 text-black/40 dark:text-white/40 text-sm">还没有说说</div>
 {:else}
-	<div class="space-y-6">
+	<div class="space-y-4 sm:space-y-6">
 		{#each entries as entry, i (entry.date + i)}
 			<div class="flex gap-3">
 				<div class="shrink-0 mt-1">
@@ -116,10 +116,10 @@ onMount(async () => {
 					<div class="card-base rounded-xl rounded-tl-md px-4 py-3 text-sm text-black/80 dark:text-white/80">
 						{@html renderContent(entry)}
 						{#if entry.images?.length}
-							<div class="grid gap-1.5 mt-2" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))">
+							<div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 mt-2">
 								{#each entry.images as img, j}
 									<button onclick={() => openViewer(j, entry.images!)} class="block overflow-hidden rounded-lg bg-black/5 dark:bg-white/5 cursor-pointer w-full text-left p-0 border-0">
-										<img src={img} loading="lazy" class="w-full h-36 object-cover hover:scale-105 transition-transform duration-300" />
+										<img src={img} loading="lazy" class="w-full h-28 sm:h-36 object-cover hover:scale-105 transition-transform duration-300" />
 									</button>
 								{/each}
 							</div>
@@ -133,12 +133,12 @@ onMount(async () => {
 
 {#if viewingIdx >= 0}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85">
-		<button onclick={closeViewer} class="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-xl leading-none">&times;</button>
+		<button onclick={closeViewer} class="absolute top-4 right-4 z-10 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-2xl sm:text-xl leading-none">&times;</button>
 		{#if viewingImgs.length > 1}
-			<button onclick={prevImg} class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-2xl leading-none">&lsaquo;</button>
-			<button onclick={nextImg} class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-2xl leading-none">&rsaquo;</button>
+			<button onclick={prevImg} class="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-3xl sm:text-2xl leading-none">&lsaquo;</button>
+			<button onclick={nextImg} class="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition cursor-pointer border-0 text-3xl sm:text-2xl leading-none">&rsaquo;</button>
 			<div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 text-white/70 text-sm font-medium bg-black/40 px-3 py-1 rounded-full">{viewingIdx + 1} / {viewingImgs.length}</div>
 		{/if}
-		<img src={viewingImgs[viewingIdx]} onclick={(e) => e.stopPropagation()} class="max-w-full max-h-[80vh] object-contain select-none px-4" />
+		<img src={viewingImgs[viewingIdx]} onclick={(e) => e.stopPropagation()} class="max-w-full max-h-[90vh] sm:max-h-[85vh] object-contain select-none px-4" />
 	</div>
 {/if}

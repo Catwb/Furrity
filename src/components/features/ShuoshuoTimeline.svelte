@@ -69,7 +69,9 @@ function onKeydown(e: KeyboardEvent) {
 onMount(async () => {
 	document.addEventListener("keydown", onKeydown);
 	try {
-		const res = await fetch(fetchUrl);
+		const cacheBuster = `t=${Date.now()}`;
+		const url = fetchUrl.includes("?") ? `${fetchUrl}&${cacheBuster}` : `${fetchUrl}?${cacheBuster}`;
+		const res = await fetch(url);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data: ShuoshuoEntry[] = await res.json();
 		entries = data.sort((a, b) => {

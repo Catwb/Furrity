@@ -194,28 +194,3 @@ content:
     type: file
     path: src/config/friend-links.ts
 
-  - name: shuoshuo
-    label: 说说
-    type: file
-    path: public/shuoshuo/data.json
-    format: json
-    list: true
-    fields:
-      - name: date
-        type: date
-        required: true
-        label: 时间
-        options:
-          time: true
-      - name: content
-        type: text
-        label: 内容
-        list: true
-      - name: images
-        type: image
-        label: 图片
-        list: true
-      - name: pinned
-        type: boolean
-        label: 置顶
-        default: false

@@ -4,9 +4,10 @@ import { onMount } from "svelte";
 interface Props {
 	avatar: string;
 	name: string;
+	fetchUrl: string;
 }
 
-let { avatar, name, ..._rest }: Props = $props();
+let { avatar, name, fetchUrl, ..._rest }: Props = $props();
 
 interface ShuoshuoEntry {
 	date: string;
@@ -68,7 +69,7 @@ function onKeydown(e: KeyboardEvent) {
 onMount(async () => {
 	document.addEventListener("keydown", onKeydown);
 	try {
-		const res = await fetch("/shuoshuo/data.json");
+		const res = await fetch(fetchUrl);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data: ShuoshuoEntry[] = await res.json();
 		entries = data.sort((a, b) => {

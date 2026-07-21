@@ -2,6 +2,7 @@
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import ShuoshuoTimeline from "@components/features/ShuoshuoTimeline.svelte";
 import { profileConfig } from "../config/site";
+import { shuoshuoConfig } from "../config/shuoshuo";
 import avatarSrc from "@assets/images/avatar.jpg";
 ---
 
@@ -14,7 +15,7 @@ import avatarSrc from "@assets/images/avatar.jpg";
         动态
       </h1>
 
-      <ShuoshuoTimeline avatar={avatarSrc.src} name={profileConfig.name} client:load />
+      <ShuoshuoTimeline avatar={avatarSrc.src} name={profileConfig.name} fetchUrl={shuoshuoConfig.fetchUrl} client:load />
     </div>
   </div>
 </MainGridLayout>

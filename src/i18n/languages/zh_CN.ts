@@ -53,6 +53,9 @@ export const zh_CN: Translation = {
 
 	[Key.friends]: "友链",
 
+	[Key.outdateWarning]: "本文发布于 {ago}，部分内容可能已过时。",
+	[Key.outdateDay]: "天前",
+
 	[Key.music]: "音乐",
 	[Key.musicNoPlaying]: "暂未播放",
 	[Key.musicLyrics]: "歌词",

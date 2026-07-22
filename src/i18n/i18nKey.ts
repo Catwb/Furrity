@@ -49,6 +49,9 @@ enum I18nKey {
 	chaptersCount = "chaptersCount",
 	friends = "friends",
 
+	outdateWarning = "outdateWarning",
+	outdateDay = "outdateDay",
+
 	music = "music",
 	musicNoPlaying = "musicNoPlaying",
 	musicLyrics = "musicLyrics",

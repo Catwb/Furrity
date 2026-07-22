@@ -10,8 +10,9 @@ import { getSortedPosts } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { computeAbbrlink } from "@utils/abbrlink-utils";
 import { Icon } from "astro-icon/components";
-import { licenseConfig } from "../../config/site";
+import { licenseConfig, outdateWarningConfig } from "../../config/site";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
+import OutdateWarning from "../../components/misc/OutdateWarning.astro";
 import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config/site";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
@@ -106,6 +107,13 @@ const jsonLd = {
                         tags={entry.data.tags}
                         category={entry.data.category}
                 ></PostMetadata>
+                {outdateWarningConfig.enable && (
+                    <OutdateWarning
+                        published={entry.data.published}
+                        updated={entry.data.updated}
+                        thresholdDays={outdateWarningConfig.thresholdDays}
+                    />
+                )}
                 <div class="flex flex-wrap items-center gap-3">
                     {entry.data.password && (
                         <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50">

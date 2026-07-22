@@ -4,6 +4,7 @@ import type {
 	LicenseConfig,
 	MetingConfig,
 	NavBarConfig,
+	OutdateWarningConfig,
 	ProfileConfig,
 	SiteConfig,
 } from "../types/config";
@@ -192,6 +193,11 @@ export const licenseConfig: LicenseConfig = {
 	enable: true,
 	name: "CC BY-NC-SA 4.0",
 	url: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+};
+
+export const outdateWarningConfig: OutdateWarningConfig = {
+	enable: true,
+	thresholdDays: 180,
 };
 
 export const expressiveCodeConfig: ExpressiveCodeConfig = {

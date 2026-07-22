@@ -1,0 +1,33 @@
+---
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+
+interface Props {
+	published: Date;
+	updated?: Date;
+	thresholdDays: number;
+}
+
+const { published, updated, thresholdDays } = Astro.props;
+
+const now = new Date();
+const diffMs = now.getTime() - published.getTime();
+const diffDays = Math.floor(diffMs / 86400000);
+
+const isOutdated = diffDays >= thresholdDays;
+
+function getAgoText(date: Date): string {
+	const days = Math.floor((now.getTime() - date.getTime()) / 86400000);
+	return `${days} ${i18n(I18nKey.outdateDay)}`;
+}
+
+const agoText = getAgoText(updated && updated.getTime() !== published.getTime() ? updated : published);
+const message = i18n(I18nKey.outdateWarning).replace("{ago}", agoText);
+---
+
+{isOutdated && (
+	<div class="flex items-center gap-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 px-4 py-3 mb-5 onload-animation">
+		<span class="text-base shrink-0 leading-none">⏰</span>
+		<p class="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">{message}</p>
+	</div>
+)}

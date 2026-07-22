@@ -6,15 +6,7 @@ export type SiteConfig = {
 
 	lang:
 		| "en"
-		| "zh_CN"
-		| "zh_TW"
-		| "ja"
-		| "ko"
-		| "es"
-		| "th"
-		| "vi"
-		| "tr"
-		| "id";
+		| "zh_CN";
 
 	themeColor: {
 		hue: number;
@@ -53,6 +45,7 @@ export type SiteConfig = {
 	custom?: CustomCodeConfig;
 	preconnect?: string[];
 	abbrlink?: AbbrlinkConfig;
+	outdateWarning?: OutdateWarningConfig;
 };
 
 export type TwikooConfig = {
@@ -124,6 +117,11 @@ export type Favicon = {
 	src: string;
 	theme?: "light" | "dark";
 	sizes?: string;
+};
+
+export type OutdateWarningConfig = {
+	enable: boolean;
+	thresholdDays: number;
 };
 
 export type FriendLink = {

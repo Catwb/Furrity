@@ -14,6 +14,15 @@ declare global {
 	}
 }
 
+declare module "@fontsource-variable/jetbrains-mono" {
+	const _: never;
+	export default _;
+}
+declare module "@fontsource-variable/jetbrains-mono/wght-italic.css" {
+	const _: never;
+	export default _;
+}
+
 interface SearchResult {
 	url: string;
 	meta: {

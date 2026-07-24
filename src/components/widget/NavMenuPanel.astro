@@ -13,7 +13,9 @@ type FlatNavItem = { name: string; url: string; external?: boolean; depth: numbe
 function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] {
 	const result: FlatNavItem[] = [];
 	for (const item of items) {
-		result.push({ name: item.name, url: item.url, external: item.external, depth });
+		if (item.url) {
+			result.push({ name: item.name, url: item.url, external: item.external, depth });
+		}
 		if (item.children && item.children.length > 0) {
 			result.push(...flattenNavItems(item.children, depth + 1));
 		}

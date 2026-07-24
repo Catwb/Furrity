@@ -103,7 +103,7 @@ if (gallery) {
 }
 
 document.querySelectorAll(".fursona-gallery img").forEach(function (img) {
-	img.addEventListener("error", function () {
+	img.addEventListener("error", function (this: HTMLImageElement) {
 		this.onerror = null;
 		this.style.display = "none";
 		var parent = this.parentElement;

@@ -1,8 +1,6 @@
 import type {
-	AbbrlinkConfig,
 	ExpressiveCodeConfig,
 	LicenseConfig,
-	MetingConfig,
 	NavBarConfig,
 	OutdateWarningConfig,
 	ProfileConfig,

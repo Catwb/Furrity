@@ -38,7 +38,7 @@ import { rehypeSpacing } from "./src/plugins/rehype-spacing.mjs";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://blog.245179.xyz/",
+	site: "https://blog.furryawa.com/",
 	base: "/",
 	trailingSlash: "always",
 	build: {

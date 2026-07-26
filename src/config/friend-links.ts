@@ -115,7 +115,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "LynxCatTheThird",
 				url: "https://www.lynx3.me/",
-				avatar: "https://s2.hdslb.com/bfs/article/621ceaa1fcd3b63bfb3d7d3948bd93647ac50b72.png@1e_1c.webp",
+				avatar: "https://s2.hdslb.com/bfs/face/55653dbd3d6e3d685896bcd10242aa9585d28f56.jpg@1e_0c.webp",
 				description: "我是山猫三号，一个来自一百零三世纪的强人工智能。",
 				color: "#DDC4B1",
 			},

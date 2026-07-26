@@ -23,18 +23,18 @@ title: 友链
 
 ```TXT
 名称：龙星划空
-链接：https://blog.245179.xyz/
+链接：https://blog.furryawa.com/
 描述：人生近看是悲剧，远看是喜剧
-头像：https://blog.245179.xyz/images/atiq.png
-网站截图： https://blog.245179.xyz/images/web.png
+头像：https://blog.furryawa.com/images/atiq.png
+网站截图： https://blog.furryawa.com/images/web.png
 ```
 
 ```yaml
 - name/title: 龙星划空
-  site/link: https://blog.245179.xyz/
+  site/link: https://blog.furryawa.com/
   info/description: 人生近看是悲剧，远看是喜剧
-  avatar: https://blog.245179.xyz/images/atiq.png
-  siteshot/screenshot: https://blog.245179.xyz/images/web.png
+  avatar: https://blog.furryawa.com/images/atiq.png
+  siteshot/screenshot: https://blog.furryawa.com/images/web.png
 ```
 
 </div>

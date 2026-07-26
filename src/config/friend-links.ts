@@ -38,8 +38,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			},
 			{
 				name: "Creeper005の小站",
-				url: "https://normal.qrasa.top/",
-				avatar: "https://normal.qrasa.top/img/avatar.png",
+				url: "https://creeper005bili.github.io/",
+				avatar: "https://creeper005bili.github.io/img/avatar.png",
 				description: "坐牢日常",
 				color: "rgb(57, 197, 187)",
 			},

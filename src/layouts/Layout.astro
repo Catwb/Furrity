@@ -142,6 +142,7 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
 		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
+			const root = document.documentElement;
 			// Read geometry first (before any DOM writes)
 			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 			offset = offset - offset % 4;
@@ -150,23 +151,23 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			switch (theme) {
 				case LIGHT_MODE:
-					document.documentElement.classList.remove('dark');
+					root.classList.remove('dark');
 					break
 				case DARK_MODE:
-					document.documentElement.classList.add('dark');
+					root.classList.add('dark');
 					break
 				case AUTO_MODE:
 					if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-						document.documentElement.classList.add('dark');
+						root.classList.add('dark');
 					} else {
-						document.documentElement.classList.remove('dark');
+						root.classList.remove('dark');
 					}
 			}
 
 			// Load the hue from local storage
 			const hue = localStorage.getItem('hue') || configHue;
-			document.documentElement.style.setProperty('--hue', hue);
-			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+			root.style.setProperty('--hue', hue);
+			root.style.setProperty('--banner-height-extend', `${offset}px`);
 		</script>
 		<style define:vars={{
 			configHue,
@@ -552,18 +553,14 @@ const setup = () => {
 	})
 */
 	window.swup.hooks.on('link:click', () => {
-		// Read geometry first
 		if (bannerEnabled) {
-			let threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 72 - 16
-			let navbar = document.getElementById('navbar-wrapper')
-			if (navbar && document.body.classList.contains('lg:is-home')) {
-				if (document.body.scrollTop >= threshold || document.documentElement.scrollTop >= threshold) {
-					navbar.classList.add('navbar-hidden')
-				}
+			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 72 - 16;
+			const n = navbar || document.getElementById('navbar-wrapper');
+			if (n && body.classList.contains('lg:is-home')) {
+				n.classList.toggle('navbar-hidden', (body.scrollTop || docEl.scrollTop) >= threshold);
 			}
 		}
-		// Write after reads
-		document.documentElement.style.setProperty('--content-delay', '0ms')
+		docEl.style.setProperty('--content-delay', '0ms')
 	})
 	window.swup.hooks.on('content:replace', () => {
 		requestAnimationFrame(() => {
@@ -637,53 +634,50 @@ if (window?.swup?.hooks) {
 	setTimeout(tryInit, 600)
 }
 
+const docEl = document.documentElement;
+const body = document.body;
 let backToTopBtn = document.getElementById('back-to-top-btn');
 let toc = document.getElementById('toc-wrapper');
-let navbar = document.getElementById('navbar-wrapper')
+let navbar = document.getElementById('navbar-wrapper');
+
+let scrollRafId = 0;
 function scrollFunction() {
-	let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
-	let bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100)
+	if (scrollRafId) return;
+	scrollRafId = requestAnimationFrame(() => {
+		scrollRafId = 0;
+		// batch all reads first
+		const scrollPos = body.scrollTop || docEl.scrollTop;
+		const vh = window.innerHeight;
+		const bannerH = vh * (BANNER_HEIGHT / 100);
 
-	if (backToTopBtn) {
-		if (scrollPos > bannerHeight) {
-			backToTopBtn.classList.remove('hide')
-		} else {
-			backToTopBtn.classList.add('hide')
+		// batch all writes
+		if (backToTopBtn) {
+			backToTopBtn.classList.toggle('hide', scrollPos <= bannerH);
 		}
-	}
-
-	if (bannerEnabled && toc) {
-		if (scrollPos > bannerHeight) {
-			toc.classList.remove('toc-hide')
-		} else {
-			toc.classList.add('toc-hide')
+		if (bannerEnabled && toc) {
+			toc.classList.toggle('toc-hide', scrollPos <= bannerH);
 		}
-	}
-
-	if (!bannerEnabled) return
-	if (navbar) {
-		const NAVBAR_HEIGHT = 72
-		const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16
-
-		let bannerHeight = BANNER_HEIGHT
-		if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
-			bannerHeight = BANNER_HEIGHT_HOME
+		if (bannerEnabled && navbar) {
+			let bh = BANNER_HEIGHT;
+			if (body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
+				bh = BANNER_HEIGHT_HOME;
+			}
+			const threshold = vh * (bh / 100) - 72 - MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16 - 16;
+			navbar.classList.toggle('navbar-hidden', scrollPos >= threshold);
 		}
-		let threshold = window.innerHeight * (bannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16
-		if (scrollPos >= threshold) {
-			navbar.classList.add('navbar-hidden')
-		} else {
-			navbar.classList.remove('navbar-hidden')
-		}
-	}
+	});
 }
-window.onscroll = scrollFunction
+window.onscroll = scrollFunction;
 
+let resizeRafId = 0;
 window.onresize = () => {
-	// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
-	let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-	offset = offset - offset % 4;
-	document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+	if (resizeRafId) return;
+	resizeRafId = requestAnimationFrame(() => {
+		resizeRafId = 0;
+		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+		offset = offset - offset % 4;
+		docEl.style.setProperty('--banner-height-extend', `${offset}px`);
+	});
 }
 
 </script>

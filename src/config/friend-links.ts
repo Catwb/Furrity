@@ -34,6 +34,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				name: "辞入森川",
 				url: "https://yuluo.xyz/",
 				description: "辞尽俗世纷扰，只身步入森与川。",
+				avatar: "https://q1.qlogo.cn/g?b=qq&nk=1935734608&s=100"
 			},
 			{
 				name: "Creeper005の小站",

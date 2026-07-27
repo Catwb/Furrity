@@ -183,6 +183,9 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		optimizeDeps: {
+			include: ["photoswipe"],
+		},
 		build: {
 			rollupOptions: {
 				onwarn(warning, warn) {

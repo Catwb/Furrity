@@ -96,8 +96,7 @@ export const siteConfig: SiteConfig = {
 		threshold: 200,
 	},
 	preconnect: [
-		"https://cdn.245179.xyz",
-		"https://unpkg.com",
+		{ href: "https://cdn.245179.xyz", crossorigin: "anonymous" },
 	],
 	custom: {
 		head: [

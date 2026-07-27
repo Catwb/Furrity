@@ -43,7 +43,7 @@ export type SiteConfig = {
 		threshold?: number;
 	};
 	custom?: CustomCodeConfig;
-	preconnect?: string[];
+	preconnect?: (string | { href: string; crossorigin?: string })[];
 	abbrlink?: AbbrlinkConfig;
 	outdateWarning?: OutdateWarningConfig;
 };

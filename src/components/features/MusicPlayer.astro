@@ -823,7 +823,16 @@ const widgetId =
         syncAll();
     } else {
         setLoading(true);
-        mgr.init();
+        function deferredInit() {
+            if (document.readyState === 'complete') {
+                setTimeout(function () { mgr.init(); }, 3000);
+            } else {
+                window.addEventListener('load', function () {
+                    setTimeout(function () { mgr.init(); }, 3000);
+                });
+            }
+        }
+        deferredInit();
     }
 })();
 </script>

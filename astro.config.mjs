@@ -57,7 +57,7 @@ export default defineConfig({
 			containers: ["main", "#toc"],
 			smoothScrolling: true,
 			cache: true,
-			preload: false,
+			preload: true,
 			accessibility: true,
 			updateHead: true,
 			updateBodyClass: false,
@@ -188,6 +188,18 @@ export default defineConfig({
 		},
 		build: {
 			rollupOptions: {
+				output: {
+					manualChunks(id) {
+						if (id.includes('node_modules/swup')) return 'swup';
+						if (id.includes('node_modules/overlayscrollbars')) return 'overlayscrollbars';
+						if (id.includes('node_modules/photoswipe')) return 'photoswipe';
+						if (id.includes('_astro/') && id.includes('.js') && !id.includes('pagefind')) {
+							if (id.includes('Icon') || id.includes('iconify')) return 'icons';
+							if (id.includes('Search') || id.includes('DisplaySettings')) return 'widgets';
+							if (id.includes('translation') || id.includes('setting-utils') || id.includes('url-utils')) return 'utils';
+						}
+					},
+				},
 				onwarn(warning, warn) {
 					// temporarily suppress this warning
 					if (

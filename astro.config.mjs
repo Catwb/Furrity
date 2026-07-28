@@ -36,6 +36,70 @@ import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-cop
 import { rehypeMermaidComponent } from "./src/plugins/rehype-tags/mermaid.mjs";
 import { rehypeExternalLinks } from "./src/plugins/rehype-external-links.mjs";
 import { rehypeSpacing } from "./src/plugins/rehype-spacing.mjs";
+// Tab 代码块 — 不再使用 rehype-code-group，改为内联自定义 rehypeCodeGroupWrapper
+
+/* 自定义 rehype-code-group 实现：用 <hr> 切分面板 */
+import { SKIP, visit } from "unist-util-visit";
+
+const rehypeCodeGroupWrapper = () => {
+  return (tree) => {
+    const groups = [];
+    visit(tree, "element", (node, index, parent) => {
+      if (!parent || index === undefined) return;
+      if (node.tagName !== "p") return;
+      const txt = node.children?.[0]?.value ?? "";
+      const m = txt.match(/^::: code-group labels=\[([^\]]+)\]/);
+      if (m) {
+        groups.push({ parent, startIdx: index, labels: m[1].split(",").map(s=>s.trim()) });
+        return SKIP;
+      }
+      if (txt.trim() === ":::") {
+        const g = groups.pop();
+        if (g && g.parent === parent) {
+          const between = parent.children.slice(g.startIdx + 1, index);
+          const panels = [];
+          let cur = [];
+          for (const item of between) {
+            if (item.type === "element" && item.tagName === "hr") {
+              if (cur.length) { panels.push(cur); cur = []; }
+            } else { cur.push(item); }
+          }
+          if (cur.length) panels.push(cur);
+          const tabEl = {
+            type: "element", tagName: "div",
+            properties: { className: ["rcg-tab-container"], role: "tablist" },
+            children: g.labels.map((label, i) => ({
+              type: "element", tagName: "button",
+              properties: {
+                type: "button", className: ["rcg-tab", ...(i===0?["active"]:[])],
+                role: "tab", "aria-selected": i===0 ? "true" : "false",
+                "aria-controls": `rcg-0-block-${i}`, id: `rcg-0-tab-${i}`,
+              },
+              children: [{ type: "text", value: label }],
+            })),
+          };
+          const blockEls = panels.map((p, i) => ({
+            type: "element", tagName: "div",
+            properties: {
+              className: ["rcg-block", ...(i===0?["active"]:[])],
+              role: "tabpanel", "aria-labelledby": `rcg-0-tab-${i}`,
+              id: `rcg-0-block-${i}`,
+              ...(i===0?{}:{hidden:true}),
+            },
+            children: p,
+          }));
+          const wrapper = {
+            type: "element", tagName: "div",
+            properties: { className: ["rehype-code-group"] },
+            children: [tabEl, ...blockEls],
+          };
+          parent.children.splice(g.startIdx, index - g.startIdx + 1, wrapper);
+          return [SKIP, g.startIdx + 1];
+        }
+      }
+    });
+  };
+};
 
 // https://astro.build/config
 export default defineConfig({
@@ -153,6 +217,7 @@ export default defineConfig({
 					},
 				},
 			],
+			rehypeCodeGroupWrapper,
 			rehypePoetryComponent,
 			rehypePaperComponent,
 			rehypeSpacing,

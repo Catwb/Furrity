@@ -125,3 +125,48 @@
     }
     
 }
+
+/* code-group tabs */
+.rehype-code-group {
+    margin: 1rem 0;
+    border: 1px solid var(--line-divider, oklch(0.85 0.02 var(--hue)));
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.rcg-tab-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--line-divider, oklch(0.85 0.02 var(--hue)));
+    margin-bottom: 0;
+    padding: 0.35rem 0.5rem 0;
+    background: var(--btn-regular-bg, oklch(0.95 0.025 var(--hue)));
+}
+.rcg-tab {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 0.875rem;
+    color: var(--btn-content, oklch(0.5 0.05 var(--hue)));
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+}
+.rcg-tab:hover {
+    color: var(--primary, oklch(0.5 0.15 var(--hue)));
+}
+.rcg-tab.active {
+    color: var(--primary, oklch(0.5 0.15 var(--hue)));
+    border-bottom-color: var(--primary, oklch(0.5 0.15 var(--hue)));
+    font-weight: 600;
+}
+.rcg-block {
+    display: none;
+    overflow-x: auto;
+    padding: 0.75rem 1rem;
+}
+.rcg-block.active {
+    display: block;
+}

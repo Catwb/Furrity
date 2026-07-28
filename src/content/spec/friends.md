@@ -8,14 +8,7 @@ title: 友链
 
 
 
-<div class="tag-plugin tabs">
-<div class="tab-nav">
-<button class="tab-btn active" data-tab="0">本站信息</button>
-<button class="tab-btn" data-tab="1">友链申请</button>
-<button class="tab-btn" data-tab="2">星陨之地</button>
-<button class="tab-btn" data-tab="3">友链状态</button>
-</div>
-<div class="tab-panel active" data-tab="0">
+::: code-group labels=[本站信息, 友链申请, 星陨之地, 友链状态]
 
 **欢迎和我交换友链**
 
@@ -37,9 +30,7 @@ title: 友链
   siteshot/screenshot: https://blog.furryawa.com/images/web.png
 ```
 
-</div>
-
-<div class="tab-panel" data-tab="1">
+---
 
 **友链申请条件：**
 
@@ -101,8 +92,7 @@ title: 友链
 如果发现有问题，可以进行回复，如果长时间并未处理，可以联系`hualaozhe@qq.com`
 :::
 
-</div>
-<div class="tab-panel" data-tab="2">
+---
 
 > **星陨之地**：因某些原因导致无法访问的站点。
 
@@ -131,8 +121,7 @@ title: 友链
 			},
 ```
 
-</div>
-<div class="tab-panel" data-tab="3">
+---
 
 > Cloudflare Workers 自动检测，标红我会亲自去看看，可以访问就打上标记，长时间红就因 **“无法访问”** 而下友链。
 
@@ -171,5 +160,4 @@ title: 友链
 })();
 </script>
 
-</div>
-</div>
+:::

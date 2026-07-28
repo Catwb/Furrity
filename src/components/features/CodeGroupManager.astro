@@ -25,8 +25,11 @@
     blocks.forEach((block, i) => {
       const selected = i === target;
       block.classList.toggle("active", selected);
-      if (selected) block.removeAttribute("hidden");
-      else block.setAttribute("hidden", "true");
+      if (selected) {
+        block.removeAttribute("hidden");
+      } else {
+        block.setAttribute("hidden", "true");
+      }
     });
 
     if (focusTab) tabs[target].focus({ preventScroll: true });

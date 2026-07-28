@@ -86,7 +86,11 @@ const rehypeCodeGroupWrapper = () => {
               id: `rcg-0-block-${i}`,
               ...(i===0?{}:{hidden:true}),
             },
-            children: p,
+            children: i === 0 ? p : [{
+              type: "element", tagName: "template",
+              properties: { className: ["rcg-panel"] },
+              children: p,
+            }],
           }));
           const wrapper = {
             type: "element", tagName: "div",

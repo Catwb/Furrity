@@ -27,6 +27,20 @@
       block.classList.toggle("active", selected);
       if (selected) {
         block.removeAttribute("hidden");
+        const tpl = block.querySelector<HTMLTemplateElement>("template.rcg-panel");
+        if (tpl) {
+          const clone = tpl.content.cloneNode(true);
+          block.appendChild(clone);
+          tpl.remove();
+          block.querySelectorAll("script").forEach(oldScript => {
+            const newScript = document.createElement("script");
+            for (const attr of oldScript.attributes) {
+              newScript.setAttribute(attr.name, attr.value);
+            }
+            newScript.textContent = oldScript.textContent;
+            oldScript.replaceWith(newScript);
+          });
+        }
       } else {
         block.setAttribute("hidden", "true");
       }

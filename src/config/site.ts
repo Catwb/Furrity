@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
 	title: "龙星划空",
 	subtitle: "朝花夕拾",
 	lang: "zh_CN",
-	background: "url(https://api.furry.ist/furry-img/?mode=auto)",
+	background:  "url(https://files.seeusercontent.com/2026/07/28/obG4/1785244831147_compressed.png)", //"url(https://api.furry.ist/furry-img/?mode=auto)",
 	themeColor: {
 		hue: 35,
 		fixed: false,

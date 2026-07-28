@@ -51,6 +51,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				color: "#D4F2FD",
 			},
 			{
+				name: "初叶🍂的小窝",
+				url: "https://www.chuyel.cn",
+				avatar: "https://cloud.chuyel.top/f/QjNHV/%E7%AB%B9%E5%8F%B6-%E5%A4%B4%E5%83%8F-%E6%B0%B4%E5%8D%B0%E7%89%88.jpg",
+				description: "初叶🍂竹叶的温暖小窝",
+			},
+			{
 				name: "缎金SatinAuの主页",
 				url: "https://satinau.cn",
 				avatar: "https://satinau.cn/public/favicon.ico",

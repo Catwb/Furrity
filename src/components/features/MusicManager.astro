@@ -94,7 +94,7 @@ const managerConfigStr = JSON.stringify({
 
     var audio = document.createElement('audio');
     audio.crossOrigin = 'anonymous';
-    audio.preload = 'none';
+    audio.preload = 'auto';
     audio.style.display = 'none';
     document.body.appendChild(audio);
 
@@ -226,6 +226,9 @@ const managerConfigStr = JSON.stringify({
             audio.play().then(function () {
                 state.isPlaying = true;
                 emit('fm:play-state', { isPlaying: true });
+            }).catch(function (e) {
+                if (e.name === 'AbortError') return;
+                console.warn('Play failed:', e);
             });
         } else {
             audio.pause();
@@ -237,7 +240,10 @@ const managerConfigStr = JSON.stringify({
     function playNext(auto) {
         if (state.playMode === 1 && auto) {
             audio.currentTime = 0;
-            audio.play();
+            audio.play().catch(function (e) {
+                if (e.name === 'AbortError') return;
+                console.warn('PlayNext failed:', e);
+            });
             return;
         }
         var nextIndex;
@@ -336,6 +342,10 @@ const managerConfigStr = JSON.stringify({
     audio.addEventListener('error', function () {
         state.error = 'Audio playback error';
         emit('fm:error', { message: state.error });
+    });
+
+    audio.addEventListener('canplay', function () {
+        emit('fm:ready');
     });
 
     async function init() {

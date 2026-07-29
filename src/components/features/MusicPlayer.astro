@@ -631,7 +631,6 @@ const widgetId =
 
     on('fm:init', function (e) {
         var d = e.detail;
-        setLoading(false);
         if (d.playlist.length > 0) {
             renderPlaylist(d.playlist, 0);
             updateModeUI(d.playMode);
@@ -641,8 +640,14 @@ const widgetId =
         }
     });
 
+    on('fm:ready', function () {
+        clearTimeout(loadingFallback);
+        setLoading(false);
+    });
+
     on('fm:track', function (e) {
         var d = e.detail;
+        setLoading(true);
         updateTrackUI(d.track);
         updatePlaylistActiveUI(d.index);
     });
@@ -677,6 +682,8 @@ const widgetId =
     });
 
     on('fm:error', function (e) {
+        clearTimeout(loadingFallback);
+        setLoading(false);
         ui.title.innerText = e.detail.message || cfg.i18n.error;
     });
 
@@ -823,6 +830,7 @@ const widgetId =
         syncAll();
     } else {
         setLoading(true);
+        var loadingFallback = setTimeout(function () { setLoading(false); }, 15000);
         function deferredInit() {
             if (document.readyState === 'complete') {
                 setTimeout(function () { mgr.init(); }, 3000);

@@ -182,7 +182,7 @@ export default defineConfig({
 		}),
         svelte(),
 		sitemap(),
-		compress(),
+		compress({ CSS: false }),
 	],
 	markdown: {
 		processor: unified({

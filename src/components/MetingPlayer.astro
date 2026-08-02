@@ -1,9 +1,12 @@
 ---
 import { siteConfig } from "../config/site";
+
 const meting = siteConfig.meting;
 if (!meting?.enable) return;
 const f = meting.fixed;
-const api = meting.api || "https://meting.furwolf.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+const api =
+	meting.api ||
+	"https://meting.furwolf.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
 ---
 
 <link rel="preload" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />

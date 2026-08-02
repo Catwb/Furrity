@@ -27,15 +27,28 @@ function formatDate(dateStr: string): string {
 
 function parseInline(text: string): string {
 	return text
-		.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" class="text-[var(--primary)] hover:underline">$1</a>')
+		.replace(
+			/\[([^\]]+)\]\(([^)]+)\)/g,
+			'<a href="$2" target="_blank" rel="noopener" class="text-[var(--primary)] hover:underline">$1</a>',
+		)
 		.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
 		.replace(/\*([^*]+)\*/g, "<em>$1</em>")
-		.replace(/`([^`]+)`/g, "<code class='bg-black/5 dark:bg-white/10 px-1 rounded text-sm'>$1</code>");
+		.replace(
+			/`([^`]+)`/g,
+			"<code class='bg-black/5 dark:bg-white/10 px-1 rounded text-sm'>$1</code>",
+		);
 }
 
 function renderContent(entry: ShuoshuoEntry): string {
-	const paragraphs = Array.isArray(entry.content) ? entry.content : [entry.content];
-	return paragraphs.map((p) => `		<p class="leading-relaxed mb-2 last:mb-0 break-words">${parseInline(p)}</p>`).join("\n");
+	const paragraphs = Array.isArray(entry.content)
+		? entry.content
+		: [entry.content];
+	return paragraphs
+		.map(
+			(p) =>
+				`		<p class="leading-relaxed mb-2 last:mb-0 break-words">${parseInline(p)}</p>`,
+		)
+		.join("\n");
 }
 
 let viewingImgs: string[] = [];
@@ -70,7 +83,9 @@ onMount(async () => {
 	document.addEventListener("keydown", onKeydown);
 	try {
 		const cacheBuster = `t=${Date.now()}`;
-		const url = fetchUrl.includes("?") ? `${fetchUrl}&${cacheBuster}` : `${fetchUrl}?${cacheBuster}`;
+		const url = fetchUrl.includes("?")
+			? `${fetchUrl}&${cacheBuster}`
+			: `${fetchUrl}?${cacheBuster}`;
 		const res = await fetch(url);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const data: ShuoshuoEntry[] = await res.json();

@@ -1,10 +1,10 @@
-import rss from "@astrojs/rss";
 import { render } from "astro:content";
-import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import rss from "@astrojs/rss";
+import { computeAbbrlink } from "@utils/abbrlink-utils";
 import { getSortedPosts } from "@utils/content-utils";
 import { url } from "@utils/url-utils";
-import { computeAbbrlink } from "@utils/abbrlink-utils";
 import type { APIContext } from "astro";
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import sanitizeHtml from "sanitize-html";
 import { siteConfig } from "@/config/site";
 
@@ -18,7 +18,14 @@ export async function GET(context: APIContext) {
 	const items = await Promise.all(
 		blog.map(async (post) => {
 			if (post.data.password) {
-				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
+				const linkSlug =
+					post.data.abbrlink ||
+					computeAbbrlink(
+						post.data.title,
+						post.data.published,
+						alg as any,
+						rep as any,
+					);
 				return {
 					title: post.data.title,
 					pubDate: post.data.published,
@@ -33,7 +40,14 @@ export async function GET(context: APIContext) {
 				const content = sanitizeHtml(rawHtml, {
 					allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
 				});
-				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
+				const linkSlug =
+					post.data.abbrlink ||
+					computeAbbrlink(
+						post.data.title,
+						post.data.published,
+						alg as any,
+						rep as any,
+					);
 				return {
 					title: post.data.title,
 					pubDate: post.data.published,
@@ -42,7 +56,14 @@ export async function GET(context: APIContext) {
 					content,
 				};
 			} catch {
-				const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
+				const linkSlug =
+					post.data.abbrlink ||
+					computeAbbrlink(
+						post.data.title,
+						post.data.published,
+						alg as any,
+						rep as any,
+					);
 				return {
 					title: post.data.title,
 					pubDate: post.data.published,

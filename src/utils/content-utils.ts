@@ -30,11 +30,13 @@ export async function getSortedPosts() {
 	const sorted = await getRawSortedPosts();
 
 	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].data.abbrlink || getEntrySlug(sorted[i - 1]);
+		sorted[i].data.nextSlug =
+			sorted[i - 1].data.abbrlink || getEntrySlug(sorted[i - 1]);
 		sorted[i].data.nextTitle = sorted[i - 1].data.title;
 	}
 	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].data.abbrlink || getEntrySlug(sorted[i + 1]);
+		sorted[i].data.prevSlug =
+			sorted[i + 1].data.abbrlink || getEntrySlug(sorted[i + 1]);
 		sorted[i].data.prevTitle = sorted[i + 1].data.title;
 	}
 
@@ -103,7 +105,10 @@ export async function getCategoryTree(): Promise<CategoryNode[]> {
 		}
 
 		cats.forEach((cat) => {
-			const segments = cat.split("/").map(s => s.trim()).filter(s => s);
+			const segments = cat
+				.split("/")
+				.map((s) => s.trim())
+				.filter((s) => s);
 			if (segments.length === 0) return;
 
 			let currentLevel = root;
@@ -112,7 +117,7 @@ export async function getCategoryTree(): Promise<CategoryNode[]> {
 				const seg = segments[i];
 				fullPath = fullPath ? `${fullPath}/${seg}` : seg;
 
-				let node = currentLevel.find(n => n.name === seg);
+				let node = currentLevel.find((n) => n.name === seg);
 				if (!node) {
 					node = {
 						name: seg,

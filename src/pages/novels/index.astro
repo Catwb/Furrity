@@ -1,14 +1,15 @@
 ---
-import { Icon } from "astro-icon/components";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getNovelMetas, getSeriesList } from "@utils/novel-utils";
 import { getNovelUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
 
 const metas = await getNovelMetas();
 const seriesList = getSeriesList(metas);
-const hasSeries = seriesList.length > 0 && seriesList.some((s) => s.novels.length > 0);
+const hasSeries =
+	seriesList.length > 0 && seriesList.some((s) => s.novels.length > 0);
 ---
 
 <MainGridLayout title={i18n(I18nKey.novels)}>

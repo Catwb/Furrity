@@ -21,7 +21,9 @@ function getAgoText(date: Date): string {
 	return `${days} ${i18n(I18nKey.outdateDay)}`;
 }
 
-const agoText = getAgoText(updated && updated.getTime() !== published.getTime() ? updated : published);
+const agoText = getAgoText(
+	updated && updated.getTime() !== published.getTime() ? updated : published,
+);
 const message = i18n(I18nKey.outdateWarning).replace("{ago}", agoText);
 ---
 

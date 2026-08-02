@@ -1,5 +1,5 @@
-import { glob } from "astro/loaders";
 import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
 const postsCollection = defineCollection({
@@ -75,7 +75,9 @@ const charactersCollection = defineCollection({
 		novel: z.string(),
 		description: z.string().optional().default(""),
 		avatar: z.string().optional(),
-		role: z.enum(["protagonist", "antagonist", "supporting", "minor", "guest"]).optional(),
+		role: z
+			.enum(["protagonist", "antagonist", "supporting", "minor", "guest"])
+			.optional(),
 		alias: z.array(z.string()).optional().default([]),
 	}),
 });

@@ -1,22 +1,25 @@
 ---
-import WidgetLayout from "./WidgetLayout.astro";
 import { getCollection } from "astro:content";
+import WidgetLayout from "./WidgetLayout.astro";
 
 const allPosts = await getCollection("posts", ({ data }) => {
-  return import.meta.env.PROD ? data.draft !== true : true;
+	return import.meta.env.PROD ? data.draft !== true : true;
 });
 
 const postCount = allPosts.length;
-const totalChars = allPosts.reduce((sum, post) => sum + (post.body ? post.body.length : 0), 0);
+const totalChars = allPosts.reduce(
+	(sum, post) => sum + (post.body ? post.body.length : 0),
+	0,
+);
 
 function formatChars(n: number): string {
-  if (n >= 10000) return (n / 1000).toFixed(1) + "k";
-  return String(n);
+	if (n >= 10000) return (n / 1000).toFixed(1) + "k";
+	return String(n);
 }
 
 const latest = allPosts.reduce((latest, post) => {
-  const d = post.data.updated || post.data.published;
-  return d > latest ? d : latest;
+	const d = post.data.updated || post.data.published;
+	return d > latest ? d : latest;
 }, new Date(0));
 
 const y = latest.getFullYear();

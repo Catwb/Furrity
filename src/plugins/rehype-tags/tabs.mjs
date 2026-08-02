@@ -1,5 +1,5 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
+import { h } from "hastscript";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `.tag-plugin.tabs {
   margin: 1em 0;
@@ -42,7 +42,7 @@ const STYLE = `.tag-plugin.tabs {
 }
 .tag-plugin.tabs .tab-panel.active {
   display: block;
-}`
+}`;
 
 const SCRIPT = `document.addEventListener("click",function(e){
   var b=e.target.closest(".tab-btn");if(!b)return;
@@ -52,16 +52,16 @@ const SCRIPT = `document.addEventListener("click",function(e){
   b.classList.add("active");
   var p=t.querySelectorAll(".tab-panel");
   if(p[b.getAttribute("data-tab")])p[b.getAttribute("data-tab")].classList.add("active");
-})`
+})`;
 
 function walk(node, fn, parent, index) {
-  if (!node) return
-  fn(node, parent, index)
-  if (node.children && Array.isArray(node.children)) {
-    for (let i = 0; i < node.children.length; i++) {
-      walk(node.children[i], fn, node, i)
-    }
-  }
+	if (!node) return;
+	fn(node, parent, index);
+	if (node.children && Array.isArray(node.children)) {
+		for (let i = 0; i < node.children.length; i++) {
+			walk(node.children[i], fn, node, i);
+		}
+	}
 }
 
 /**
@@ -69,28 +69,38 @@ function walk(node, fn, parent, index) {
  * and injects CSS/JS via the registry (only once per page).
  */
 export function rehypeTabsComponent() {
-  return (tree) => {
-    if (!tree) return
-    let found = false
-    walk(tree, (node) => {
-      if (found) return
-      if (node.type === "raw" && typeof node.value === "string") {
-        if (node.value.includes("tag-plugin tabs")) found = true
-        else if (node.value.includes("tab-btn")) found = true
-        else if (node.value.includes("tab-panel")) found = true
-      }
-      if (node.type === "element") {
-        if (node.properties?.class === "tag-plugin tabs") found = true
-        if (node.properties?.className === "tag-plugin tabs") found = true
-        if (Array.isArray(node.properties?.className) && node.properties.className.includes("tag-plugin") && node.properties.className.includes("tabs")) found = true
-      }
-      if (node.type === "text" && typeof node.value === "string" && node.value.includes("tag-plugin tabs")) found = true
-    })
-    if (!found) return
-    if (!shouldInject("tabs")) return
-    tree.children.unshift(
-      h("style", { "data-tag-plugin": "tabs" }, STYLE),
-      h("script", { "data-tag-plugin": "tabs" }, SCRIPT),
-    )
-  }
+	return (tree) => {
+		if (!tree) return;
+		let found = false;
+		walk(tree, (node) => {
+			if (found) return;
+			if (node.type === "raw" && typeof node.value === "string") {
+				if (node.value.includes("tag-plugin tabs")) found = true;
+				else if (node.value.includes("tab-btn")) found = true;
+				else if (node.value.includes("tab-panel")) found = true;
+			}
+			if (node.type === "element") {
+				if (node.properties?.class === "tag-plugin tabs") found = true;
+				if (node.properties?.className === "tag-plugin tabs") found = true;
+				if (
+					Array.isArray(node.properties?.className) &&
+					node.properties.className.includes("tag-plugin") &&
+					node.properties.className.includes("tabs")
+				)
+					found = true;
+			}
+			if (
+				node.type === "text" &&
+				typeof node.value === "string" &&
+				node.value.includes("tag-plugin tabs")
+			)
+				found = true;
+		});
+		if (!found) return;
+		if (!shouldInject("tabs")) return;
+		tree.children.unshift(
+			h("style", { "data-tag-plugin": "tabs" }, STYLE),
+			h("script", { "data-tag-plugin": "tabs" }, SCRIPT),
+		);
+	};
 }

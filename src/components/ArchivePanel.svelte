@@ -14,16 +14,16 @@ tags = params.has("tag") ? params.getAll("tag") : [];
 categories = params.has("category") ? params.getAll("category") : [];
 const uncategorized = params.get("uncategorized");
 
-	interface Post {
-		slug: string;
-		data: {
-			title: string;
-			tags: string[];
-			category?: string[];
-			published: Date;
-			abbrlink?: string;
-		};
-	}
+interface Post {
+	slug: string;
+	data: {
+		title: string;
+		tags: string[];
+		category?: string[];
+		published: Date;
+		abbrlink?: string;
+	};
+}
 
 interface Group {
 	year: number;

@@ -1,9 +1,9 @@
 import { render } from "astro:content";
-import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { computeAbbrlink } from "@utils/abbrlink-utils";
 import { getSortedPosts } from "@utils/content-utils";
 import { url } from "@utils/url-utils";
-import { computeAbbrlink } from "@utils/abbrlink-utils";
 import type { APIContext } from "astro";
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import sanitizeHtml from "sanitize-html";
 import { siteConfig } from "@/config/site";
 
@@ -27,15 +27,32 @@ export async function GET(context: APIContext) {
 			} catch {
 				content = post.data.description || "";
 			}
-			const linkSlug = post.data.abbrlink || computeAbbrlink(post.data.title, post.data.published, alg as any, rep as any);
+			const linkSlug =
+				post.data.abbrlink ||
+				computeAbbrlink(
+					post.data.title,
+					post.data.published,
+					alg as any,
+					rep as any,
+				);
 			const link = url(`/posts/${linkSlug}/`);
 			const updated = post.data.updated || post.data.published;
-			return { title: post.data.title, published: post.data.published, updated, link, description: post.data.description || "", content };
+			return {
+				title: post.data.title,
+				published: post.data.published,
+				updated,
+				link,
+				description: post.data.description || "",
+				content,
+			};
 		}),
 	);
 
 	const feedUrl = siteUrl + "/atom.xml";
-	const updated = entries.length > 0 ? entries[0].updated.toISOString() : new Date().toISOString();
+	const updated =
+		entries.length > 0
+			? entries[0].updated.toISOString()
+			: new Date().toISOString();
 
 	const feed = [
 		`<?xml version="1.0" encoding="utf-8"?>`,
@@ -46,18 +63,20 @@ export async function GET(context: APIContext) {
 		`  <link href="${escapeXml(siteUrl)}" rel="alternate" type="text/html"/>`,
 		`  <updated>${updated}</updated>`,
 		`  <id>${escapeXml(feedUrl)}</id>`,
-		...entries.map((e) => [
-			`  <entry>`,
-			`    <title>${escapeXml(e.title)}</title>`,
-			`    <link href="${escapeXml(e.link)}" rel="alternate" type="text/html"/>`,
-			`    <id>${escapeXml(e.link)}</id>`,
-			`    <published>${e.published.toISOString()}</published>`,
-			`    <updated>${e.updated.toISOString()}</updated>`,
-			`    <summary>${escapeXml(e.description)}</summary>`,
-			`    <content type="html"><![CDATA[${e.content}]]></content>`,
-			`  </entry>`,
-		].join("\n")),
-		`</feed>`,
+		...entries.map((e) =>
+			[
+				"  <entry>",
+				`    <title>${escapeXml(e.title)}</title>`,
+				`    <link href="${escapeXml(e.link)}" rel="alternate" type="text/html"/>`,
+				`    <id>${escapeXml(e.link)}</id>`,
+				`    <published>${e.published.toISOString()}</published>`,
+				`    <updated>${e.updated.toISOString()}</updated>`,
+				`    <summary>${escapeXml(e.description)}</summary>`,
+				`    <content type="html"><![CDATA[${e.content}]]></content>`,
+				"  </entry>",
+			].join("\n"),
+		),
+		"</feed>",
 	].join("\n");
 
 	return new Response(feed, {
@@ -67,5 +86,10 @@ export async function GET(context: APIContext) {
 
 function escapeXml(s: unknown): string {
 	const str = typeof s === "string" ? s : String(s ?? "");
-	return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&apos;");
 }

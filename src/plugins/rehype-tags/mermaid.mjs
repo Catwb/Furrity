@@ -7,10 +7,7 @@ export function rehypeMermaidComponent() {
 		let hasMermaid = false;
 
 		visit(tree, "element", (node, index, parent) => {
-			if (
-				node.tagName === "pre" &&
-				node.children?.[0]?.tagName === "code"
-			) {
+			if (node.tagName === "pre" && node.children?.[0]?.tagName === "code") {
 				const code = node.children[0];
 				const classes = code.properties?.className || [];
 				if (classes.includes("language-mermaid")) {
@@ -37,7 +34,9 @@ export function rehypeMermaidComponent() {
 			);
 
 			tree.children.push(
-				h("script", { "data-swup-ignore-script": true },
+				h(
+					"script",
+					{ "data-swup-ignore-script": true },
 					`(function() {
   var els = document.querySelectorAll('.mermaid');
   if (els.length === 0) return;

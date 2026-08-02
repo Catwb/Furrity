@@ -1,5 +1,5 @@
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
 export type NovelEntry = CollectionEntry<"novels">;
 export type CharacterEntry = CollectionEntry<"characters">;
@@ -46,7 +46,10 @@ export async function getNovelMetas(): Promise<NovelMeta[]> {
 		const chapters = (grouped.get(key) || []).sort(
 			(a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0),
 		);
-		const wordCount = chapters.reduce((sum, ch) => sum + computeWordCount(ch.body), 0);
+		const wordCount = chapters.reduce(
+			(sum, ch) => sum + computeWordCount(ch.body),
+			0,
+		);
 		metas.push({
 			slug: key,
 			title: idx.data.novelTitle || idx.data.title,
@@ -63,14 +66,20 @@ export async function getNovelMetas(): Promise<NovelMeta[]> {
 	return metas;
 }
 
-export async function getNovelChapters(novelSlug: string): Promise<NovelEntry[]> {
+export async function getNovelChapters(
+	novelSlug: string,
+): Promise<NovelEntry[]> {
 	const entries = await getAllNovelEntries();
 	return entries
-		.filter((e) => getNovelSlug(e) === novelSlug && e.data.chapter !== undefined)
+		.filter(
+			(e) => getNovelSlug(e) === novelSlug && e.data.chapter !== undefined,
+		)
 		.sort((a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0));
 }
 
-export async function getNovelIndex(novelSlug: string): Promise<NovelEntry | undefined> {
+export async function getNovelIndex(
+	novelSlug: string,
+): Promise<NovelEntry | undefined> {
 	const entries = await getAllNovelEntries();
 	return entries.find((e) => getNovelSlug(e) === novelSlug && !e.data.chapter);
 }
@@ -83,7 +92,9 @@ export async function getAllCharacters(): Promise<CharacterEntry[]> {
 	}
 }
 
-export async function getCharactersByNovel(novelSlug: string): Promise<CharacterEntry[]> {
+export async function getCharactersByNovel(
+	novelSlug: string,
+): Promise<CharacterEntry[]> {
 	const all = await getAllCharacters();
 	const target = novelSlug.toLowerCase();
 	return all.filter((c) => getNovelSlugFromName(c.data.novel) === target);
@@ -93,7 +104,9 @@ function getNovelSlugFromName(novel: string): string {
 	return novel.replace(/\.md$/, "").toLowerCase();
 }
 
-export function getSeriesList(metas: NovelMeta[]): { name: string; novels: NovelMeta[] }[] {
+export function getSeriesList(
+	metas: NovelMeta[],
+): { name: string; novels: NovelMeta[] }[] {
 	const map = new Map<string, NovelMeta[]>();
 	for (const m of metas) {
 		const key = m.series || i18n(I18nKey.uncategorized);
@@ -105,6 +118,6 @@ export function getSeriesList(metas: NovelMeta[]): { name: string; novels: Novel
 		.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-import { computeWordCount } from "./word-count";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import { computeWordCount } from "./word-count";

@@ -1,6 +1,6 @@
 ---
-import CodeGroupManager from "@components/features/CodeGroupManager.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import CodeGroupManager from "@components/features/CodeGroupManager.astro";
 import MusicManager from "@components/features/MusicManager.astro";
 import { profileConfig, siteConfig } from "@/config/site";
 import {
@@ -17,6 +17,7 @@ import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
 import "../styles/tag-plugins-dark.css";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 interface Props {
 	title?: string;
@@ -27,7 +28,8 @@ interface Props {
 	plugins?: string[];
 }
 
-let { title, banner, description, lang, setOGTypeArticle, plugins } = Astro.props;
+let { title, banner, description, lang, setOGTypeArticle, plugins } =
+	Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
 // Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
@@ -188,6 +190,8 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
 
+		<SpeedInsights />
+
 	</head>
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
@@ -195,7 +199,7 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 		<div class="spinner" id="page-loader">
 			<span class="loader-text">0%</span>
 			<div class="loader" style="--width: 0%;"></div>
-			<span class="loader-text-below" id="loader-close">不想等待可以点我关掉</span>
+			<span class="loader-text-below" id="loader-close">不想等待可以点���关掉</span>
 			<span class="loader-tips">Tips：非卡住不建议关闭，以确保Swup正常运行</span>
 		</div>
 		<style>

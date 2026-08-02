@@ -1,6 +1,6 @@
 export function computeWordCount(body: string | undefined): number {
 	if (!body) return 0;
-	let text = body
+	const text = body
 		.replace(/!\[.*?\]\(.*?\)/g, "")
 		.replace(/\[([^\]]*)\]\(.*?\)/g, "$1")
 		.replace(/<[^>]*>/g, "")

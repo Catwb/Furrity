@@ -53,7 +53,8 @@ export const en: Translation = {
 
 	[Key.friends]: "Friends",
 
-	[Key.outdateWarning]: "This article was published {ago}. Some content may be outdated.",
+	[Key.outdateWarning]:
+		"This article was published {ago}. Some content may be outdated.",
 	[Key.outdateDay]: "day(s) ago",
 
 	[Key.music]: "Music",

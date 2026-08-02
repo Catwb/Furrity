@@ -1,6 +1,6 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
-import { parseTitleProps } from "./_parse-title.mjs"
+import { h } from "hastscript";
+import { parseTitleProps } from "./_parse-title.mjs";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `.tag-plugin.colorful.folding {
   margin: 1em 0;
@@ -25,27 +25,27 @@ const STYLE = `.tag-plugin.colorful.folding {
 .tag-plugin.colorful.folding[color="yellow"] { --block-bg: oklch(0.95 0.04 80); --block-border: oklch(0.88 0.06 80); }
 .tag-plugin.colorful.folding[color="green"] { --block-bg: oklch(0.93 0.04 140); --block-border: oklch(0.85 0.06 140); }
 .tag-plugin.colorful.folding[color="blue"] { --block-bg: oklch(0.93 0.04 240); --block-border: oklch(0.85 0.06 240); }
-.tag-plugin.colorful.folding[color="purple"] { --block-bg: oklch(0.93 0.04 290); --block-border: oklch(0.85 0.06 290); }`
+.tag-plugin.colorful.folding[color="purple"] { --block-bg: oklch(0.93 0.04 290); --block-border: oklch(0.85 0.06 290); }`;
 
 export function FoldingComponent(properties, children) {
-  const nodes = []
-  if (shouldInject("folding")) {
-    nodes.push(h("style", { "data-tag-plugin": "folding" }, STYLE))
-  }
+	const nodes = [];
+	if (shouldInject("folding")) {
+		nodes.push(h("style", { "data-tag-plugin": "folding" }, STYLE));
+	}
 
-  const props = parseTitleProps(properties || {})
-  const attrs = { class: "tag-plugin colorful folding" }
-  if (props.color) attrs.color = props.color
-  if (props.open === "true" || props.open === true) attrs.open = ""
+	const props = parseTitleProps(properties || {});
+	const attrs = { class: "tag-plugin colorful folding" };
+	if (props.color) attrs.color = props.color;
+	if (props.open === "true" || props.open === true) attrs.open = "";
 
-  const inner = []
-  if (props.title) {
-    inner.push(h("summary", props.title))
-  }
-  if (children && children.length > 0) {
-    inner.push(h("div", { class: "body" }, children))
-  }
+	const inner = [];
+	if (props.title) {
+		inner.push(h("summary", props.title));
+	}
+	if (children && children.length > 0) {
+		inner.push(h("div", { class: "body" }, children));
+	}
 
-  nodes.push(h("details", attrs, inner))
-  return nodes.length === 1 ? nodes[0] : nodes
+	nodes.push(h("details", attrs, inner));
+	return nodes.length === 1 ? nodes[0] : nodes;
 }

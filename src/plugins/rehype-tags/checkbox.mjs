@@ -1,5 +1,5 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
+import { h } from "hastscript";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `.tag-plugin.checkbox {
   display: flex;
@@ -26,33 +26,39 @@ const STYLE = `.tag-plugin.checkbox {
 }
 .tag-plugin.checkbox .icon.unchecked {
   background: #ccc;
-}`
+}`;
 
 export function CheckboxComponent(properties, children) {
-  const nodes = []
-  if (shouldInject("checkbox")) {
-    nodes.push(h("style", { "data-tag-plugin": "checkbox" }, STYLE))
-  }
+	const nodes = [];
+	if (shouldInject("checkbox")) {
+		nodes.push(h("style", { "data-tag-plugin": "checkbox" }, STYLE));
+	}
 
-  const props = properties || {}
-  const checked = props.checked === "true" || props.checked === true
-  const color = props.color || ""
+	const props = properties || {};
+	const checked = props.checked === "true" || props.checked === true;
+	const color = props.color || "";
 
-  const colorMap = {
-    green: "oklch(0.6 0.15 140)",
-    red: "oklch(0.6 0.2 20)",
-    blue: "oklch(0.5 0.15 240)",
-    yellow: "oklch(0.7 0.12 80)",
-    cyan: "oklch(0.6 0.12 190)",
-    purple: "oklch(0.55 0.15 290)",
-    orange: "oklch(0.65 0.15 50)",
-  }
+	const colorMap = {
+		green: "oklch(0.6 0.15 140)",
+		red: "oklch(0.6 0.2 20)",
+		blue: "oklch(0.5 0.15 240)",
+		yellow: "oklch(0.7 0.12 80)",
+		cyan: "oklch(0.6 0.12 190)",
+		purple: "oklch(0.55 0.15 290)",
+		orange: "oklch(0.65 0.15 50)",
+	};
 
-  const icon = h("span", {
-    class: `icon ${checked ? "checked" : "unchecked"}`,
-    style: color ? `--checkbox-color: ${colorMap[color] || color}` : "",
-  }, checked ? "✓" : "✗")
+	const icon = h(
+		"span",
+		{
+			class: `icon ${checked ? "checked" : "unchecked"}`,
+			style: color ? `--checkbox-color: ${colorMap[color] || color}` : "",
+		},
+		checked ? "✓" : "✗",
+	);
 
-  nodes.push(h("span", { class: "tag-plugin checkbox" }, [icon, ...(children || [])]))
-  return nodes.length === 1 ? nodes[0] : nodes
+	nodes.push(
+		h("span", { class: "tag-plugin checkbox" }, [icon, ...(children || [])]),
+	);
+	return nodes.length === 1 ? nodes[0] : nodes;
 }

@@ -1,10 +1,11 @@
 ---
-import path from "node:path";
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import path from "node:path";
 import MainGridLayout from "../../../layouts/MainGridLayout.astro";
 
-const allFursonas: CollectionEntry<"fursonas">[] = await getCollection("fursonas");
+const allFursonas: CollectionEntry<"fursonas">[] =
+	await getCollection("fursonas");
 
 function getInitial(name: string): string {
 	return name.charAt(0) || "?";

@@ -8,7 +8,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "FurryFandomClub",
 				url: "https://furryfandomclub.cn",
-				avatar: "https://furryfandomclub.cn/wp-content/uploads/2025/09/cropped-FurryFandomClub_icon-scaled-2.png",
+				avatar:
+					"https://furryfandomclub.cn/wp-content/uploads/2025/09/cropped-FurryFandomClub_icon-scaled-2.png",
 				description: "超棒的Furry聚集地",
 			},
 			{
@@ -26,7 +27,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "布丁の小窝",
 				url: "https://www.furryowo.top/",
-				avatar: "https://dn-qiniu-avatar.qbox.me/avatar/7da7e82f04de94c795db0301c3397bb6",
+				avatar:
+					"https://dn-qiniu-avatar.qbox.me/avatar/7da7e82f04de94c795db0301c3397bb6",
 				description: "一个有梦想的咸鱼",
 				color: "#9FD8F9",
 			},
@@ -34,7 +36,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				name: "辞入森川",
 				url: "https://yuluo.xyz/",
 				description: "辞尽俗世纷扰，只身步入森与川。",
-				avatar: "https://q1.qlogo.cn/g?b=qq&nk=1935734608&s=100"
+				avatar: "https://q1.qlogo.cn/g?b=qq&nk=1935734608&s=100",
 			},
 			{
 				name: "Creeper005の小站",
@@ -53,7 +55,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "初叶🍂的小窝",
 				url: "https://www.chuyel.cn",
-				avatar: "https://cloud.chuyel.top/f/QjNHV/%E7%AB%B9%E5%8F%B6-%E5%A4%B4%E5%83%8F-%E6%B0%B4%E5%8D%B0%E7%89%88.jpg",
+				avatar:
+					"https://cloud.chuyel.top/f/QjNHV/%E7%AB%B9%E5%8F%B6-%E5%A4%B4%E5%83%8F-%E6%B0%B4%E5%8D%B0%E7%89%88.jpg",
 				description: "初叶🍂竹叶的温暖小窝",
 			},
 			{
@@ -71,7 +74,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "GoodBoyboy's Blog",
 				url: "https://blog.goodboyboy.top/",
-				avatar: "https://gravatar.goodboyboy.top/avatar/9da9d1d515d273d4794015f2321f6e04?s=96&d=monsterid&r=g",
+				avatar:
+					"https://gravatar.goodboyboy.top/avatar/9da9d1d515d273d4794015f2321f6e04?s=96&d=monsterid&r=g",
 				description: "惬意小屋 - 点滴记忆",
 				color: "#D8AC75",
 			},
@@ -122,7 +126,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "LynxCatTheThird",
 				url: "https://www.lynx3.me/",
-				avatar: "https://s2.hdslb.com/bfs/face/55653dbd3d6e3d685896bcd10242aa9585d28f56.jpg@1e_0c.webp",
+				avatar:
+					"https://s2.hdslb.com/bfs/face/55653dbd3d6e3d685896bcd10242aa9585d28f56.jpg@1e_0c.webp",
 				description: "我是山猫三号，一个来自一百零三世纪的强人工智能。",
 				color: "#DDC4B1",
 			},
@@ -181,7 +186,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "Qrasa的小站",
 				url: "https://blog.qrasa.cn/",
-				avatar: "https://blog.qrasa.cn/wp-content/uploads/2025/11/cropped-1764501521-3ca59cafd35748c38efd5d624a25243a-e1765684431787.jpeg",
+				avatar:
+					"https://blog.qrasa.cn/wp-content/uploads/2025/11/cropped-1764501521-3ca59cafd35748c38efd5d624a25243a-e1765684431787.jpeg",
 				description: "记录一些活着的日常",
 				color: "#E1D3C6",
 			},
@@ -189,7 +195,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				name: "Rimuru's Blog",
 				url: "https://blog.rimuru.work/",
 				description: "分享 DevOps、AI 工具、Linux 运维及游戏攻略。",
-				avatar: "https://blog.rimuru.work/cdn-cgi/image/format=auto,quality=85,fit=contain,width=128,height=128/images/favicon.png",
+				avatar:
+					"https://blog.rimuru.work/cdn-cgi/image/format=auto,quality=85,fit=contain,width=128,height=128/images/favicon.png",
 			},
 			{
 				name: "Sakitami 的集装箱",
@@ -220,7 +227,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				name: "UpXuu’s blog",
 				url: "https://upxuu.com",
 				avatar: "https://upxuu.com/images/me.jpg",
-				description: "逐光而上"
+				description: "逐光而上",
 			},
 			{
 				name: "Watermelonabc的Blog",
@@ -254,10 +261,10 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "欲望以提升热忱，毅力以磨平高山",
 			},
 			{
-			name: "小林笔记",
-			url: "https://m.senlinm.cn",
-			avatar: "https://esaimg.cdn1.vip/i/6a37e4ac53fc2_1782047916.webp",
-			description: "轻生活，秒上签",
+				name: "小林笔记",
+				url: "https://m.senlinm.cn",
+				avatar: "https://esaimg.cdn1.vip/i/6a37e4ac53fc2_1782047916.webp",
+				description: "轻生活，秒上签",
 			},
 			{
 				name: "XingJiのBlog",
@@ -287,7 +294,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "Yang's Blog",
 				url: "https://kaeshi.top/",
-				avatar: "http://q.qlogo.cn/headimg_dl?dst_uin=2958445350&spec=640&img_type=jpg",
+				avatar:
+					"http://q.qlogo.cn/headimg_dl?dst_uin=2958445350&spec=640&img_type=jpg",
 				description: "Make a dent in the universe.",
 			},
 			{
@@ -325,7 +333,8 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "知行间",
 				url: "https://blog.xp6.top",
-				avatar: "https://dl.xp6.top/view.php/e2b4caebe61dcd98846ded5f901a7328.png",
+				avatar:
+					"https://dl.xp6.top/view.php/e2b4caebe61dcd98846ded5f901a7328.png",
 				description: "一个普通的职高生",
 			},
 		],

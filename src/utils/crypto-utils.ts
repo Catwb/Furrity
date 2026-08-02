@@ -16,9 +16,18 @@ export function encryptContent(
 ): string {
 	const salt = deriveBytes(password, `salt:${slug}`, SALT_LENGTH);
 	const iv = deriveBytes(password, `iv:${slug}`, IV_LENGTH);
-	const key = pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, KEY_LENGTH, "sha256");
+	const key = pbkdf2Sync(
+		password,
+		salt,
+		PBKDF2_ITERATIONS,
+		KEY_LENGTH,
+		"sha256",
+	);
 	const cipher = createCipheriv("aes-256-gcm", key, iv);
-	const encrypted = Buffer.concat([cipher.update(html, "utf8"), cipher.final()]);
+	const encrypted = Buffer.concat([
+		cipher.update(html, "utf8"),
+		cipher.final(),
+	]);
 	const authTag = cipher.getAuthTag();
 	const result = Buffer.concat([salt, iv, authTag, encrypted]);
 	return result.toString("base64");

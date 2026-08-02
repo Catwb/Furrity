@@ -7,7 +7,9 @@ const { envId, region, lang, cdn, css } = siteConfig.twikoo || {};
 onMount(() => {
 	if (!envId) return;
 
-	const twikooCDN = cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
+	const twikooCDN =
+		cdn ||
+		"https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
 	let loaded = false;
 
 	function loadComments() {
@@ -41,12 +43,15 @@ onMount(() => {
 	if ("IntersectionObserver" in window) {
 		const el = document.getElementById("tcomment");
 		if (el) {
-			const obs = new IntersectionObserver((entries) => {
-				if (entries[0]?.isIntersecting) {
-					loadComments();
-					obs.disconnect();
-				}
-			}, { rootMargin: "200px" });
+			const obs = new IntersectionObserver(
+				(entries) => {
+					if (entries[0]?.isIntersecting) {
+						loadComments();
+						obs.disconnect();
+					}
+				},
+				{ rootMargin: "200px" },
+			);
 			obs.observe(el);
 		}
 	}

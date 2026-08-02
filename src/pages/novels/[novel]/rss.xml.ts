@@ -1,10 +1,14 @@
-import rss from "@astrojs/rss";
+import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { experimental_AstroContainer as AstroContainer } from "astro/container";
-import { getNovelChapters, getNovelIndex, getNovelMetas } from "@utils/novel-utils";
+import rss from "@astrojs/rss";
+import {
+	getNovelChapters,
+	getNovelIndex,
+	getNovelMetas,
+} from "@utils/novel-utils";
 import { getChapterUrl } from "@utils/url-utils";
 import type { APIContext } from "astro";
-import type { CollectionEntry } from "astro:content";
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import sanitizeHtml from "sanitize-html";
 import { siteConfig } from "@/config/site";
 
@@ -32,12 +36,25 @@ export async function GET(context: APIContext) {
 	const container = await AstroContainer.create();
 	const novelTitle = index.data.novelTitle || index.data.title;
 	const description = index.data.description || "";
-	const baseUrl = (context.site?.href ?? "https://fuwari.vercel.app").replace(/\/$/, "");
+	const baseUrl = (context.site?.href ?? "https://fuwari.vercel.app").replace(
+		/\/$/,
+		"",
+	);
 	const novelUrl = `${baseUrl}/novels/${slug}/`;
 
-	async function renderEntry(entry: NovelEntry, title: string, desc: string, link: string) {
+	async function renderEntry(
+		entry: NovelEntry,
+		title: string,
+		desc: string,
+		link: string,
+	) {
 		if (entry.data.password) {
-			return { title, description: desc, link, content: "本章已加密保护，请访问网站查看。" };
+			return {
+				title,
+				description: desc,
+				link,
+				content: "本章已加密保护，请访问网站查看。",
+			};
 		}
 		try {
 			const { Content } = await render(entry);
@@ -51,13 +68,23 @@ export async function GET(context: APIContext) {
 		}
 	}
 
-	const items = [await renderEntry(index, novelTitle, description, `/novels/${slug}/`)];
+	const items = [
+		await renderEntry(index, novelTitle, description, `/novels/${slug}/`),
+	];
 
 	for (const ch of chapters) {
-		const chTitle = ch.data.chapter !== undefined
-			? `第${ch.data.chapter}章 ${ch.data.title}`
-			: ch.data.title;
-		items.push(await renderEntry(ch, chTitle, ch.data.description || "", getChapterUrl(slug, ch.id)));
+		const chTitle =
+			ch.data.chapter !== undefined
+				? `第${ch.data.chapter}章 ${ch.data.title}`
+				: ch.data.title;
+		items.push(
+			await renderEntry(
+				ch,
+				chTitle,
+				ch.data.description || "",
+				getChapterUrl(slug, ch.id),
+			),
+		);
 	}
 
 	return rss({

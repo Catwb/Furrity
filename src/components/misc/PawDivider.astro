@@ -1,5 +1,10 @@
 ---
-const { count = 3, size = "1.25rem", color = "var(--primary)", class: className } = Astro.props;
+const {
+	count = 3,
+	size = "1.25rem",
+	color = "var(--primary)",
+	class: className,
+} = Astro.props;
 ---
 
 <div class:list={["flex justify-center items-center gap-2 opacity-40 my-6 select-none", className]} aria-hidden="true">

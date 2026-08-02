@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
 	title: "龙星划空",
 	subtitle: "朝花夕拾",
 	lang: "zh_CN",
-	background:  "url(/images/background.png)", //"url(https://api.furry.ist/furry-img/?mode=auto)",
+	background: "url(/images/background.png)", //"url(https://api.furry.ist/furry-img/?mode=auto)",
 	themeColor: {
 		hue: 35,
 		fixed: false,
@@ -95,9 +95,7 @@ export const siteConfig: SiteConfig = {
 		cdn: "https://unpkg.com/vanilla-lazyload@19.1.3/dist/lazyload.iife.js",
 		threshold: 200,
 	},
-	preconnect: [
-		{ href: "https://cdn.245179.xyz", crossorigin: "anonymous" },
-	],
+	preconnect: [{ href: "https://cdn.245179.xyz", crossorigin: "anonymous" }],
 	custom: {
 		head: [
 			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Medium/result.css" /></noscript>',

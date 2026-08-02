@@ -46,7 +46,10 @@ async function loadPagefind() {
 		document.dispatchEvent(new CustomEvent("pagefindready"));
 	} catch (e) {
 		console.error("Failed to load Pagefind:", e);
-		window.pagefind = { search: () => Promise.resolve({ results: [] }), options: () => Promise.resolve() };
+		window.pagefind = {
+			search: () => Promise.resolve({ results: [] }),
+			options: () => Promise.resolve(),
+		};
 		document.dispatchEvent(new CustomEvent("pagefindloaderror"));
 	} finally {
 		pagefindLoading = false;
@@ -116,7 +119,9 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 onMount(() => {
 	initialized = true;
 	if (import.meta.env.DEV) {
-		console.log("Pagefind is not available in development mode. Using mock data.");
+		console.log(
+			"Pagefind is not available in development mode. Using mock data.",
+		);
 	}
 });
 

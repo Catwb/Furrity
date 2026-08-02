@@ -7,7 +7,8 @@ const currentYear = new Date().getFullYear();
 
 const footerConfig = siteConfig.footer;
 const footerLines = footerConfig?.content;
-const hasCustomFooter = footerConfig?.enable && footerLines && footerLines.length > 0;
+const hasCustomFooter =
+	footerConfig?.enable && footerLines && footerLines.length > 0;
 const md = new MarkdownIt({ html: true });
 ---
 

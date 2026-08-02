@@ -1,9 +1,9 @@
 ---
-import { Icon } from "astro-icon/components";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getAllCharacters, getAllNovelEntries } from "@utils/novel-utils";
+import { Icon } from "astro-icon/components";
 
 const allCharacters = await getAllCharacters();
 const allNovels = await getAllNovelEntries();
@@ -22,7 +22,13 @@ for (const c of allCharacters) {
 	grouped.get(key)!.push(c);
 }
 
-const roleOrder: Record<string, number> = { protagonist: 0, antagonist: 1, supporting: 2, minor: 3, guest: 4 };
+const roleOrder: Record<string, number> = {
+	protagonist: 0,
+	antagonist: 1,
+	supporting: 2,
+	minor: 3,
+	guest: 4,
+};
 function sortByRole(chars: typeof allCharacters) {
 	return [...chars].sort((a, b) => {
 		const ra = roleOrder[a.data.role ?? "guest"] ?? 9;
@@ -30,7 +36,6 @@ function sortByRole(chars: typeof allCharacters) {
 		return ra - rb;
 	});
 }
-
 ---
 
 <MainGridLayout title={i18n(I18nKey.characters)}>

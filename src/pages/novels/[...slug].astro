@@ -1,16 +1,21 @@
 ---
-import Markdown from "@components/misc/Markdown.astro";
-import EncryptedContent from "@components/features/EncryptedContent.astro";
 import { render } from "astro:content";
-import { Icon } from "astro-icon/components";
+import EncryptedContent from "@components/features/EncryptedContent.astro";
+import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { computeWordCount } from "@utils/word-count";
-import { getAllNovelEntries, getNovelChapters, getCharactersByNovel, getNovelSlug } from "@utils/novel-utils";
+import {
+	getAllNovelEntries,
+	getCharactersByNovel,
+	getNovelChapters,
+	getNovelSlug,
+} from "@utils/novel-utils";
 import { getChapterUrl, getNovelUrl } from "@utils/url-utils";
+import { computeWordCount } from "@utils/word-count";
+import { Icon } from "astro-icon/components";
 
-export const getStaticPaths = (async () => {
+export const getStaticPaths = async () => {
 	const entries = await getAllNovelEntries();
 	return entries.map((entry) => {
 		const id = entry.id.replace(/\.md$/, "");
@@ -20,7 +25,7 @@ export const getStaticPaths = (async () => {
 			props: { entry },
 		};
 	});
-});
+};
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
@@ -33,10 +38,12 @@ const characters = isIndex ? await getCharactersByNovel(novelSlug) : [];
 const currentChapterIdx = !isIndex
 	? chapters.findIndex((c) => c.data.chapter === entry.data.chapter)
 	: -1;
-const prevChapter = currentChapterIdx > 0 ? chapters[currentChapterIdx - 1] : null;
-const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.length - 1
-	? chapters[currentChapterIdx + 1]
-	: null;
+const prevChapter =
+	currentChapterIdx > 0 ? chapters[currentChapterIdx - 1] : null;
+const nextChapter =
+	currentChapterIdx >= 0 && currentChapterIdx < chapters.length - 1
+		? chapters[currentChapterIdx + 1]
+		: null;
 ---
 
 <MainGridLayout title={isIndex ? entry.data.novelTitle : entry.data.title} headings={isIndex ? [] : headings}>

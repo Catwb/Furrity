@@ -1,5 +1,5 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
+import { h } from "hastscript";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `.tag-plugin.colorful.button {
   display: inline-flex;
@@ -21,31 +21,31 @@ const STYLE = `.tag-plugin.colorful.button {
 .tag-plugin.colorful.button[color="green"] { --btn-bg: oklch(0.9 0.06 140); --btn-bg-hover: oklch(0.85 0.08 140); }
 .tag-plugin.colorful.button[color="blue"] { --btn-bg: oklch(0.9 0.06 240); --btn-bg-hover: oklch(0.85 0.08 240); }
 .tag-plugin.colorful.button[color="yellow"] { --btn-bg: oklch(0.92 0.06 80); --btn-bg-hover: oklch(0.88 0.08 80); }
-.tag-plugin.colorful.button[color="purple"] { --btn-bg: oklch(0.9 0.06 290); --btn-bg-hover: oklch(0.85 0.08 290); }`
+.tag-plugin.colorful.button[color="purple"] { --btn-bg: oklch(0.9 0.06 290); --btn-bg-hover: oklch(0.85 0.08 290); }`;
 
 export function ButtonComponent(properties, children) {
-  const nodes = []
-  if (shouldInject("button")) {
-    nodes.push(h("style", { "data-tag-plugin": "button" }, STYLE))
-  }
+	const nodes = [];
+	if (shouldInject("button")) {
+		nodes.push(h("style", { "data-tag-plugin": "button" }, STYLE));
+	}
 
-  const attrs = { class: "tag-plugin colorful button" }
-  if (properties.color) attrs.color = properties.color
-  if (properties.size) attrs.size = properties.size
+	const attrs = { class: "tag-plugin colorful button" };
+	if (properties.color) attrs.color = properties.color;
+	if (properties.size) attrs.size = properties.size;
 
-  const text = properties.text || ""
-  const url = properties.url || ""
+	const text = properties.text || "";
+	const url = properties.url || "";
 
-  if (url) attrs.href = url
-  attrs.title = text
+	if (url) attrs.href = url;
+	attrs.title = text;
 
-  const inner = []
-  if (children && children.length > 0) {
-    inner.push(...children)
-  } else if (text) {
-    inner.push(h("span", text))
-  }
+	const inner = [];
+	if (children && children.length > 0) {
+		inner.push(...children);
+	} else if (text) {
+		inner.push(h("span", text));
+	}
 
-  nodes.push(h("a", attrs, inner))
-  return nodes.length === 1 ? nodes[0] : nodes
+	nodes.push(h("a", attrs, inner));
+	return nodes.length === 1 ? nodes[0] : nodes;
 }

@@ -1,5 +1,5 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
+import { h } from "hastscript";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `/* paper-v2 */
 .tag-plugin.paper {
@@ -103,118 +103,121 @@ const STYLE = `/* paper-v2 */
 }
 .tag-plugin.paper > .content.underline > .title {
   border-top: 1px solid oklch(0.8 0.02 var(--hue));
-}`
+}`;
 
 function extractText(node) {
-  if (!node) return ""
-  if (node.type === "text") return node.value || ""
-  if (node.children && Array.isArray(node.children)) {
-    return node.children.map(extractText).join("")
-  }
-  return ""
+	if (!node) return "";
+	if (node.type === "text") return node.value || "";
+	if (node.children && Array.isArray(node.children)) {
+		return node.children.map(extractText).join("");
+	}
+	return "";
 }
 
 function groupBySections(children) {
-  const sections = []
-  let current = { type: "paragraph", title: "", content: [] }
+	const sections = [];
+	let current = { type: "paragraph", title: "", content: [] };
 
-  function flush() {
-    if (current.content.length === 0) return
-    let el
-    if (current.type === "section" && current.title) {
-      el = h("div", { class: "section" }, [
-        h("div", { class: "section-title" }, current.title),
-        h("div", { class: "section-content" }, current.content),
-      ])
-    } else {
-      el = h("div", { class: current.type }, current.content)
-    }
-    sections.push(el)
-  }
+	function flush() {
+		if (current.content.length === 0) return;
+		let el;
+		if (current.type === "section" && current.title) {
+			el = h("div", { class: "section" }, [
+				h("div", { class: "section-title" }, current.title),
+				h("div", { class: "section-content" }, current.content),
+			]);
+		} else {
+			el = h("div", { class: current.type }, current.content);
+		}
+		sections.push(el);
+	}
 
-  for (const child of children) {
-    if (child.type === "element" && child.tagName === "hr") {
-      flush()
-      current = { type: "paragraph", title: "", content: [] }
-      continue
-    }
-    if (child.type === "element" && /^h[1-6]$/.test(child.tagName)) {
-      flush()
-      current = { type: "section", title: extractText(child), content: [] }
-      continue
-    }
-    if (child.type === "raw" || child.type === "comment") {
-      continue
-    }
-    current.content.push(child)
-  }
-  flush()
-  return sections
+	for (const child of children) {
+		if (child.type === "element" && child.tagName === "hr") {
+			flush();
+			current = { type: "paragraph", title: "", content: [] };
+			continue;
+		}
+		if (child.type === "element" && /^h[1-6]$/.test(child.tagName)) {
+			flush();
+			current = { type: "section", title: extractText(child), content: [] };
+			continue;
+		}
+		if (child.type === "raw" || child.type === "comment") {
+			continue;
+		}
+		current.content.push(child);
+	}
+	flush();
+	return sections;
 }
 
 function buildPaper(node) {
-  const props = node.properties || {}
-  const children = (node.children || []).filter(Boolean)
-  const sections = groupBySections(children)
-  const inner = []
+	const props = node.properties || {};
+	const children = (node.children || []).filter(Boolean);
+	const sections = groupBySections(children);
+	const inner = [];
 
-  if (props.title) {
-    inner.push(h("div", { class: "title" }, [h("strong", props.title)]))
-  }
+	if (props.title) {
+		inner.push(h("div", { class: "title" }, [h("strong", props.title)]));
+	}
 
-  if (sections.length > 0) {
-    inner.push(h("div", { class: "body" }, sections))
-  }
+	if (sections.length > 0) {
+		inner.push(h("div", { class: "body" }, sections));
+	}
 
-  const footerParts = []
-  const authorDateParts = []
-  if (props.author) {
-    authorDateParts.push(h("span", { class: "author" }, props.author))
-  }
-  if (props.date) {
-    authorDateParts.push(h("span", { class: "date" }, props.date))
-  }
-  if (authorDateParts.length > 0) {
-    footerParts.push(h("div", { class: "author-date" }, authorDateParts))
-  }
-  if (props.footer) {
-    footerParts.push(props.footer)
-  }
-  if (footerParts.length > 0) {
-    inner.push(h("div", { class: "footer" }, footerParts))
-  }
+	const footerParts = [];
+	const authorDateParts = [];
+	if (props.author) {
+		authorDateParts.push(h("span", { class: "author" }, props.author));
+	}
+	if (props.date) {
+		authorDateParts.push(h("span", { class: "date" }, props.date));
+	}
+	if (authorDateParts.length > 0) {
+		footerParts.push(h("div", { class: "author-date" }, authorDateParts));
+	}
+	if (props.footer) {
+		footerParts.push(props.footer);
+	}
+	if (footerParts.length > 0) {
+		inner.push(h("div", { class: "footer" }, footerParts));
+	}
 
-  const nodes = []
-  if (shouldInject("paper")) {
-    nodes.push(h("style", { "data-tag-plugin": "paper" }, STYLE))
-  }
+	const nodes = [];
+	if (shouldInject("paper")) {
+		nodes.push(h("style", { "data-tag-plugin": "paper" }, STYLE));
+	}
 
-  const contentClass = props.style === "underline" ? "content underline" : "content"
-  nodes.push(h("div", { class: "tag-plugin paper" }, [
-    h("div", { class: contentClass }, inner),
-  ]))
+	const contentClass =
+		props.style === "underline" ? "content underline" : "content";
+	nodes.push(
+		h("div", { class: "tag-plugin paper" }, [
+			h("div", { class: contentClass }, inner),
+		]),
+	);
 
-  return nodes
+	return nodes;
 }
 
 function walk(node, fn, parent, index) {
-  if (!node) return
-  fn(node, parent, index)
-  if (node.children && Array.isArray(node.children)) {
-    for (let i = 0; i < node.children.length; i++) {
-      walk(node.children[i], fn, node, i)
-    }
-  }
+	if (!node) return;
+	fn(node, parent, index);
+	if (node.children && Array.isArray(node.children)) {
+		for (let i = 0; i < node.children.length; i++) {
+			walk(node.children[i], fn, node, i);
+		}
+	}
 }
 
 export function rehypePaperComponent() {
-  return (tree) => {
-    if (!tree) return
-    walk(tree, (node, parent, index) => {
-      if (index == null || !parent) return
-      if (node.type !== "element" || node.tagName !== "paper") return
-      const replacement = buildPaper(node)
-      parent.children.splice(index, 1, ...replacement)
-    })
-  }
+	return (tree) => {
+		if (!tree) return;
+		walk(tree, (node, parent, index) => {
+			if (index == null || !parent) return;
+			if (node.type !== "element" || node.tagName !== "paper") return;
+			const replacement = buildPaper(node);
+			parent.children.splice(index, 1, ...replacement);
+		});
+	};
 }

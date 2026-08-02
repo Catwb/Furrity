@@ -1,23 +1,27 @@
 ---
+import { render } from "astro:content";
 import path from "node:path";
+import EncryptedContent from "@components/features/EncryptedContent.astro";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
+import TwikooComments from "@components/TwikooComments.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import EncryptedContent from "@components/features/EncryptedContent.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts, getEntrySlug } from "@utils/content-utils";
-import { render } from "astro:content";
-import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { computeAbbrlink } from "@utils/abbrlink-utils";
+import { getEntrySlug, getSortedPosts } from "@utils/content-utils";
+import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
-import { licenseConfig, outdateWarningConfig } from "../../config/site";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import OutdateWarning from "../../components/misc/OutdateWarning.astro";
 import PostMetadata from "../../components/PostMeta.astro";
-import { profileConfig, siteConfig } from "../../config/site";
+import {
+	licenseConfig,
+	outdateWarningConfig,
+	profileConfig,
+	siteConfig,
+} from "../../config/site";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
-import TwikooComments from "@components/TwikooComments.svelte";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
@@ -29,7 +33,9 @@ export async function getStaticPaths() {
 		props: { entry },
 	}));
 	for (const entry of blogEntries) {
-		const abbrlink = entry.data.abbrlink || computeAbbrlink(entry.data.title, entry.data.published, alg, rep);
+		const abbrlink =
+			entry.data.abbrlink ||
+			computeAbbrlink(entry.data.title, entry.data.published, alg, rep);
 		paths.push({
 			params: { slug: abbrlink },
 			props: { entry },

@@ -26,10 +26,14 @@ const className = Astro.props.class;
 
 type CategorySeg = { name: string; fullPath: string }[];
 const categorySegmentsList: CategorySeg[] = (category || []).map((cat) =>
-	cat.split("/").map((s) => s.trim()).filter((s) => s).map((seg, i, arr) => ({
-		name: seg,
-		fullPath: arr.slice(0, i + 1).join("/"),
-	})),
+	cat
+		.split("/")
+		.map((s) => s.trim())
+		.filter((s) => s)
+		.map((seg, i, arr) => ({
+			name: seg,
+			fullPath: arr.slice(0, i + 1).join("/"),
+		})),
 );
 ---
 

@@ -1,6 +1,6 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
-import { parseTitleProps } from "./_parse-title.mjs"
+import { h } from "hastscript";
+import { parseTitleProps } from "./_parse-title.mjs";
+import { shouldInject } from "./_registry.js";
 
 const STYLE = `.tag-plugin.colorful.note {
   position: relative;
@@ -19,26 +19,26 @@ const STYLE = `.tag-plugin.colorful.note {
 .tag-plugin.colorful.note[color="green"] { --block-bg: oklch(0.93 0.04 140); }
 .tag-plugin.colorful.note[color="cyan"] { --block-bg: oklch(0.93 0.04 190); }
 .tag-plugin.colorful.note[color="blue"] { --block-bg: oklch(0.93 0.04 240); }
-.tag-plugin.colorful.note[color="purple"] { --block-bg: oklch(0.93 0.04 290); }`
+.tag-plugin.colorful.note[color="purple"] { --block-bg: oklch(0.93 0.04 290); }`;
 
 export function NoteComponent(properties, children) {
-  const nodes = []
-  if (shouldInject("note")) {
-    nodes.push(h("style", { "data-tag-plugin": "note" }, STYLE))
-  }
+	const nodes = [];
+	if (shouldInject("note")) {
+		nodes.push(h("style", { "data-tag-plugin": "note" }, STYLE));
+	}
 
-  const props = parseTitleProps(properties || {})
-  const attrs = { class: "tag-plugin colorful note" }
-  if (props.color) attrs.color = props.color
+	const props = parseTitleProps(properties || {});
+	const attrs = { class: "tag-plugin colorful note" };
+	if (props.color) attrs.color = props.color;
 
-  const inner = []
-  if (props.title) {
-    inner.push(h("div", { class: "title" }, props.title))
-  }
-  if (children && children.length > 0) {
-    inner.push(h("div", { class: "body" }, children))
-  }
+	const inner = [];
+	if (props.title) {
+		inner.push(h("div", { class: "title" }, props.title));
+	}
+	if (children && children.length > 0) {
+		inner.push(h("div", { class: "body" }, children));
+	}
 
-  nodes.push(h("div", attrs, inner))
-  return nodes.length === 1 ? nodes[0] : nodes
+	nodes.push(h("div", attrs, inner));
+	return nodes.length === 1 ? nodes[0] : nodes;
 }

@@ -147,9 +147,6 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 		<!-- Set the theme before the page is rendered to avoid a flash -->
 		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
 			const root = document.documentElement;
-			// Read geometry first (before any DOM writes)
-			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-			offset = offset - offset % 4;
 
 			// Load the theme from local storage
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
@@ -171,7 +168,15 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 			// Load the hue from local storage
 			const hue = localStorage.getItem('hue') || configHue;
 			root.style.setProperty('--hue', hue);
-			root.style.setProperty('--banner-height-extend', `${offset}px`);
+
+			// Set an immediate vh-based value (no geometry read, no reflow),
+			// then refine to exact pixels after first paint.
+			root.style.setProperty('--banner-height-extend', `${BANNER_HEIGHT_EXTEND}vh`);
+			requestAnimationFrame(() => {
+				let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+				offset = offset - offset % 4;
+				root.style.setProperty('--banner-height-extend', `${offset}px`);
+			});
 		</script>
 		<style define:vars={{
 			configHue,

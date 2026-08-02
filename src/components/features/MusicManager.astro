@@ -307,6 +307,16 @@ const managerConfigStr = JSON.stringify({
         }
     }
 
+    audio.addEventListener('playing', function () {
+        state.isPlaying = true;
+        emit('fm:play-state', { isPlaying: true });
+    });
+
+    audio.addEventListener('pause', function () {
+        state.isPlaying = false;
+        emit('fm:play-state', { isPlaying: false });
+    });
+
     audio.addEventListener('timeupdate', function () {
         if (isNaN(audio.duration)) return;
         var ct = audio.currentTime;

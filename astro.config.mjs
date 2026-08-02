@@ -1,13 +1,13 @@
 import compress from "@playform/compress";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
-import tailwind from "@astrojs/tailwind";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import swup from "@swup/astro";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
@@ -114,9 +114,6 @@ export default defineConfig({
 		inlineStylesheets: "auto",
 	},
 	integrations: [
-		tailwind({
-			nesting: true,
-		}),
 		swup({
 			theme: false,
 			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
@@ -188,68 +185,72 @@ export default defineConfig({
 		compress(),
 	],
 	markdown: {
-		remarkPlugins: [
-			remarkAbbrlink,
-			remarkMath,
-			remarkReadingTime,
-			remarkExcerpt,
-			remarkGithubAdmonitionsToDirectives,
-			remarkDirective,
-			remarkSectionize,
-			parseDirectiveNode,
-		],
-		rehypePlugins: [
-			rehypeMermaidComponent,
-			rehypeKatex,
-			rehypeSlug,
-			[
-				rehypeComponents,
-				{
-					components: {
-						note: NoteComponent, // Stellar-style note with color support
-						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
-						important: (x, y) => AdmonitionComponent(x, y, "important"),
-						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
-						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
-						box: BoxComponent,
-						check: CheckboxComponent,
-						stnote: NoteComponent,
-						folding: FoldingComponent,
-						button: ButtonComponent,
-						frame: FrameComponent,
-						meting: MetingComponent,
-					},
-				},
+		processor: unified({
+			remarkPlugins: [
+				remarkAbbrlink,
+				remarkMath,
+				remarkReadingTime,
+				remarkExcerpt,
+				remarkGithubAdmonitionsToDirectives,
+				remarkDirective,
+				remarkSectionize,
+				parseDirectiveNode,
 			],
-			rehypeCodeGroupWrapper,
-			rehypePoetryComponent,
-			rehypePaperComponent,
-			rehypeSpacing,
-			rehypeExternalLinks,
-			[
-				rehypeAutolinkHeadings,
-				{
-					behavior: "append",
-					properties: {
-						className: ["anchor"],
-					},
-					content: {
-						type: "element",
-						tagName: "span",
-						properties: {
-							className: ["anchor-icon"],
-							"data-pagefind-ignore": true,
+			rehypePlugins: [
+				rehypeMermaidComponent,
+				rehypeKatex,
+				rehypeSlug,
+				[
+					rehypeComponents,
+					{
+						components: {
+							note: NoteComponent, // Stellar-style note with color support
+							tip: (x, y) => AdmonitionComponent(x, y, "tip"),
+							important: (x, y) => AdmonitionComponent(x, y, "important"),
+							caution: (x, y) => AdmonitionComponent(x, y, "caution"),
+							warning: (x, y) => AdmonitionComponent(x, y, "warning"),
+							box: BoxComponent,
+							check: CheckboxComponent,
+							stnote: NoteComponent,
+							folding: FoldingComponent,
+							button: ButtonComponent,
+							frame: FrameComponent,
+							meting: MetingComponent,
 						},
-						children: [
-							{
-								type: "text",
-								value: "#",
-							},
-						],
 					},
-				},
+				],
+				rehypeCodeGroupWrapper,
+				rehypePoetryComponent,
+				rehypePaperComponent,
+				rehypeSpacing,
+				rehypeExternalLinks,
+				[
+					rehypeAutolinkHeadings,
+					{
+						behavior: "append",
+						properties: {
+							className: ["anchor"],
+						},
+						content: {
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["anchor-icon"],
+								"data-pagefind-ignore": true,
+							},
+							children: [
+								{
+									type: "text",
+									value: "#",
+								},
+							],
+						},
+					},
+				],
 			],
-		],
+			gfm: true,
+			smartypants: true,
+		}),
 	},
 	vite: {
 		optimizeDeps: {

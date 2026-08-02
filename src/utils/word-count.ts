@@ -1,4 +1,4 @@
-export function computeWordCount(body: string): number {
+export function computeWordCount(body: string | undefined): number {
 	if (!body) return 0;
 	let text = body
 		.replace(/!\[.*?\]\(.*?\)/g, "")

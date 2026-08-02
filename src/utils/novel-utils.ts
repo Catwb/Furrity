@@ -15,6 +15,12 @@ export type NovelMeta = {
 	chapters: NovelEntry[];
 };
 
+/** 从 entry.id（Content Layer 已全小写化）派生出 novel 的唯一 slug */
+export function getNovelSlug(entry: NovelEntry): string {
+	const id = entry.id.replace(/\.md$/, "");
+	return id.split("/")[0] ?? id;
+}
+
 export async function getAllNovelEntries() {
 	return await getCollection("novels", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
@@ -29,14 +35,14 @@ export async function getNovelMetas(): Promise<NovelMeta[]> {
 
 	const grouped = new Map<string, NovelEntry[]>();
 	for (const ch of chapterEntries) {
-		const key = ch.data.novel;
+		const key = getNovelSlug(ch);
 		if (!grouped.has(key)) grouped.set(key, []);
 		grouped.get(key)!.push(ch);
 	}
 
 	const metas: NovelMeta[] = [];
 	for (const idx of indexEntries) {
-		const key = idx.data.novel;
+		const key = getNovelSlug(idx);
 		const chapters = (grouped.get(key) || []).sort(
 			(a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0),
 		);
@@ -60,22 +66,31 @@ export async function getNovelMetas(): Promise<NovelMeta[]> {
 export async function getNovelChapters(novelSlug: string): Promise<NovelEntry[]> {
 	const entries = await getAllNovelEntries();
 	return entries
-		.filter((e) => e.data.novel === novelSlug && e.data.chapter !== undefined)
+		.filter((e) => getNovelSlug(e) === novelSlug && e.data.chapter !== undefined)
 		.sort((a, b) => (a.data.chapter ?? 0) - (b.data.chapter ?? 0));
 }
 
 export async function getNovelIndex(novelSlug: string): Promise<NovelEntry | undefined> {
 	const entries = await getAllNovelEntries();
-	return entries.find((e) => e.data.novel === novelSlug && !e.data.chapter);
+	return entries.find((e) => getNovelSlug(e) === novelSlug && !e.data.chapter);
 }
 
 export async function getAllCharacters(): Promise<CharacterEntry[]> {
-	return await getCollection("characters");
+	try {
+		return await getCollection("characters");
+	} catch {
+		return [];
+	}
 }
 
 export async function getCharactersByNovel(novelSlug: string): Promise<CharacterEntry[]> {
 	const all = await getAllCharacters();
-	return all.filter((c) => c.data.novel === novelSlug);
+	const target = novelSlug.toLowerCase();
+	return all.filter((c) => getNovelSlugFromName(c.data.novel) === target);
+}
+
+function getNovelSlugFromName(novel: string): string {
+	return novel.replace(/\.md$/, "").toLowerCase();
 }
 
 export function getSeriesList(metas: NovelMeta[]): { name: string; novels: NovelMeta[] }[] {

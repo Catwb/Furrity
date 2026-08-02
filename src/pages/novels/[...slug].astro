@@ -7,7 +7,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { computeWordCount } from "@utils/word-count";
-import { getAllNovelEntries, getNovelChapters, getCharactersByNovel } from "@utils/novel-utils";
+import { getAllNovelEntries, getNovelChapters, getCharactersByNovel, getNovelSlug } from "@utils/novel-utils";
 import { getChapterUrl, getNovelUrl } from "@utils/url-utils";
 
 export const getStaticPaths = (async () => {
@@ -25,7 +25,7 @@ export const getStaticPaths = (async () => {
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
 const isIndex = !entry.data.chapter;
-const novelSlug = entry.data.novel;
+const novelSlug = getNovelSlug(entry);
 
 const chapters = isIndex ? await getNovelChapters(novelSlug) : [];
 const characters = isIndex ? await getCharactersByNovel(novelSlug) : [];

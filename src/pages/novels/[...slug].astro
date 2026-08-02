@@ -1,6 +1,7 @@
 ---
 import Markdown from "@components/misc/Markdown.astro";
 import EncryptedContent from "@components/features/EncryptedContent.astro";
+import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
@@ -22,7 +23,7 @@ export const getStaticPaths = (async () => {
 });
 
 const { entry } = Astro.props;
-const { Content, headings } = await entry.render();
+const { Content, headings } = await render(entry);
 const isIndex = !entry.data.chapter;
 const novelSlug = entry.data.novel;
 

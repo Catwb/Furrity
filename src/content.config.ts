@@ -1,6 +1,9 @@
-import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 
 const postsCollection = defineCollection({
+	loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
 	schema: z.object({
 		title: z.string(),
 		published: z.date(),
@@ -35,12 +38,14 @@ const postsCollection = defineCollection({
 });
 
 const specCollection = defineCollection({
+	loader: glob({ pattern: "**/*.md", base: "./src/content/spec" }),
 	schema: z.object({
 		title: z.string(),
 	}),
 });
 
 const novelsCollection = defineCollection({
+	loader: glob({ pattern: "**/*.md", base: "./src/content/novels" }),
 	schema: z.object({
 		title: z.string(),
 		description: z.string().optional().default(""),
@@ -64,6 +69,7 @@ const novelsCollection = defineCollection({
 });
 
 const charactersCollection = defineCollection({
+	loader: glob({ pattern: "**/*.md", base: "./src/content/characters" }),
 	schema: z.object({
 		name: z.string(),
 		novel: z.string(),
@@ -75,6 +81,7 @@ const charactersCollection = defineCollection({
 });
 
 const fursonaCollection = defineCollection({
+	loader: glob({ pattern: "**/*.md", base: "./src/content/fursonas" }),
 	schema: z.object({
 		name: z.string(),
 		species: z.string(),

@@ -6,7 +6,8 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import EncryptedContent from "@components/features/EncryptedContent.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
+import { getSortedPosts, getEntrySlug } from "@utils/content-utils";
+import { render } from "astro:content";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { computeAbbrlink } from "@utils/abbrlink-utils";
 import { Icon } from "astro-icon/components";
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
 	const alg = abbrConfig.alg || "crc16";
 	const rep = abbrConfig.rep || "dec";
 	const paths = blogEntries.map((entry) => ({
-		params: { slug: entry.slug },
+		params: { slug: getEntrySlug(entry) },
 		props: { entry },
 	}));
 	for (const entry of blogEntries) {
@@ -38,9 +39,9 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content, headings } = await entry.render();
+const { Content, headings } = await render(entry);
 
-const { remarkPluginFrontmatter } = await entry.render();
+const { remarkPluginFrontmatter } = await render(entry);
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -144,7 +145,7 @@ const jsonLd = {
               </Markdown>
             )}
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} slug={getEntrySlug(entry)} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
 
         </div>
     </div>

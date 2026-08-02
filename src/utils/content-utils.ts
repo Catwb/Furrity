@@ -4,6 +4,11 @@ import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils";
 import type { CategoryNode } from "@/types/config";
 
+// Content Layer entries expose `id` (with extension) instead of legacy `.slug`
+export function getEntrySlug(entry: { id: string }): string {
+	return entry.id.replace(/\.mdx?$/, "");
+}
+
 // // Retrieve posts and sort them by publication date
 async function getRawSortedPosts() {
 	const allBlogPosts = await getCollection("posts", ({ data }) => {
@@ -25,11 +30,11 @@ export async function getSortedPosts() {
 	const sorted = await getRawSortedPosts();
 
 	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].data.abbrlink || sorted[i - 1].slug;
+		sorted[i].data.nextSlug = sorted[i - 1].data.abbrlink || getEntrySlug(sorted[i - 1]);
 		sorted[i].data.nextTitle = sorted[i - 1].data.title;
 	}
 	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].data.abbrlink || sorted[i + 1].slug;
+		sorted[i].data.prevSlug = sorted[i + 1].data.abbrlink || getEntrySlug(sorted[i + 1]);
 		sorted[i].data.prevTitle = sorted[i + 1].data.title;
 	}
 
@@ -44,7 +49,7 @@ export async function getSortedPostsList(): Promise<PostForList[]> {
 
 	// delete post.body
 	const sortedPostsList = sortedFullPosts.map((post) => ({
-		slug: post.slug,
+		slug: getEntrySlug(post),
 		data: post.data,
 	}));
 

@@ -234,6 +234,7 @@ const widgetId =
 
     var ITEM_H = 42;
     var OVERSCAN = 8;
+    var playSafetyTimer = 0;
     var local = {
         isUserScrolling: false,
         scrollTimeout: null,
@@ -642,6 +643,7 @@ const widgetId =
 
     on('fm:ready', function () {
         clearTimeout(loadingFallback);
+        clearTimeout(playSafetyTimer);
         setLoading(false);
     });
 
@@ -683,11 +685,20 @@ const widgetId =
 
     on('fm:error', function (e) {
         clearTimeout(loadingFallback);
+        clearTimeout(playSafetyTimer);
         setLoading(false);
         ui.title.innerText = e.detail.message || cfg.i18n.error;
     });
 
-    ui.btnPlay.addEventListener('click', function () { mgr.togglePlay(); });
+    ui.btnPlay.addEventListener('click', function () {
+        mgr.togglePlay();
+        // Safety net: if the audio never becomes ready, clear the loading
+        // overlay so the widget doesn't stay blocked/unresponsive.
+        clearTimeout(playSafetyTimer);
+        playSafetyTimer = setTimeout(function () {
+            setLoading(false);
+        }, 8000);
+    });
     ui.btnNext.addEventListener('click', function () { mgr.playNext(); });
     ui.btnPrev.addEventListener('click', function () { mgr.playPrev(); });
     ui.btnRepeat.addEventListener('click', function () { mgr.cyclePlayMode(); });

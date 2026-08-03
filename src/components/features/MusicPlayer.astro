@@ -235,6 +235,8 @@ const widgetId =
     var ITEM_H = 42;
     var OVERSCAN = 8;
     var playSafetyTimer = 0;
+    var swupBusy = false;
+    var audioReady = false;
     var local = {
         isUserScrolling: false,
         scrollTimeout: null,
@@ -251,11 +253,21 @@ const widgetId =
     };
 
     function setLoading(bool) {
+        // Keep the loading overlay visible while swup is still swapping in
+        // the new page, or until the audio is actually ready. The overlay
+        // only clears when both are satisfied.
         if (bool) {
             ui.loading.classList.remove('opacity-0', 'pointer-events-none');
         } else {
+            if (swupBusy || !audioReady) return;
             ui.loading.classList.add('opacity-0', 'pointer-events-none');
         }
+    }
+
+    function clearLoadingNow() {
+        swupBusy = false;
+        audioReady = true;
+        ui.loading.classList.add('opacity-0', 'pointer-events-none');
     }
 
     function updatePlayStateUI(isPlaying) {
@@ -593,6 +605,7 @@ const widgetId =
         var s = mgr.getState();
         if (!s.initialized) return;
 
+        audioReady = true;
         setLoading(false);
 
         if (s.playlist.length === 0) {
@@ -644,11 +657,13 @@ const widgetId =
     on('fm:ready', function () {
         clearTimeout(loadingFallback);
         clearTimeout(playSafetyTimer);
+        audioReady = true;
         setLoading(false);
     });
 
     on('fm:track', function (e) {
         var d = e.detail;
+        audioReady = false;
         setLoading(true);
         updateTrackUI(d.track);
         updatePlaylistActiveUI(d.index);
@@ -686,7 +701,7 @@ const widgetId =
     on('fm:error', function (e) {
         clearTimeout(loadingFallback);
         clearTimeout(playSafetyTimer);
-        setLoading(false);
+        clearLoadingNow();
         ui.title.innerText = e.detail.message || cfg.i18n.error;
     });
 
@@ -845,21 +860,39 @@ const widgetId =
         // (fm:ready) or on a real error. As a last resort, after a long
         // timeout show an error hint instead of a silently "ready" widget.
         var loadingFallback = setTimeout(function () {
-            setLoading(false);
+            clearLoadingNow();
             if (!mgr.getState().initialized) {
                 ui.title.innerText = cfg.i18n.error + ' · ' + cfg.i18n.noSongs;
             }
         }, 15000);
-        function deferredInit() {
-            if (document.readyState === 'complete') {
-                setTimeout(function () { mgr.init(); }, 3000);
-            } else {
-                window.addEventListener('load', function () {
-                    setTimeout(function () { mgr.init(); }, 3000);
-                });
-            }
+
+        // Follow the swup page lifecycle: keep the overlay visible while
+        // swup is swapping content, and start init once the first page is
+        // actually visible (astro:page-load, fired on page:view).
+        var initTriggered = false;
+        function triggerInit() {
+            if (initTriggered) return;
+            initTriggered = true;
+            mgr.init();
         }
-        deferredInit();
+
+        document.addEventListener('astro:before-swap', function () {
+            swupBusy = true;
+            setLoading(true);
+        });
+        document.addEventListener('astro:page-load', function () {
+            swupBusy = false;
+            setLoading(false);
+            clearTimeout(initFallbackTimer);
+            triggerInit();
+        });
+
+        // Fallback: ensure init runs even if swup is unavailable/disabled.
+        var initFallbackTimer = setTimeout(function () {
+            if (!mgr.getState().initialized) {
+                triggerInit();
+            }
+        }, 5000);
     }
 })();
 </script>

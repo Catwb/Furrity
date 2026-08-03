@@ -74,6 +74,8 @@ class TableOfContents extends HTMLElement {
     active: boolean[] = [];
     activeIndicator: HTMLElement | null = null;
 
+    initialized = false;
+
     constructor() {
         super();
         this.observer = new IntersectionObserver(
@@ -220,15 +222,28 @@ class TableOfContents extends HTMLElement {
     };
 
     connectedCallback() {
-        // wait for the onload animation to finish, which makes the `getBoundingClientRect` return correct values
+        // Initialize once the layout has settled. Prefer the prose
+        // onload animation end (keeps measurements correct after the
+        // fade-in), but fall back to a timer so the TOC still activates
+        // on systems where animations are disabled (prefers-reduced-motion)
+        // or on pages with no .prose animation at all.
         const element = document.querySelector('.prose');
-        if (element) {
-            element.addEventListener('animationend', () => {
-                this.init();
-            }, { once: true });
-        } else {
-            console.debug('Animation element not found');
+
+        if (!element) {
+            // Not a post page (no .prose); nothing to highlight.
+            return;
         }
+
+        const boot = () => {
+            if (this.initialized) return;
+            this.initialized = true;
+            this.init();
+        };
+
+        element.addEventListener('animationend', boot, { once: true });
+        // Safety net: the animation above runs up to ~350ms (with delays),
+        // so boot shortly after it would have ended. Covers reduced-motion.
+        setTimeout(boot, 600);
     };
 
     init() {
@@ -237,6 +252,18 @@ class TableOfContents extends HTMLElement {
         );
 
         if (!this.tocEl) return;
+
+        // Idempotent: drop any existing observations before rebuilding,
+        // so a re-init (e.g. page:view refresh) never stacks observers.
+        this.observer.disconnect();
+
+        // Reset module state so a re-init starts from a clean slate.
+        this.headingIdxMap = new Map<string, number>();
+        this.activeIndicator = null;
+        this.tocEntries = [];
+        this.sections = [];
+        this.headings = [];
+        this.active = [];
 
         this.tocEl.addEventListener("click", this.handleAnchorClick, {
             capture: true,
@@ -278,10 +305,24 @@ class TableOfContents extends HTMLElement {
         );
         this.observer.disconnect();
         this.tocEl?.removeEventListener("click", this.handleAnchorClick);
+        // Allow a subsequent connectedCallback (e.g. swup re-use) to init again.
+        this.initialized = false;
     };
 }
 
 if (!customElements.get("table-of-contents")) {
     customElements.define("table-of-contents", TableOfContents);
 }
+
+// Refresh current reading position after a swup navigation. The custom
+// element is re-created by the swap, which re-runs connectedCallback ->
+// boot, but this is a cheap safety net in case only the content (not the
+// #toc container) changed and the element was never reconnected.
+document.addEventListener('astro:page-load', () => {
+    const el = document.querySelector('table-of-contents') as TableOfContents | null;
+    if (el && !el.initialized && document.querySelector('.prose')) {
+        el['initialized'] = true;
+        el.init();
+    }
+});
 </script>

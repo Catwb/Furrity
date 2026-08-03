@@ -841,7 +841,15 @@ const widgetId =
         syncAll();
     } else {
         setLoading(true);
-        var loadingFallback = setTimeout(function () { setLoading(false); }, 15000);
+        // Only clear the loading overlay once the audio is actually ready
+        // (fm:ready) or on a real error. As a last resort, after a long
+        // timeout show an error hint instead of a silently "ready" widget.
+        var loadingFallback = setTimeout(function () {
+            setLoading(false);
+            if (!mgr.getState().initialized) {
+                ui.title.innerText = cfg.i18n.error + ' · ' + cfg.i18n.noSongs;
+            }
+        }, 15000);
         function deferredInit() {
             if (document.readyState === 'complete') {
                 setTimeout(function () { mgr.init(); }, 3000);

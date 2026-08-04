@@ -57,6 +57,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "初叶🍂竹叶的温暖小窝",
 			},
 			{
+				name: "冬草空间站",
+				url: "https://blog.loxi.work/",
+				description: "揽天冬之幽，品橘果之甘，饮清茶之淡，悟生活之简",
+				avatar: "https://loxi.work/share/avatar.webp"
+			},
+			{
 				name: "缎金SatinAuの主页",
 				url: "https://satinau.cn",
 				avatar: "https://satinau.cn/public/favicon.ico",

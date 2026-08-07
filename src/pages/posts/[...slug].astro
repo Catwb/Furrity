@@ -24,16 +24,17 @@ export async function getStaticPaths() {
 	const abbrConfig = siteConfig.abbrlink || {};
 	const alg = abbrConfig.alg || "crc16";
 	const rep = abbrConfig.rep || "dec";
-	const paths = blogEntries.map((entry) => ({
-		params: { slug: getEntrySlug(entry) },
-		props: { entry },
-	}));
+	const seen = new Set<string>();
+	const paths = [];
 	for (const entry of blogEntries) {
+		const slug = getEntrySlug(entry);
 		const abbrlink = entry.data.abbrlink || computeAbbrlink(entry.data.title, entry.data.published, alg, rep);
-		paths.push({
-			params: { slug: abbrlink },
-			props: { entry },
-		});
+		for (const s of [slug, abbrlink]) {
+			if (s && !seen.has(s)) {
+				seen.add(s);
+				paths.push({ params: { slug: s }, props: { entry } });
+			}
+		}
 	}
 	return paths;
 }

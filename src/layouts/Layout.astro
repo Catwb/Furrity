@@ -662,7 +662,6 @@ if (window?.swup?.hooks) {
 
 const docEl = document.documentElement;
 const body = document.body;
-let backToTopBtn = document.getElementById('back-to-top-btn');
 let toc = document.getElementById('toc-wrapper');
 let navbar = document.getElementById('navbar-wrapper');
 
@@ -677,6 +676,8 @@ function scrollFunction() {
 		const isHome = body.classList.contains('lg:is-home');
 		const isWide = window.innerWidth >= 1024;
 
+		// 实时查询按钮，避免顶层捕获时为 null（按钮 DOM 晚于脚本执行）
+		const backToTopBtn = document.getElementById('back-to-top-btn');
 		if (backToTopBtn) {
 			backToTopBtn.classList.toggle('hide', scrollPos <= bannerH);
 		}

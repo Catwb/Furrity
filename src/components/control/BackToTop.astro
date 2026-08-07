@@ -26,24 +26,48 @@ import { Icon } from "astro-icon/components";
     font-weight: bold
     border: none
     position: fixed
+    right: 1rem
     bottom: 10rem
+    z-index: 40
     opacity: 1
     cursor: pointer
-    transform: translateX(5rem)
+    transform: translateX(0)
     pointer-events: auto
     i
         font-size: 1.75rem
     &.hide
-        transform: translateX(5rem) scale(0.9)
+        transform: translateX(calc(100% + 2rem))
         opacity: 0
         pointer-events: none
     &:active
-      transform: translateX(5rem) scale(0.9)
+        transform: translateX(0) scale(0.9)
 
 </style>
 
 <script is:raw is:inline>
 function backToTop() {
-    window.scroll({ top: 0, behavior: 'smooth' });
+	// OverlayScrollbars 接管 body 滚动时，window.scroll 可能无效，
+	// 同时滚动 window / html / body，确保一定回到顶部
+	var opts = { top: 0, behavior: 'smooth' };
+	window.scrollTo(opts);
+	if (document.documentElement.scrollTo) document.documentElement.scrollTo(opts);
+	if (document.body.scrollTo) document.body.scrollTo(opts);
 }
+
+// 按钮跟随文章主体（#main-grid 容器）右缘，而不是视口边缘
+function positionBackToTop() {
+	var btn = document.getElementById('back-to-top-btn');
+	var wrapper = document.querySelector('.back-to-top-wrapper');
+	if (!btn || !wrapper) return;
+	var rect = wrapper.getBoundingClientRect();
+	// 按钮整体放在文章主体右缘外侧 0.5rem，完全避开正文
+	var btnW = btn.offsetWidth || 60;
+	var right = Math.max(12, window.innerWidth - rect.right - btnW - 8);
+	btn.style.right = right + 'px';
+}
+window.addEventListener('scroll', positionBackToTop, { passive: true });
+window.addEventListener('resize', positionBackToTop);
+document.addEventListener('astro:page-load', positionBackToTop);
+window.addEventListener('load', positionBackToTop);
+positionBackToTop();
 </script>

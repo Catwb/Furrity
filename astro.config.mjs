@@ -181,7 +181,13 @@ export default defineConfig({
 		}),
         svelte(),
 		sitemap(),
-		compress({ CSS: false }),
+		compress({
+			CSS: false,
+			HTML: false,
+			JavaScript: false,
+			SVG: false,
+			JSON: false,
+		}),
 	],
 	markdown: {
 		processor: satteriUnified({

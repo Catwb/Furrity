@@ -7,14 +7,13 @@ import swup from "@swup/astro";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
-import { unified } from "@astrojs/markdown-remark";
+import { satteriUnified } from "./src/plugins/satteri-unified-processor.mjs";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive"; /* Handle directives */
 import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-directives";
-import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config/site.ts";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
@@ -185,10 +184,9 @@ export default defineConfig({
 		compress({ CSS: false }),
 	],
 	markdown: {
-		processor: unified({
+		processor: satteriUnified({
 			remarkPlugins: [
 				remarkAbbrlink,
-				remarkMath,
 				remarkReadingTime,
 				remarkExcerpt,
 				remarkGithubAdmonitionsToDirectives,

@@ -198,6 +198,10 @@ export type BlogPostData = {
 
 export type ExpressiveCodeConfig = {
 	theme: string;
+	/** 代码块超过该行数后，自动折叠第 N 行之后的全部行 */
+	autoCollapseLines?: number;
+	/** 折叠提示文案的 locale（如 "zh"），默认跟随站点语言 */
+	autoCollapseLocale?: string;
 };
 
 export type CategoryNode = {

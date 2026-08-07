@@ -17,6 +17,7 @@ import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-di
 import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config/site.ts";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
+import { pluginAutoCollapse } from "./src/plugins/expressive-code/auto-collapse.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { CheckboxComponent } from "./src/plugins/rehype-tags/checkbox.mjs";
 import { BoxComponent } from "./src/plugins/rehype-tags/box.mjs";
@@ -138,13 +139,16 @@ export default defineConfig({
 		expressiveCode({
 			themes: [expressiveCodeConfig.theme, expressiveCodeConfig.theme],
 			plugins: [
+				pluginAutoCollapse(expressiveCodeConfig.autoCollapseLines ?? 10),
 				pluginCollapsibleSections(),
 				pluginLineNumbers(),
 				pluginLanguageBadge(),
 				pluginCustomCopyButton()
 			],
+			getBlockLocale: () => expressiveCodeConfig.autoCollapseLocale ?? "zh",
 			defaultProps: {
 				wrap: true,
+				collapseStyle: "collapsible-auto",
 				overridesByLang: {
 					'shellsession': {
 						showLineNumbers: false,

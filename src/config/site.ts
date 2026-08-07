@@ -201,4 +201,5 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 	// 注意：部分样式（如背景色）会被覆盖，详见 astro.config.mjs
 	// 请选择一个深色主题，因为本博客主题目前仅支持深色背景
 	theme: "github-dark",
+	autoCollapseLines: 10,
 };

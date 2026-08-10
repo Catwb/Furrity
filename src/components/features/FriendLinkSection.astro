@@ -1,0 +1,170 @@
+---
+import { Icon } from "astro-icon/components";
+import type { FriendLinkGroup } from "@/types/config";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+const { groups } = Astro.props as {
+	groups: FriendLinkGroup[];
+};
+---
+<div id="friend-link-section">
+	<!-- 搜索栏 -->
+	<div class="mb-4 flex items-center gap-3 transition-all h-11 rounded-xl px-4 mx-1
+		bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06]
+		dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10">
+		<Icon name="material-symbols:search-rounded" class="text-[1.25rem] shrink-0 text-black/30 dark:text-white/30 pointer-events-none" />
+		<input id="friend-link-search" type="search" inputmode="search" autocomplete="off"
+			placeholder={i18n(I18nKey.search)}
+			class="w-full bg-transparent outline-none focus:outline-none text-sm text-black/70 dark:text-white/70 placeholder:text-black/30 dark:placeholder:text-white/30" />
+		<Icon name="material-symbols:close-rounded" id="friend-link-clear"
+			class="text-xl my-auto shrink-0 text-black/40 dark:text-white/40 cursor-pointer p-0.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition hidden" />
+	</div>
+
+	<!-- 搜索命中计数 -->
+	<div id="friend-link-count" class="text-xs text-black/40 dark:text-white/40 mb-3 px-1 hidden"></div>
+
+	<!-- 分组视图 -->
+	<div id="friend-link-groups">
+		{groups.map((group, gi) => (
+			<details class:list={["group mb-4 card-base rounded-[var(--radius-large)] overflow-hidden transition"]} open={!group.collapsed} data-group={gi}>
+				<summary class="flex items-center gap-2 px-5 py-3 cursor-pointer text-sm font-bold text-black/60 dark:text-white/60 hover:text-black/80 dark:hover:text-white/80 transition select-none">
+					<Icon name="material-symbols:chevron-right-rounded" class="text-lg transition rotate-0 group-open:rotate-90" />
+					{group.title}
+					<span class="ml-auto text-xs text-black/30 dark:text-white/30">{group.links.length}</span>
+				</summary>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-5 pb-4">
+					{group.links.map((link) => (
+						<a href={link.url} target="_blank" rel="noopener" data-name={link.name} data-desc={link.description ?? ""}
+							data-host={(() => {
+								try { return new URL(link.url).hostname; } catch { return ""; }
+							})()}
+							class="flex flex-col gap-2 p-4 pl-7 rounded-[var(--radius-large)] transition active:scale-[0.98] relative overflow-hidden bg-[var(--card-bg)] border border-black/5 dark:border-white/10 hover:border-[var(--primary)]/30 hover:shadow-sm">
+							<div class="absolute left-2 inset-y-2 w-1 rounded-md pointer-events-none z-10"
+								 style={`background-color: ${link.color || 'var(--primary)'}`} />
+							<Icon name="fa6-solid:link"
+								  class="absolute pointer-events-none right-4 top-1/2 -translate-y-1/2 text-black/[0.04] dark:text-white/[0.06] text-[8rem] z-0" />
+							<div class="flex items-center gap-3 relative z-10">
+								{link.avatar ? (
+									<img src={link.avatar} alt={link.name} width={48} height={48}
+										 class="w-12 h-12 rounded-full object-cover shrink-0" loading="lazy" decoding="async" />
+								) : (
+									<div class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 text-white"
+										 style={link.color ? `background-color: ${link.color}` : 'background-color: var(--primary)'}>
+										{link.name[0]}
+									</div>
+								)}
+								<div class="font-bold text-black/85 dark:text-white/85 flex items-center gap-1 text-sm">
+									{link.name}
+									<Icon name="fa6-solid:arrow-up-right-from-square"
+										  class="text-[0.6rem] text-black/30 dark:text-white/30" />
+								</div>
+							</div>
+							<div class="flex justify-between items-center gap-2 relative z-10 ml-[60px]">
+								{link.description && (
+									<div class="text-xs text-black/50 dark:text-white/50 truncate">
+										{link.description}
+									</div>
+								)}
+								<div class="flex items-center gap-1 shrink-0 text-xs text-[var(--primary)]">
+									<Icon name="fa6-solid:link" class="text-[0.65rem]" />
+									<span>{(() => {
+										try { return new URL(link.url).hostname; } catch { return ""; }
+									})()}</span>
+								</div>
+							</div>
+						</a>
+					))}
+				</div>
+			</details>
+		))}
+	</div>
+
+	<!-- 搜索结果视图 -->
+	<div id="friend-link-results" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+
+	<!-- 空结果占位 -->
+	<div id="friend-link-empty" class="hidden card-base rounded-[var(--radius-large)] px-5 py-8 text-center text-sm text-black/40 dark:text-white/40">
+		暂无匹配的友链
+	</div>
+</div>
+
+<style is:global>
+	#friend-link-search::-webkit-search-cancel-button {
+		display: none;
+	}
+	#friend-link-search {
+		outline: none;
+	}
+</style>
+
+<script is:inline>
+(() => {
+	const section = document.getElementById('friend-link-section');
+	if (!section) return;
+	const input = document.getElementById('friend-link-search');
+	const clearBtn = document.getElementById('friend-link-clear');
+	const count = document.getElementById('friend-link-count');
+	const groupsWrap = document.getElementById('friend-link-groups');
+	const resultsWrap = document.getElementById('friend-link-results');
+	const empty = document.getElementById('friend-link-empty');
+	if (!input || !groupsWrap || !resultsWrap) return;
+
+	// 记录每张卡片及其原始分组容器；组内 Fisher–Yates 随机排序
+	const allCards = [];
+	groupsWrap.querySelectorAll('details > div').forEach((container) => {
+		const cards = Array.from(container.querySelectorAll(':scope > a'));
+		cards.forEach((card) => allCards.push({ card, origin: container }));
+		for (let i = cards.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			container.appendChild(cards[j]);
+		}
+	});
+
+	const normalize = (s) => s.toLowerCase().trim();
+
+	function restore() {
+		allCards.forEach(({ card, origin }) => origin.appendChild(card));
+	}
+
+	function renderResults(list) {
+		resultsWrap.innerHTML = '';
+		list.forEach(({ card }) => resultsWrap.appendChild(card));
+	}
+
+	function applyFilter() {
+		const q = normalize(input.value);
+		const showSearch = q.length > 0;
+
+		groupsWrap.classList.toggle('hidden', showSearch);
+		resultsWrap.classList.toggle('hidden', !showSearch);
+		resultsWrap.classList.toggle('grid', showSearch);
+		count.classList.toggle('hidden', !showSearch);
+		clearBtn.classList.toggle('hidden', !showSearch);
+
+		if (!showSearch) {
+			empty.classList.add('hidden');
+			count.textContent = '';
+			restore();
+			return;
+		}
+
+		const matched = allCards.filter(({ card }) => {
+			const hay = [card.dataset.name, card.dataset.desc, card.dataset.host]
+				.filter(Boolean).join(' ').toLowerCase();
+			return hay.includes(q);
+		});
+
+		count.textContent = `找到 ${matched.length} 个友链`;
+		empty.classList.toggle('hidden', matched.length > 0);
+		renderResults(matched);
+	}
+
+	input.addEventListener('input', applyFilter);
+	clearBtn.addEventListener('click', () => {
+		input.value = '';
+		applyFilter();
+		input.focus();
+	});
+})();
+</script>

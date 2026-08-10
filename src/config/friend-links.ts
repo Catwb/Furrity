@@ -139,6 +139,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "但愿日子清静抬头遇见的满是柔情",
 			},
 			{
+				name: "MingBlog（Ming 博客）",
+				url: "https://mingblog.site",
+				avatar: "https://mingblog.site/icons/icon-512.png",
+				description: "记录日常生活、城市影像、旅行与观察，以及认真看过、读过和听过的作品。",
+			},
+			{
 				name: "Mete0r's Blog",
 				url: "https://www.xscnet.cn/",
 				avatar: "https://img.xscnet.cn/i/2025/07/09/686e64ec429db.png",

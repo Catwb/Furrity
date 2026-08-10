@@ -2,6 +2,7 @@
 import CodeGroupManager from "@components/features/CodeGroupManager.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicManager from "@components/features/MusicManager.astro";
+import PageLoader from "@components/features/PageLoader.astro";
 import { profileConfig, siteConfig } from "@/config/site";
 import {
 	AUTO_MODE,
@@ -192,108 +193,10 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 	>
-		<div class="spinner" id="page-loader">
-			<span class="loader-text">0%</span>
-			<div class="loader" style="--width: 0%;"></div>
-			<span class="loader-text-below" id="loader-close">不想等待可以点我关掉</span>
-			<span class="loader-tips">Tips：非卡住不建议关闭，以确保Swup正常运行</span>
-		</div>
-		<style>
-			#page-loader {
-				position: fixed; inset: 0; z-index: 9999;
-				display: flex; flex-direction: column;
-				align-items: center; justify-content: center;
-				background: oklch(0.96 0.01 var(--hue, 250) / 0.55);
-			backdrop-filter: blur(2px);
-				transition: opacity 0.3s;
-			}
-			#page-loader.hide { opacity: 0; pointer-events: none; }
-			#page-loader .loader {
-				width: 240px; height: 4px;
-				background: oklch(0.85 0.02 var(--hue, 250));
-				border-radius: 2px; overflow: hidden;
-				margin-bottom: 12px;
-			}
-			#page-loader .loader::after {
-				content: ""; display: block; height: 100%;
-				width: var(--width, 0%); background: var(--primary, oklch(0.55 0.2 var(--hue, 250)));
-				border-radius: 2px; transition: width 0.3s;
-			}
-			#page-loader .loader-text {
-				font-size: 15px; color: oklch(0.45 0.02 var(--hue, 250));
-				margin-bottom: 12px;
-			}
-			#page-loader .loader-text-below {
-				font-size: 13px; color: oklch(0.5 0.04 var(--hue, 250));
-				cursor: pointer; border-bottom: 1px solid transparent;
-				transition: border-color 0.2s;
-			}
-			#page-loader .loader-text-below:hover {
-				border-bottom-color: var(--primary, oklch(0.55 0.2 var(--hue, 250)));
-			}
-			#page-loader .loader-tips {
-				font-size: 12px; color: oklch(0.55 0.02 var(--hue, 250));
-				margin-top: 6px;
-			}
-		</style>
-		<script is:inline>
-			(function() {
-				if (window.__loaderShown) return;
-				window.__loaderShown = true;
-				var loader = document.getElementById("page-loader");
-				if (!loader) return;
-				var textEl = loader.querySelector(".loader-text");
-				var closeEl = document.getElementById("loader-close");
-				if (!closeEl) return;
-
-				var _progress = 0;
-				function setProgress(p) {
-					_progress = p;
-					var barEl = loader.querySelector(".loader");
-					if (barEl) barEl.style.setProperty("--width", p + "%");
-					if (textEl) textEl.textContent = p + "%";
-				}
-
-				function hideLoader() {
-					setProgress(100);
-					setTimeout(function() { loader.classList.add("hide"); }, 400);
-				}
-
-				var animId;
-				function animateTo(target, dur) {
-					var start = performance.now();
-					var cur = _progress;
-					if (animId) cancelAnimationFrame(animId);
-					function tick(now) {
-						var t = Math.min((now - start) / dur, 1);
-						var p = Math.round(cur + (target - cur) * t);
-						setProgress(p);
-						if (t < 1) { animId = requestAnimationFrame(tick); }
-					}
-					animId = requestAnimationFrame(tick);
-				}
-
-				closeEl.addEventListener("click", function(e) {
-					e.stopPropagation();
-					if (animId) cancelAnimationFrame(animId);
-					hideLoader();
-				});
-
-				setProgress(0);
-				animateTo(80, 1500);
-				window.addEventListener("load", function() {
-					animateTo(100, 300);
-					setTimeout(hideLoader, 500);
-				});
-				window.addEventListener("error", function() {
-					if (animId) cancelAnimationFrame(animId);
-					setTimeout(hideLoader, 300);
-				});
-			})();
-		</script>
 		<ConfigCarrier></ConfigCarrier>
 		<CodeGroupManager />
 		<MusicManager />
+		<PageLoader />
 		<slot />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->

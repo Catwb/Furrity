@@ -1,0 +1,262 @@
+---
+const checklistFirst = [
+	{ id: "dom:parse", label: "DOM 解析完成" },
+	{ id: "layout:render", label: "页面布局渲染" },
+	{ id: "swup:enable", label: "SWUP 引擎初始化" },
+	{ id: "third-party", label: "第三方组件就绪" },
+	{ id: "window:load", label: "资源加载完成" },
+];
+---
+
+<div class="spinner" id="page-loader">
+	<span class="loader-text" id="loader-percent">0%</span>
+	<div class="loader" style="--width: 0%;"></div>
+	<ul class="loader-checklist" id="loader-checklist"></ul>
+	<span class="loader-warn" id="loader-warn" hidden>⚠️ 已等待 5 秒，某项可能卡住</span>
+	<span class="loader-text-below" id="loader-close">不想等待可以点我关掉</span>
+	<span class="loader-tips">Tips：非卡住不建议关闭，以确保Swup正常运行</span>
+</div>
+
+<style is:global>
+	#page-loader {
+		position: fixed; inset: 0; z-index: 9999;
+		display: flex; flex-direction: column;
+		align-items: center; justify-content: center;
+		background: oklch(0.96 0.01 var(--hue, 250) / 0.55);
+		backdrop-filter: blur(2px);
+		transition: opacity 0.3s;
+	}
+	#page-loader.hide { opacity: 0; pointer-events: none; }
+	#page-loader .loader {
+		width: 240px; height: 4px;
+		background: oklch(0.85 0.02 var(--hue, 250));
+		border-radius: 2px; overflow: hidden;
+		margin-bottom: 14px;
+	}
+	#page-loader .loader::after {
+		content: ""; display: block; height: 100%;
+		width: var(--width, 0%); background: var(--primary, oklch(0.55 0.2 var(--hue, 250)));
+		border-radius: 2px; transition: width 0.3s;
+	}
+	#page-loader .loader-text {
+		font-size: 15px; color: oklch(0.45 0.02 var(--hue, 250));
+		margin-bottom: 8px;
+	}
+	#page-loader .loader-checklist {
+		list-style: none; padding: 0; margin: 0 0 12px;
+		width: 250px; min-height: 0;
+		display: flex; flex-direction: column; gap: 4px;
+		max-height: 220px; overflow-y: auto;
+		font-size: 13px; color: oklch(0.45 0.02 var(--hue, 250));
+	}
+	#page-loader .loader-checklist li {
+		display: flex; align-items: center; gap: 6px;
+		transition: color 0.25s;
+	}
+	#page-loader .loader-checklist li::before {
+		content: "○"; display: inline-block; width: 1em; text-align: center;
+		color: oklch(0.6 0.02 var(--hue, 250)); font-size: 12px;
+		flex-shrink: 0;
+	}
+	#page-loader .loader-checklist li.done {
+		color: oklch(0.4 0.04 var(--hue, 250));
+	}
+	#page-loader .loader-checklist li.done::before {
+		content: "✓"; color: var(--primary, oklch(0.55 0.2 var(--hue, 250)));
+	}
+	#page-loader .loader-checklist li.warn {
+		color: oklch(0.55 0.13 var(--warn-hue, 30));
+	}
+	#page-loader .loader-checklist li.warn::before {
+		content: "!"; color: oklch(0.55 0.13 var(--warn-hue, 30));
+		font-weight: 700;
+	}
+	#page-loader .loader-warn {
+		font-size: 12px; color: oklch(0.55 0.13 var(--warn-hue, 30));
+		margin-bottom: 8px;
+	}
+	#page-loader .loader-text-below {
+		font-size: 13px; color: oklch(0.5 0.04 var(--hue, 250));
+		cursor: pointer; border-bottom: 1px solid transparent;
+		transition: border-color 0.2s;
+	}
+	#page-loader .loader-text-below:hover {
+		border-bottom-color: var(--primary, oklch(0.55 0.2 var(--hue, 250)));
+	}
+	#page-loader .loader-tips {
+		font-size: 12px; color: oklch(0.55 0.02 var(--hue, 250));
+		margin-top: 6px;
+	}
+</style>
+
+<script is:inline define:vars={{ checklistFirst }}>
+	window.__PAGE_LOADER_FIRST__ = checklistFirst;
+</script>
+
+<script is:inline>
+	(function () {
+		if (window.__pageLoaderInit) return;
+		window.__pageLoaderInit = true;
+
+		var loader = document.getElementById("page-loader");
+		if (!loader) return;
+		var percentEl = loader.querySelector("#loader-percent");
+		var listEl = loader.querySelector("#loader-checklist");
+
+		var checklist = [];
+		var checkedCount = 0;
+		var hiddenByUser = false;
+		var shownSession = false;
+
+		var warnEl = document.getElementById("loader-warn");
+		var warnTimers = [];
+
+		function warnOnStuck(id, seconds) {
+			var t = setTimeout(function () {
+				var item = checklist.find(function (x) { return x.id === id; });
+				if (!item || item.done) return;
+				item.warn = true;
+				if (item.el) item.el.classList.add("warn");
+				if (warnEl) warnEl.hidden = false;
+			}, (seconds || 5) * 1000);
+			warnTimers.push(t);
+		}
+
+		function clearWarnTimers() {
+			warnTimers.forEach(function (t) { clearTimeout(t); });
+			warnTimers = [];
+			if (warnEl) warnEl.hidden = true;
+		}
+
+		function setProgress(p) {
+			var barEl = loader.querySelector(".loader");
+			if (barEl) barEl.style.setProperty("--width", p + "%");
+			if (percentEl) percentEl.textContent = p + "%";
+		}
+
+		function renderChecklist() {
+			if (!listEl) return;
+			listEl.textContent = "";
+			checklist.forEach(function (item) {
+				var li = document.createElement("li");
+				li.textContent = item.label;
+				if (item.done) li.classList.add("done");
+				item.el = li;
+				listEl.appendChild(li);
+			});
+		}
+
+		function updateProgress() {
+			var total = checklist.length || 1;
+			var pct = Math.round((checkedCount / total) * 100);
+			setProgress(pct);
+		}
+
+		function check(name) {
+			var item = checklist.find(function (x) { return x.id === name; });
+			if (!item || item.done) return;
+			item.done = true;
+			if (item.warn) {
+				item.warn = false;
+				if (item.el) item.el.classList.remove("warn");
+			}
+			if (item.el) item.el.classList.add("done");
+			checkedCount++;
+			updateProgress();
+			if (checkedCount === checklist.length) {
+				clearWarnTimers();
+				scheduleHide();
+			}
+		}
+
+		function hideLoader() {
+			loader.classList.add("hide");
+			shownSession = false;
+			checklist = [];
+			checkedCount = 0;
+			clearWarnTimers();
+		}
+
+		var hideTimer = null;
+		function scheduleHide() {
+			if (hideTimer) clearTimeout(hideTimer);
+			hideTimer = setTimeout(hideLoader, 400);
+		}
+
+		function showSession(items) {
+			if (hiddenByUser) return;
+			if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+			clearWarnTimers();
+			checklist = items.map(function (it) { return { id: it.id, label: it.label, done: false }; });
+			checkedCount = 0;
+			renderChecklist();
+			updateProgress();
+			loader.classList.remove("hide");
+			shownSession = true;
+		}
+
+		var closeEl = document.getElementById("loader-close");
+		if (closeEl) {
+			closeEl.addEventListener("click", function (e) {
+				e.stopPropagation();
+				hiddenByUser = true;
+				hideLoader();
+			});
+		}
+
+		function thirdPartyPending() {
+			// mermaid diagrams must finish rendering their svg
+			var mermaid = document.querySelector(".mermaid");
+			if (mermaid && !mermaid.querySelector("svg")) return true;
+			// the music widget mounts synchronously; its shell being in the DOM
+			// means the component is ready - never wait on the meting network request
+			return false;
+		}
+
+		function waitForThirdParty(targetId) {
+			var hasMermaid = !!document.querySelector(".mermaid");
+			var hasMusic = !!document.querySelector('[id^="music-widget-"]');
+			// nothing external on this page -> mark ready immediately
+			if (!hasMermaid && !hasMusic) {
+				check(targetId);
+				return;
+			}
+			// music widget is synchronous (never pending); only mermaid may take time
+			if (!hasMermaid) {
+				check(targetId);
+				return;
+			}
+			warnOnStuck(targetId, 5);
+			var interval = setInterval(function () {
+				if (thirdPartyPending()) return;
+				clearInterval(interval);
+				check(targetId);
+			}, 300);
+		}
+
+		function startFirstLoad() {
+			var items = __PAGE_LOADER_FIRST__.slice();
+			if (document.readyState === "complete") {
+				items = items.filter(function (x) { return x.id !== "window:load"; });
+			}
+			showSession(items);
+			// dom parse + layout render are effectively done when the first script runs
+			check("dom:parse");
+			var markLayout = function () { check("layout:render"); };
+			requestAnimationFrame(markLayout);
+			setTimeout(markLayout, 150); // fallback if rAF is throttled (background tab / headless)
+			window.addEventListener("load", function () { check("window:load"); });
+			document.addEventListener("swup:enable", function () { check("swup:enable"); });
+			// Swup initializes lazily (loadOnIdle); flag it as stuck if it still hasn't
+			// come up after 5s instead of silently pretending it succeeded.
+			warnOnStuck("swup:enable", 5);
+			waitForThirdParty("third-party");
+		}
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", startFirstLoad);
+		} else {
+			startFirstLoad();
+		}
+	})();
+</script>

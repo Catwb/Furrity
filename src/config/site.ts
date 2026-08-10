@@ -104,6 +104,9 @@ export const siteConfig: SiteConfig = {
 			'<link rel="preload" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" /><noscript><link rel="stylesheet" href="https://cdn.245179.xyz/LXGWWenKai-Regular/result.css" /></noscript>',
 		],
 	},
+	canonical: {
+		origin: "https://blog.furryawa.com",
+	},
 	analytics: {
 		enable: true,
 		url: "https://analyse.245179.xyz/tracker.min.js",

@@ -44,6 +44,10 @@ export type SiteConfig = {
 	};
 	custom?: CustomCodeConfig;
 	preconnect?: (string | { href: string; crossorigin?: string })[];
+	canonical?: {
+		/** SEO 权威域名（主站），canonical / og:url 统一指向它 */
+		origin: string;
+	};
 	abbrlink?: AbbrlinkConfig;
 	outdateWarning?: OutdateWarningConfig;
 };

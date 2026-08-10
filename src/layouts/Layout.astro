@@ -75,6 +75,11 @@ const fontHeading = siteConfig.fonts?.heading || "inherit";
 const fontBody = siteConfig.fonts?.body || "inherit";
 const fontCode = siteConfig.fonts?.code || "inherit";
 const fontBold = siteConfig.fonts?.bold || "inherit";
+
+// canonical / og:url always point to the SEO-canonical origin, no matter which
+// mirror the current request hit (see siteConfig.canonical.origin)
+const canonicalOrigin = (siteConfig.canonical?.origin ?? Astro.site?.origin ?? "").replace(/\/$/, "");
+const canonicalUrl = `${canonicalOrigin}${Astro.url.pathname}`;
 ---
 
 <!DOCTYPE html>
@@ -90,8 +95,9 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
 		<meta name="description" content={description || pageTitle}>
 		<meta name="author" content={profileConfig.name}>
 
+		<link rel="canonical" href={canonicalUrl}>
 		<meta property="og:site_name" content={siteConfig.title}>
-		<meta property="og:url" content={Astro.url}>
+		<meta property="og:url" content={canonicalUrl}>
 		<meta property="og:title" content={pageTitle}>
 		<meta property="og:description" content={description || pageTitle}>
 		{setOGTypeArticle ? (
@@ -101,7 +107,7 @@ const fontBold = siteConfig.fonts?.bold || "inherit";
         )}
 
 		<meta name="twitter:card" content="summary_large_image">
-		<meta property="twitter:url" content={Astro.url}>
+		<meta property="twitter:url" content={canonicalUrl}>
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description || pageTitle}>
 

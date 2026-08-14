@@ -102,6 +102,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "心随幻想，梦行无疆",
 			},
 			{
+				name: "JerryLife",
+				url: "https://jerrynis.com",
+				avatar: "https://img.jerry-nis.top/d8703c5c-4c4a-49cc-bd94-3363c9eda2d8.png",
+				description: "Enjoy life",
+			},
+			{
 				name: "竟何",
 				url: "https://blog.lylelove.top/",
 				avatar: "https://s2.loli.net/2021/12/04/8pQyDdjPbmZO5rv.png",

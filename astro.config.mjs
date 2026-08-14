@@ -1,5 +1,4 @@
 import compress from "@playform/compress";
-import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
@@ -184,7 +183,6 @@ export default defineConfig({
 			}
 		}),
         svelte(),
-		sitemap(),
 		compress({
 			CSS: false,
 			HTML: false,

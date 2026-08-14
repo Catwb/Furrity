@@ -1,0 +1,56 @@
+name: 预热 Vercel 缓存
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 提取 sitemap URL
+        run: |
+          curl -fsSL -A "Googlebot" "https://blog.furryawa.com/sitemap.xml" \
+            | grep -oE '<loc>[^<]+</loc>' \
+            | sed -E 's#</?loc>##g' > urls.txt
+          echo "共 $(wc -l < urls.txt) 个 URL"
+
+      - name: 第一遍预热（并发 6）
+        run: |
+          cat urls.txt | xargs -P 6 -I{} curl -fsS -o /dev/null \
+            -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" {}
+
+      - name: 第二遍检测缓存状态（并发 6）
+        run: |
+          cat urls.txt | xargs -P 6 -I{} bash -c '
+            u="$1"
+            hdr=$(curl -s -D - -o /dev/null \
+              -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" "$u")
+            code=$(printf "%s" "$hdr" | tr -d "\r" | head -1 | awk "{print \$2}")
+            cache=$(printf "%s" "$hdr" | tr -d "\r" | grep -i "^x-vercel-cache:" | awk "{print \$2}")
+            printf "%s\t%s\t%s\n" "$u" "$code" "${cache:-NONE}" >> results.tsv
+          ' _ {}
+
+      - name: 生成命中报告（step summary）
+        run: |
+          total=$(wc -l < results.tsv)
+          hit=$(awk -F"\t" '$3=="HIT"' results.tsv | wc -l)
+          miss=$(awk -F"\t" '$3=="MISS"' results.tsv | wc -l)
+          other=$(awk -F"\t" '$3!="HIT" && $3!="MISS"' results.tsv | wc -l)
+          {
+            echo "## 缓存预热报告"
+            echo ""
+            echo "| 指标 | 数量 | 占比 |"
+            echo "|---|---|---|"
+            echo "| 总 URL | $total | 100% |"
+            echo "| HIT | $hit | $(awk -v n=$total -v c=$hit "BEGIN{printf \"%.1f%%\", c/n*100}") |"
+            echo "| MISS | $miss | $(awk -v n=$total -v c=$miss "BEGIN{printf \"%.1f%%\", c/n*100}") |"
+            echo "| 其他 | $other | $(awk -v n=$total -v c=$other "BEGIN{printf \"%.1f%%\", c/n*100}") |"
+            echo ""
+            echo "### 未命中明细"
+            echo ""
+            awk -F"\t" '$3!="HIT" {printf "%s\t(HTTP %s, %s)\n", $1, $2, $3}' results.tsv \
+              | head -50 || true
+          } >> "$GITHUB_STEP_SUMMARY"

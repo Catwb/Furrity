@@ -7,7 +7,7 @@ const { envId, region, lang, cdn, css } = siteConfig.twikoo || {};
 onMount(() => {
 	if (!envId) return;
 
-	const twikooCDN = cdn || "https://registry.npmmirror.com/twikoo/1.7.12/files/dist/twikoo.all.min.js";
+	const twikooCDN = cdn || "https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.7.19/twikoo.min.js";
 	let loaded = false;
 
 	function loadComments() {

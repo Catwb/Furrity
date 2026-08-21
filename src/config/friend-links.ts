@@ -242,10 +242,9 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			},
 			{
 				name: "Watermelonabc的Blog",
-				url: "https://watermelonabc.top/",
-				avatar: "https://watermelonabc.top/asset/icon/Avatar.png",
-				description: "需要记点什么东西",
-				color: "rgb(5, 163, 173)",
+				url: "https://blog.watermelonabc.top/",
+				avatar: "https://blog.watermelonabc.top/asset/icon/Avatar.webp",
+				description: "追寻各色世界",
 			},
 			{
 				name: "无名博客",

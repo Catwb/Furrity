@@ -184,13 +184,18 @@ const widgetId =
 <script define:vars={{ viewConfigStr, widgetId }}>
 (function () {
     var cfg = JSON.parse(viewConfigStr);
-    var widget = document.getElementById(widgetId);
-    if (!widget) return;
+    var _initialized = false;
 
-    var mgr = window.__fireflyMusic;
-    if (!mgr) return;
+    function initPlayer() {
+        if (_initialized) return true;
 
-    var ui = {
+        var widget = document.getElementById(widgetId);
+        if (!widget) return false;
+
+        var mgr = window.__fireflyMusic;
+        if (!mgr) return false;
+
+        var ui = {
         widget: widget,
         loading: widget.querySelector('.music-loading'),
         cover: widget.querySelector('.music-cover'),
@@ -894,6 +899,34 @@ const widgetId =
             }
         }, 5000);
     }
+
+        _initialized = true;
+        return true;
+    }
+
+    // Immediately try to initialize
+    if (initPlayer()) return;
+
+    // Retry mechanism: DOM or MusicManager may not be ready yet
+    var _retryCount = 0;
+    var _maxRetries = 20;
+    var _retryTimer = setInterval(function () {
+        _retryCount++;
+        if (initPlayer() || _retryCount >= _maxRetries) {
+            clearInterval(_retryTimer);
+        }
+    }, 200);
+
+    // Re-initialize on swup page transitions (sidebar persists outside swup container)
+    document.addEventListener('astro:page-load', function () {
+        _retryCount = 0;
+        var _pageRetryTimer = setInterval(function () {
+            _retryCount++;
+            if (initPlayer() || _retryCount >= _maxRetries) {
+                clearInterval(_pageRetryTimer);
+            }
+        }, 200);
+    });
 })();
 </script>
 

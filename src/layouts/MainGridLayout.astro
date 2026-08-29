@@ -115,12 +115,12 @@ const mainPanelTop = siteConfig.banner.enable
 
 
             {hasLeftSidebar && <SideBar
-                class="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:max-w-[17.5rem] onload-animation"
+                class="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:max-w-[17.5rem] onload-animation"
                 components={leftSidebarComponents}
                 side="left"
             />}
 
-            <div id="right-sidebar-container" data-active={String(hasRightSidebar)} class:list={["order-2 lg:order-none", {
+            <div id="right-sidebar-container" data-active={String(hasRightSidebar)} class:list={["order-3 lg:order-none", {
                 "hidden": !hasRightSidebar,
                 "hidden lg:block": isArticlePage && hasRightSidebar,
             }]}>
@@ -144,7 +144,7 @@ const mainPanelTop = siteConfig.banner.enable
                 {!isArticlePage && <div id="toc"></div>}
             </div>
 
-            <main id="swup-container" class:list={["transition-swup-fade order-3 lg:order-none overflow-hidden", {
+            <main id="swup-container" class:list={["transition-swup-fade order-1 lg:order-none overflow-hidden", {
                 "lg:col-start-2 lg:row-start-1": hasLeftSidebar,
                 "lg:col-start-1 lg:row-start-1": !hasLeftSidebar,
             }]}>

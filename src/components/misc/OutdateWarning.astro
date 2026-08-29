@@ -8,26 +8,39 @@ interface Props {
 	thresholdDays: number;
 }
 
-const { published, updated, thresholdDays } = Astro.props;
+const { published, thresholdDays } = Astro.props;
 
-const now = new Date();
-const diffMs = now.getTime() - published.getTime();
-const diffDays = Math.floor(diffMs / 86400000);
-
-const isOutdated = diffDays >= thresholdDays;
-
-function getAgoText(date: Date): string {
-	const days = Math.floor((now.getTime() - date.getTime()) / 86400000);
-	return `${days} ${i18n(I18nKey.outdateDay)}`;
-}
-
-const agoText = getAgoText(updated && updated.getTime() !== published.getTime() ? updated : published);
-const message = i18n(I18nKey.outdateWarning).replace("{ago}", agoText);
+const warningText = i18n(I18nKey.outdateWarning);
+const dayText = i18n(I18nKey.outdateDay);
 ---
 
-{isOutdated && (
-	<div class="flex items-center gap-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 px-4 py-3 mb-5 onload-animation">
-		<span class="text-base shrink-0 leading-none">⏰</span>
-		<p class="text-sm text-amber-800 dark:text-amber-200 leading-relaxed">{message}</p>
-	</div>
-)}
+<div
+	class="outdate-warning hidden items-center gap-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 px-4 py-3 mb-5 onload-animation"
+	data-published={published.getTime()}
+	data-threshold={thresholdDays}
+	data-warning={warningText}
+	data-day={dayText}
+>
+	<span class="text-base shrink-0 leading-none">⏰</span>
+	<p class="outdate-message text-sm text-amber-800 dark:text-amber-200 leading-relaxed"></p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>(".outdate-warning").forEach((el) => {
+		const publishedTime = Number(el.dataset.published);
+		const threshold = Number(el.dataset.threshold);
+		const warningTpl = el.dataset.warning || "";
+		const dayLabel = el.dataset.day || "";
+
+		const diffMs = Date.now() - publishedTime;
+		const diffDays = Math.floor(diffMs / 86400000);
+
+		if (diffDays >= threshold) {
+			const msg = warningTpl.replace("{ago}", `${diffDays} ${dayLabel}`);
+			const p = el.querySelector(".outdate-message");
+			if (p) p.textContent = msg;
+			el.classList.remove("hidden");
+			el.classList.add("flex");
+		}
+	});
+</script>

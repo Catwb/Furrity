@@ -69,6 +69,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "一只雪狐的摸鱼小站",
 			},
 			{
+				name: "飞起的小窝",
+				url: "https://feiqi3.cn",
+				avatar: "https://pic.feiqi3.cn/blogPic/avatar_feiqi3.png",
+				description: "在开发游戏的狐狸",
+			},
+			{
 				name: "fishcpy的小破站",
 				url: "https://blog.fis.ink",
 				avatar: "https://www.fis.ink/img/logo.png",

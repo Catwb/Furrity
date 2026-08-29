@@ -35,6 +35,26 @@ const {
 	plugins,
 } = Astro.props;
 const isHomePage = Astro.url.pathname === "/";
+const isArticlePage = setOGTypeArticle === true;
+const leftSidebarComponents = siteConfig.sidebar?.left ?? [];
+const rightSidebarComponents = siteConfig.sidebar?.right ?? [];
+const hasLeftSidebar = leftSidebarComponents.length > 0;
+const hasArticleToc = isArticlePage && siteConfig.toc.enable && headings.length > 0;
+const hasRightSidebar = isArticlePage ? hasArticleToc : rightSidebarComponents.length > 0;
+
+const uniqueComponents = new Set<string>();
+for (const [side, components] of [
+	["left", leftSidebarComponents],
+	["right", rightSidebarComponents],
+] as const) {
+	for (const component of components) {
+		if (component.type === "text") continue;
+		if (uniqueComponents.has(component.type)) {
+			throw new Error(`Sidebar component "${component.type}" is duplicated in the ${side} sidebar. Only text components can be repeated.`);
+		}
+		uniqueComponents.add(component.type);
+	}
+}
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -49,7 +69,7 @@ const mainPanelTop = siteConfig.banner.enable
 <!-- Navbar -->
 <slot slot="head" name="head"></slot>
 <div id="top-row" class="fixed top-0 left-0 right-0 z-50 pointer-events-none transition-all duration-700">
-    <div class="max-w-[var(--page-width)] mx-auto px-0 md:px-4">
+    <div class="max-w-[var(--page-width-wide)] mx-auto px-0 md:px-4">
         <div id="navbar-wrapper" class="pointer-events-auto transition-all">
             <Navbar></Navbar>
         </div>
@@ -77,9 +97,8 @@ const mainPanelTop = siteConfig.banner.enable
 <!-- Main content -->
 <div class="absolute w-full z-30 pointer-events-none" style={`top: ${mainPanelTop}`}>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
-    <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
-        <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] lg:grid-rows-[auto]
-    mx-auto gap-4 px-0 md:px-4"
+    <div class="main-grid-wrapper relative mx-auto pointer-events-auto">
+        <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-1 mx-auto gap-4 px-0 md:px-4"
         >
             <!-- Banner image credit -->
             {hasBannerCredit && <a href={siteConfig.banner.credit.url} id="banner-credit" target="_blank" rel="noopener" aria-label="Visit image source"
@@ -95,51 +114,109 @@ const mainPanelTop = siteConfig.banner.enable
             </a>}
 
 
-            <SideBar class="mb-4 row-start-2 row-end-3 col-span-2 lg:row-start-1 lg:row-end-2 lg:col-span-1 lg:max-w-[17.5rem] onload-animation" headings={headings}></SideBar>
+            {hasLeftSidebar && <SideBar
+                class="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:max-w-[17.5rem] onload-animation"
+                components={leftSidebarComponents}
+                side="left"
+            />}
 
-            <main id="swup-container" class="transition-swup-fade col-span-2 lg:col-span-1 overflow-hidden">
+            <div id="right-sidebar-container" data-active={String(hasRightSidebar)} class:list={["order-2 lg:order-none", {
+                "hidden": !hasRightSidebar,
+                "hidden lg:block": isArticlePage && hasRightSidebar,
+            }]}>
+                {isArticlePage
+                    ? <div id="toc-wrapper" class:list={["transition", {"toc-hide": siteConfig.banner.enable}]}>
+                        <div id="toc-inner-wrapper" class="sticky top-[5.5rem] max-h-[calc(100vh_-_7rem)] overflow-y-auto overflow-x-hidden hide-scrollbar">
+                            <div id="toc" class="w-full">
+                                {hasArticleToc && <div class="transition-swup-fade card-base py-4 px-0">
+                                    <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
+                                        before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+                                        before:absolute before:left-[-16px] before:top-[5.5px]">目录</div>
+                                    <div class="px-2">
+                                        <TOC headings={headings}></TOC>
+                                    </div>
+                                </div>}
+                            </div>
+                        </div>
+                    </div>
+                    : hasRightSidebar && <SideBar components={rightSidebarComponents} side="right" class="lg:max-w-[17.5rem] onload-animation" />
+                }
+                {!isArticlePage && <div id="toc"></div>}
+            </div>
+
+            <main id="swup-container" class:list={["transition-swup-fade order-3 lg:order-none overflow-hidden", {
+                "lg:col-start-2 lg:row-start-1": hasLeftSidebar,
+                "lg:col-start-1 lg:row-start-1": !hasLeftSidebar,
+            }]}>
                 <div id="content-wrapper" class="onload-animation">
                     <!-- the overflow-hidden here prevent long text break the layout-->
                     <!-- make id different from windows.swup global property -->
                     <slot></slot>
-                    <div class="footer col-span-2 onload-animation hidden lg:block">
+                    <div class="footer onload-animation hidden lg:block">
                         <Footer></Footer>
                     </div>
                 </div>
             </main>
 
-            <div class="footer col-span-2 onload-animation block lg:hidden">
+            <div class="footer order-4 onload-animation block lg:hidden">
                 <Footer></Footer>
             </div>
         </div>
 
         <BackToTop></BackToTop>
 
-        <!-- TOC component -->
-        {siteConfig.toc.enable && <div id="toc-wrapper" class:list={["hidden lg:block transition absolute inset-y-0 -right-[var(--toc-width)] w-[var(--toc-width)] items-center",
-            {"toc-hide": siteConfig.banner.enable}]}
-        >
-            <div id="toc-inner-wrapper" class="sticky top-14 self-start w-[var(--toc-width)] max-h-[calc(100vh_-_20rem)] overflow-y-scroll overflow-x-hidden hide-scrollbar">
-                <div id="toc" class="w-full">
-                    {headings.length > 0 && <div class="transition-swup-fade card-base py-4 px-0">
-                        <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
-                            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
-                            before:absolute before:left-[-16px] before:top-[5.5px]">目录</div>
-                        <div class="px-2">
-                            <TOC headings={headings}></TOC>
-                        </div>
-                    </div>}
-                </div>
-            </div>
-        </div>}
-
-        <!-- #toc needs to exist for Swup to work normally -->
-        {!siteConfig.toc.enable && <div id="toc"></div>}
     </div>
 </div>
 </Layout>
 
 <style is:global>
+.main-grid-wrapper {
+  max-width: var(--page-width);
+}
+
+.main-grid-wrapper:has(#right-sidebar-container[data-active="true"]) {
+  max-width: var(--page-width-wide);
+}
+
+@media (min-width: 1024px) {
+  #main-grid:has(#left-sidebar):has(#right-sidebar-container[data-active="true"]) {
+    grid-template-columns: 17.5rem minmax(0, 1fr) 17.5rem;
+  }
+
+  #main-grid:has(#left-sidebar):not(:has(#right-sidebar-container[data-active="true"])) {
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+  }
+
+  #main-grid:not(:has(#left-sidebar)):has(#right-sidebar-container[data-active="true"]) {
+    grid-template-columns: minmax(0, 1fr) 17.5rem;
+  }
+
+  #main-grid #left-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #main-grid:has(#left-sidebar) main {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  #main-grid:not(:has(#left-sidebar)) main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #main-grid:has(#left-sidebar) #right-sidebar-container[data-active="true"] {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  #main-grid:not(:has(#left-sidebar)) #right-sidebar-container[data-active="true"] {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
 .tag-plugin.tabs {
   margin: 1em 0;
   border-radius: 0.5rem;

@@ -4,11 +4,17 @@ import { siteConfig } from "../config/site";
 
 const { envId, region, lang, cdn, css } = siteConfig.twikoo || {};
 
+let loading = $state(true);
+
 onMount(() => {
 	if (!envId) return;
 
 	const twikooCDN = cdn || "https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.7.19/twikoo.min.js";
 	let loaded = false;
+
+	function hideLoader() {
+		loading = false;
+	}
 
 	function loadComments() {
 		if (loaded) return;
@@ -25,10 +31,12 @@ onMount(() => {
 		script.src = twikooCDN;
 		script.async = true;
 		script.onload = () => {
-			if ((window as any).twikoo) {
+			hideLoader();
+			const el = document.getElementById("tcomment");
+			if ((window as any).twikoo && el) {
 				(window as any).twikoo.init({
 					envId,
-					el: document.getElementById("tcomment"),
+					el,
 					path: window.location.pathname,
 					region: region || "",
 					lang: lang || "",
@@ -49,8 +57,16 @@ onMount(() => {
 			}, { rootMargin: "200px" });
 			obs.observe(el);
 		}
+	} else {
+		loadComments();
 	}
 });
 </script>
 
+{#if loading}
+<div class="flex flex-col items-center justify-center py-12 gap-3">
+	<div class="w-8 h-8 border-[3px] border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
+	<p class="text-sm text-black/50 dark:text-white/50">加载评论中...</p>
+</div>
+{/if}
 <div id="tcomment"></div>

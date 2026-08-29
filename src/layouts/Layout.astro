@@ -13,6 +13,7 @@ import {
 	DEFAULT_THEME,
 	LIGHT_MODE,
 	PAGE_WIDTH,
+	PAGE_WIDTH_WIDE,
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
@@ -188,6 +189,7 @@ const canonicalUrl = `${canonicalOrigin}${Astro.url.pathname}`;
 		<style define:vars={{
 			configHue,
 			'page-width': `${PAGE_WIDTH}rem`,
+			'page-width-wide': `${PAGE_WIDTH_WIDE}rem`,
 		}}></style>  <!-- defines global css variables. This will be applied to <html> <body> and some other elements idk why -->
 
 
@@ -584,6 +586,7 @@ function scrollFunction() {
 		const bannerH = vh * (BANNER_HEIGHT / 100);
 		const isHome = body.classList.contains('lg:is-home');
 		const isWide = window.innerWidth >= 1024;
+		toc = document.getElementById('toc-wrapper');
 
 		// 实时查询按钮，避免顶层捕获时为 null（按钮 DOM 晚于脚本执行）
 		const backToTopBtn = document.getElementById('back-to-top-btn');

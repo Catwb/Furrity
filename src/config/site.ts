@@ -7,6 +7,7 @@ import type {
 	SiteConfig,
 } from "../types/config";
 import { LinkPreset } from "../types/config";
+import { announcementConfig } from "./announcementConfig";
 
 export const siteConfig: SiteConfig = {
 	title: "龙星划空",
@@ -56,10 +57,15 @@ export const siteConfig: SiteConfig = {
 		],
 	},
 	sidebar: {
-		components: [
+		left: [
 			{ type: "profile" },
 			{ type: "music" },
 			{ type: "site-status" },
+		],
+	right: [
+			...(announcementConfig.enable
+				? [{ type: "text" as const, title: announcementConfig.title, content: announcementConfig.content }]
+				: []),
 			{ type: "categories" },
 			{ type: "tags" },
 		],

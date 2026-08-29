@@ -34,7 +34,8 @@ export type SiteConfig = {
 	twikoo?: TwikooConfig;
 	meting?: MetingConfig;
 	sidebar?: {
-		components: SidebarComponent[];
+		left: SidebarComponent[];
+		right: SidebarComponent[];
 	};
 	analytics?: AnalyticsConfig;
 	lazyload?: {

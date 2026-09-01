@@ -19,6 +19,7 @@ import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
 import "../styles/tag-plugins-dark.css";
+import "photoswipe/style.css";
 
 interface Props {
 	title?: string;
@@ -623,11 +624,19 @@ window.onresize = () => {
 
 <script>
 import PhotoSwipeLightbox from "photoswipe/lightbox"
-import "photoswipe/style.css"
 
 let lightbox: PhotoSwipeLightbox
 
+function destroyPhotoSwipe() {
+	if (lightbox) {
+		lightbox.destroy()
+		lightbox = null as any
+	}
+}
+
 function createPhotoSwipe() {
+	destroyPhotoSwipe()
+
 	lightbox = new PhotoSwipeLightbox({
 		gallery: ".custom-md img, #post-cover img",
 		pswpModule: () => import("photoswipe"),
@@ -669,7 +678,7 @@ const setup = () => {
 	window.swup.hooks.on(
 		"content:replace",
 		() => {
-			lightbox?.destroy?.()
+			destroyPhotoSwipe()
 		},
 		{ before: true },
 	)

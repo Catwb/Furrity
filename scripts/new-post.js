@@ -149,18 +149,15 @@ async function main() {
   const abbrlink = computeAbbrlink(title, dateStr)
 
   const lines = [`---`, `title: ${title}`, `published: ${frontmatter}`, `abbrlink: '${abbrlink}'`]
-  if (description) lines.push(`description: ${description}`)
-  if (password) lines.push(`password: ${password}`)
-  if (passwordHint) lines.push(`passwordHint: ${passwordHint}`)
-  if (tags) lines.push(`tags: ${tagsArray}`)
   if (category) {
     const cats = category.split(",").map((c) => c.trim()).filter(Boolean)
-    if (cats.length === 1) {
-      lines.push(`category: "${cats[0]}"`)
-    } else {
-      lines.push(`category:`, ...cats.map((c) => `  - ${c}`))
-    }
+    lines.push(`category:`)
+    cats.forEach((c) => lines.push(`  - ${c}`))
   }
+  if (description) lines.push(`description: ${description}`)
+  if (tags) lines.push(`tags: ${tagsArray}`)
+  if (password) lines.push(`password: ${password}`)
+  if (passwordHint) lines.push(`passwordHint: ${passwordHint}`)
   lines.push(`draft: false`, `pinned: false`, `---`, ``)
   const content = lines.join("\n")
 

@@ -122,7 +122,6 @@ const mainPanelTop = siteConfig.banner.enable
 
             <div id="right-sidebar-container" data-active={String(hasRightSidebar)} class:list={["order-3 lg:order-none", {
                 "hidden": !hasRightSidebar,
-                "hidden lg:block": isArticlePage && hasRightSidebar,
             }]}>
                 {isArticlePage
                     ? <div id="toc-wrapper" class:list={["transition", {"toc-hide": siteConfig.banner.enable}]}>

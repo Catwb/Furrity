@@ -18,6 +18,8 @@ import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config/site";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 import TwikooComments from "@components/TwikooComments.svelte";
+import SharePoster from "@components/misc/SharePoster.svelte";
+import avatarImg from "../../assets/images/avatar.jpg";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
@@ -147,6 +149,20 @@ const jsonLd = {
             )}
 
             {licenseConfig.enable && <License title={entry.data.title} slug={getEntrySlug(entry)} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+
+            <div class="flex justify-center mb-6 onload-animation">
+                <SharePoster
+                    client:only="svelte"
+                    title={entry.data.title}
+                    author={profileConfig.name}
+                    description={entry.data.description || ""}
+                    pubDate={entry.data.published.toISOString()}
+                    coverImage={typeof entry.data.image === "string" ? entry.data.image : null}
+                    url={Astro.url.href}
+                    siteTitle={siteConfig.title}
+                    avatar={avatarImg.src}
+                />
+            </div>
 
         </div>
     </div>

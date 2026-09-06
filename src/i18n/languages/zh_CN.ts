@@ -75,4 +75,11 @@ export const zh_CN: Translation = {
 	[Key.musicCover]: "封面",
 	[Key.musicNoCover]: "暂无封面",
 	[Key.musicAudioPlayer]: "音频播放器",
+
+	[Key.shareArticle]: "分享文章",
+	[Key.generatingPoster]: "生成中...",
+	[Key.copied]: "已复制",
+	[Key.copyLink]: "复制链接",
+	[Key.savePoster]: "保存海报",
+	[Key.scanToRead]: "扫码阅读",
 };

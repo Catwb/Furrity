@@ -124,7 +124,7 @@ const mainPanelTop = siteConfig.banner.enable
                 "hidden": !hasRightSidebar,
             }]}>
                 {isArticlePage
-                    ? <div id="toc-wrapper" class:list={["transition", {"toc-hide": siteConfig.banner.enable}]}>
+                    ? <div id="toc-wrapper" class:list={["h-full transition", {"toc-hide": siteConfig.banner.enable}]}>
                         <div id="toc-inner-wrapper" class="sticky top-[5.5rem] max-h-[calc(100vh_-_7rem)] overflow-y-auto overflow-x-hidden hide-scrollbar">
                             <div id="toc" class="w-full">
                                 {hasArticleToc && <div class="transition-swup-fade card-base py-4 px-0">

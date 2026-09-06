@@ -32,7 +32,7 @@ let heading1Count = 1;
 const maxLevel = siteConfig.toc.depth;
 ---
 {isPostsRoute &&
-<table-of-contents class:list={[className, "group"]}>
+<table-of-contents class:list={[className, "group", "relative z-0"]}>
     {headings.filter((heading) => heading.depth < minDepth + maxLevel).map((heading) =>
             <a href={`#${heading.slug}`} class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl
         hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-2
@@ -46,18 +46,31 @@ const maxLevel = siteConfig.toc.depth;
                 ]}
                 >
                     {heading.depth == minDepth && heading1Count++}
-                    {heading.depth == minDepth + 1 && <div class="transition w-2 h-2 rounded-[0.1875rem] bg-[var(--toc-badge-bg)]"></div>}
-                    {heading.depth == minDepth + 2 && <div class="transition w-1.5 h-1.5 rounded-sm bg-black/5 dark:bg-white/10"></div>}
+                    {heading.depth == minDepth + 1 && <div class:list={["transition w-2 h-2 rounded-[0.1875rem] bg-[var(--toc-badge-bg)", "toc-badge-dot"]}></div>}
+                    {heading.depth == minDepth + 2 && <div class:list={["transition w-1.5 h-1.5 rounded-sm bg-black/5 dark:bg-white/10", "toc-badge-dot-sm"]}></div>}
                 </div>
-                <div class:list={["transition text-sm", {
+                <div class:list={["transition text-sm", "toc-label", {
                     "text-50": heading.depth == minDepth || heading.depth == minDepth + 1,
                     "text-30": heading.depth == minDepth + 2,
                 }]}>{removeTailingHash(heading.text)}</div>
             </a>
     )}
-    <div id="active-indicator" style="opacity: 0" class:list={[{'hidden': headings.length == 0}, "-z-10 absolute bg-[var(--toc-btn-hover)] left-0 right-0 rounded-xl transition-all " +
-        "group-hover:bg-transparent border-2 border-[var(--toc-btn-hover)] group-hover:border-[var(--toc-btn-active)] border-dashed"]}></div>
+    <div id="active-indicator" style="opacity: 0; z-index: -1;" class:list={[{'hidden': headings.length == 0}, "absolute bg-[var(--toc-btn-hover)] left-0 right-0 rounded-xl transition-all " +
+        "shadow-[0_6px_18px_-14px_oklch(0.70_0.14_var(--hue))]"]}></div>
 </table-of-contents>}
+
+<style>
+    table-of-contents .visible .toc-label {
+        color: oklch(0.55 0.12 var(--hue));
+    }
+    :global(.dark) table-of-contents .visible .toc-label {
+        color: oklch(0.75 0.1 var(--hue));
+    }
+    table-of-contents .visible .toc-badge-dot,
+    table-of-contents .visible .toc-badge-dot-sm {
+        background: oklch(0.70 0.14 var(--hue));
+    }
+</style>
 
 <script>
 class TableOfContents extends HTMLElement {

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
+import { shuoshuoConfig } from "../../config/shuoshuo";
 
 interface Props {
 	avatar: string;
@@ -9,16 +10,41 @@ interface Props {
 
 let { avatar, name, fetchUrl, ..._rest }: Props = $props();
 
+interface ShuoshuoApiEntry {
+	id: number;
+	content: string;
+	created_at: string;
+	like_count: number;
+	images: string[];
+	music: { server: string; type: string; id: string } | null;
+}
+
+interface ShuoshuoApiResponse {
+	data: ShuoshuoApiEntry[];
+	has_more: boolean;
+	next_cursor: string | null;
+}
+
 interface ShuoshuoEntry {
 	date: string;
 	content: string | string[];
 	images?: string[];
 	pinned?: boolean;
+	like_count?: number;
+	music?: { server: string; type: string; id: string } | null;
 }
 
 let entries: ShuoshuoEntry[] = $state([]);
 let loading = $state(true);
 let error = $state("");
+let metingInited = false;
+
+$effect(() => {
+	if (entries.length > 0 && !metingInited) {
+		metingInited = true;
+		initMetingPlayers();
+	}
+});
 
 function formatDate(dateStr: string): string {
 	const d = new Date(dateStr);
@@ -66,6 +92,73 @@ function onKeydown(e: KeyboardEvent) {
 	if (e.key === "ArrowRight") nextImg();
 }
 
+function loadCSS(href: string): Promise<void> {
+	return new Promise((resolve) => {
+		if (document.querySelector(`link[href="${href}"]`)) { resolve(); return; }
+		const link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = href;
+		link.onload = () => resolve();
+		link.onerror = () => resolve();
+		document.head.appendChild(link);
+	});
+}
+
+function loadScript(src: string): Promise<void> {
+	return new Promise((resolve) => {
+		if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+		const script = document.createElement("script");
+		script.src = src;
+		script.defer = true;
+		script.onload = () => resolve();
+		script.onerror = () => resolve();
+		document.head.appendChild(script);
+	});
+}
+
+async function initMetingPlayers() {
+	const containers = document.querySelectorAll<HTMLElement>("[data-meting-container]");
+	if (containers.length === 0) return;
+
+	// Apply the same hack as MettingPlayer.astro to prevent disconnectedCallback errors during HMR
+	if (!(window as any).__metingHacked) {
+		(window as any).__metingHacked = true;
+		const origDefine = customElements.define.bind(customElements);
+		customElements.define = function (name: string, Ctor: any, opts?: any) {
+			if (name === "meting-js" && Ctor.prototype.disconnectedCallback) {
+				const orig = Ctor.prototype.disconnectedCallback;
+				Ctor.prototype.disconnectedCallback = function () {
+					try { orig.call(this); } catch (e) {}
+				};
+			}
+			return origDefine(name, Ctor, opts);
+		};
+	}
+
+	await Promise.all([
+		loadCSS("https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css"),
+		loadScript("https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"),
+		loadScript("https://unpkg.com/meting@2.0.1/dist/Meting.min.js"),
+	]);
+
+	(window as any).meting_api = shuoshuoConfig.metingApi;
+
+	for (const container of containers) {
+		if (container.getAttribute("data-meting-init") === "true") continue;
+		const server = container.dataset.server;
+		const type = container.dataset.type;
+		const id = container.dataset.id;
+		if (!server || !type || !id) continue;
+		container.setAttribute("data-meting-init", "true");
+		const metingEl = document.createElement("meting-js");
+		metingEl.setAttribute("server", server);
+		metingEl.setAttribute("type", type);
+		metingEl.setAttribute("id", id);
+		metingEl.setAttribute("api", shuoshuoConfig.metingApi);
+		container.appendChild(metingEl);
+	}
+}
+
 onMount(async () => {
 	document.addEventListener("keydown", onKeydown);
 	try {
@@ -73,8 +166,14 @@ onMount(async () => {
 		const url = fetchUrl.includes("?") ? `${fetchUrl}&${cacheBuster}` : `${fetchUrl}?${cacheBuster}`;
 		const res = await fetch(url);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-		const data: ShuoshuoEntry[] = await res.json();
-		entries = data.sort((a, b) => {
+		const apiData: ShuoshuoApiResponse = await res.json();
+		entries = apiData.data.map(item => ({
+			date: item.created_at,
+			content: item.content,
+			images: item.images,
+			like_count: item.like_count,
+			music: item.music
+		})).sort((a, b) => {
 			if (a.pinned && !b.pinned) return -1;
 			if (!a.pinned && b.pinned) return 1;
 			return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -109,6 +208,9 @@ onMount(async () => {
 					<div class="flex items-baseline gap-2 mb-1">
 						<span class="text-sm font-semibold text-black/80 dark:text-white/80">{name}</span>
 						<span class="text-xs text-black/40 dark:text-white/40">{formatDate(entry.date)}</span>
+						{#if entry.like_count && entry.like_count > 0}
+							<span class="text-xs text-black/40 dark:text-white/40">♥ {entry.like_count}</span>
+						{/if}
 						{#if entry.pinned}
 							<span class="text-xs text-[var(--primary)] font-medium">置顶</span>
 						{/if}
@@ -123,6 +225,15 @@ onMount(async () => {
 									</button>
 								{/each}
 							</div>
+						{/if}
+						{#if entry.music}
+							<div
+								class="mt-2"
+								data-meting-container
+								data-server={entry.music.server}
+								data-type={entry.music.type}
+								data-id={entry.music.id}
+							></div>
 						{/if}
 					</div>
 				</div>

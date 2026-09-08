@@ -298,7 +298,7 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 			{
 				name: "晓寒の互联网自留之地",
 				url: "https://blog.xiaohan-kaka.top/",
-				avatar: "https://f003.backblazeb2.com/file/blog-v3/120887894_p1.jpg",
+				avatar: "https://xiaohan-kaka.top/icon/512x",
 				description: "醉后不知天在水，满船清梦压星河",
 			},
 			{

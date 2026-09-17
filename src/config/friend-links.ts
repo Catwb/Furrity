@@ -81,6 +81,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				description: "非淡泊无以明志，非宁静无以致远",
 			},
 			{
+				name: "格雷万事屋",
+				url: "https://blog.grayzhao.com/",
+				avatar: "https://blog.grayzhao.com/website.png",
+				description: "格雷的万事屋包罗万象",
+			},
+			{
 				name: "GoodBoyboy's Blog",
 				url: "https://blog.goodboyboy.top/",
 				avatar: "https://gravatar.goodboyboy.top/avatar/9da9d1d515d273d4794015f2321f6e04?s=96&d=monsterid&r=g",

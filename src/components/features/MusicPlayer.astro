@@ -181,8 +181,10 @@ const widgetId =
 </div>
 </template>
 
-<script data-swup-ignore-script define:vars={{ viewConfigStr, widgetId }}>
+<script define:vars={{ viewConfigStr, widgetId }}>
 (function () {
+    if (window.__musicPlayerInit) return;
+    window.__musicPlayerInit = true;
     var cfg = JSON.parse(viewConfigStr);
     var _initialized = false;
 

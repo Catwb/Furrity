@@ -151,6 +151,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				color: "#DDC4B1",
 			},
 			{
+				name: "毛窝",
+				url: "https://maowo.space/",
+				avatar: "https://maowo.space/favicon.ico",
+				description: "发现毛毛们在互联网上的小角落",
+			},
+			{
 				name: "梦爱吃鱼",
 				url: "https://blog.bsgun.cn/",
 				avatar: "https://oss-cdn.bsgun.cn/logo/avatar.256.png",

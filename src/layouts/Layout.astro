@@ -202,10 +202,11 @@ const canonicalUrl = `${canonicalOrigin}${Astro.url.pathname}`;
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 	>
+		<!-- 放在 body 第一个：它的 markup 和脚本越早被解析越好 -->
+		<PageLoader />
 		<ConfigCarrier></ConfigCarrier>
 		<CodeGroupManager />
 		<MusicManager />
-		<PageLoader />
 		<slot />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->

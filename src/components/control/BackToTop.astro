@@ -54,20 +54,37 @@ function backToTop() {
 	if (document.body.scrollTo) document.body.scrollTo(opts);
 }
 
-// 按钮跟随文章主体（#main-grid 容器）右缘，而不是视口边缘
+// 按钮横向跟随「文章正文块」（main 栏，正文卡片宽度与之一致）的右缘，
+// 而不是整页网格（#main-grid 还包含右侧目录栏）的右缘
 function positionBackToTop() {
 	var btn = document.getElementById('back-to-top-btn');
-	var wrapper = document.querySelector('.back-to-top-wrapper');
-	if (!btn || !wrapper) return;
-	var rect = wrapper.getBoundingClientRect();
-	// 按钮整体放在文章主体右缘外侧 0.5rem，完全避开正文
+	if (!btn) return;
+	var content = document.querySelector('#main-grid main') || document.getElementById('main-grid');
+	if (!content) return;
+	var rect = content.getBoundingClientRect();
 	var btnW = btn.offsetWidth || 60;
-	var right = Math.max(12, window.innerWidth - rect.right - btnW - 8);
-	btn.style.right = right + 'px';
+	// 按钮左缘贴在正文块右缘外侧 0.5rem
+	var left = rect.right + 8;
+	// 视口不够宽时收回，避免按钮跑出屏幕
+	var maxLeft = window.innerWidth - btnW - 12;
+	if (left > maxLeft) left = maxLeft;
+	btn.style.right = window.innerWidth - left - btnW + 'px';
 }
-window.addEventListener('scroll', positionBackToTop, { passive: true });
-window.addEventListener('resize', positionBackToTop);
-document.addEventListener('astro:page-load', positionBackToTop);
-window.addEventListener('load', positionBackToTop);
+
+window.__backToTopPosition = positionBackToTop;
 positionBackToTop();
+
+// swup 会重复执行这段内联脚本，用全局守卫避免重复注册监听器
+if (!window.__backToTopInit) {
+	window.__backToTopInit = true;
+	window.addEventListener('resize', positionBackToTop);
+	document.addEventListener('astro:page-load', positionBackToTop);
+	// 正文栏宽度可能随右侧目录出现/消失、字体加载而变化，用 ResizeObserver 兜底
+	if (window.ResizeObserver) {
+		new ResizeObserver(positionBackToTop).observe(document.documentElement);
+	}
+	if (document.fonts && document.fonts.ready) {
+		document.fonts.ready.then(positionBackToTop);
+	}
+}
 </script>

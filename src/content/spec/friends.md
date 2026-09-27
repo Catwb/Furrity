@@ -14,7 +14,7 @@ title: 友链
 
 **博客信息：**
 
-```TXT
+```txt
 名称：龙星划空
 链接：https://blog.furryawa.com/
 描述：人生近看是悲剧，远看是喜剧

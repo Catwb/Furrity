@@ -93,7 +93,10 @@ const managerConfigStr = JSON.stringify({
     }
 
     var audio = document.createElement('audio');
-    audio.preload = 'auto';
+    // 'auto' 会让浏览器在首页加载时就把整首曲子拉下来（实测 471KB mp3），
+    // 哪怕访客从没点过播放 —— 白吃首屏带宽，还占着连接。
+    // 'metadata' 只取文件头（几 KB），时长/进度条照常可用，点播放时再下完整音频。
+    audio.preload = 'metadata';
     audio.style.display = 'none';
     document.body.appendChild(audio);
 
@@ -123,6 +126,18 @@ const managerConfigStr = JSON.stringify({
         window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
     }
 
+    // 网易云封面原图常是 1500×1500（实测单张 230KB），而侧栏只显示 78px、
+    // 播放列表里更小。网易图床支持 ?param=WxH 直接返回缩略图，
+    // 这里在组装歌单时统一降采样，大图/小图共用同一张，省下几十倍的解码与带宽。
+    var PIC_THUMB_SIZE = 200;
+    function thumbPic(raw) {
+        if (!raw || typeof raw !== 'string') return '';
+        if (raw.indexOf('music.126.net') === -1) return raw;
+        if (/[?&]param=/.test(raw)) return raw;
+        return raw + (raw.indexOf('?') === -1 ? '?' : '&') +
+            'param=' + PIC_THUMB_SIZE + 'y' + PIC_THUMB_SIZE;
+    }
+
     async function fetchMetingData() {
         if (!config.meting) return;
         var m = config.meting;
@@ -149,7 +164,7 @@ const managerConfigStr = JSON.stringify({
                             name: item.title || item.name || 'Unknown',
                             artist: item.author || item.artist || 'Unknown',
                             url: item.url,
-                            pic: item.pic || item.cover || '',
+                            pic: thumbPic(item.pic || item.cover || ''),
                             lrc: item.lrc
                         };
                     });

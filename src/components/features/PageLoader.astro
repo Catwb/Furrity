@@ -8,7 +8,7 @@ const checklistFirst = [
 ];
 ---
 
-<div class="spinner" id="page-loader">
+<div class="spinner" id="page-loader" style="position:fixed;inset:0;z-index:9999;">
 	<span class="loader-text" id="loader-percent">0%</span>
 	<div class="loader" style="--width: 0%;"></div>
 	<ul class="loader-checklist" id="loader-checklist">
@@ -31,8 +31,16 @@ const checklistFirst = [
 		display: flex; flex-direction: column;
 		align-items: center; justify-content: center;
 		background: oklch(0.96 0.01 var(--hue, 250) / 0.55);
-		backdrop-filter: blur(2px);
+		/* 模糊浓度就改这个数。它是整个遮罩最贵的一笔开销（全屏 fixed + 大半径
+		   backdrop blur）；低端机上要是看到掉帧，先动这里。
+		   -webkit- 那行不能删：项目没装 autoprefixer，而 Safari 18 之前只认带前缀
+		   的写法，删掉等于在旧 iOS 上完全没有模糊。 */
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
 		transition: opacity 0.3s;
+		/* 遮罩的定位同时写在内联 style 里（见上方 markup）：外链 CSS 到达之前
+		   它就已经是 fixed，永远不会以"文档流里的第一块内容"身份参与布局。 */
+		contain: layout;
 	}
 	#page-loader.hide { opacity: 0; pointer-events: none; }
 	#page-loader .loader {
@@ -56,11 +64,15 @@ const checklistFirst = [
 		list-style: none; padding: 0; margin: 0 0 12px;
 		width: min(420px, calc(100vw - 32px));
 		display: flex; flex-direction: column; gap: 6px;
-		/* 不用 40vh 硬卡：内容本身有界（约 340px），硬卡只会在小屏/手机横屏把面板切掉。
-		   改成允许收缩 + 宽松上限 —— 高度够就完整显示，不够就自己内部滚动，
-		   而不是把整个 overlay 顶出视口（横屏 390px 高时就会那样）。 */
+		/* 高度必须从第一帧起就定死。overlay 是 justify-content:center 的弹性列，
+		   清单只要在加载过程中长高一点（.ck-sub 写入文字、window:load 那条下面
+		   再插入资源面板），整块内容就会在视口里重新居中；父层虽然是 fixed，
+		   但**子元素的位移照样计入 CLS** —— 实测这一处独占 0.135 里最大的三笔
+		   （0.0725 / 0.0594 / 0.046）。这里直接给满状态高度（5 行 + 资源面板
+		   ≈ 370px）留位，超出部分内部滚动：内容不再变化，就不会再有位移。
+		   小屏/手机横屏仍按 62vh 收缩，逻辑与原注释一致。 */
 		flex: 0 1 auto; min-height: 0;
-		max-height: 70vh; overflow-y: auto;
+		height: min(400px, 62vh); overflow-y: auto;
 		font-size: 13px; color: oklch(0.45 0.02 var(--hue, 250));
 	}
 	#page-loader .loader-checklist li {
@@ -91,8 +103,14 @@ const checklistFirst = [
 		padding-left: 18px;
 		font-size: 11px; line-height: 16px;
 		color: oklch(0.58 0.02 var(--hue, 250));
+		/* 高度必须恒定。空元素自己撑不出行盒（visibility:hidden 也一样，高度仍是 0），
+		   所以心跳把文字写进去的那一刻，这一行会从 20px 变成 36px，把后面几行全顶下去
+		   —— 生产报告里 li.done 的 0.0354 / 0.0290 两笔就是这么来的。
+		   固定 16px + 单行省略：写不写文字都一样高。 */
+		height: 16px; overflow: hidden;
+		white-space: nowrap; text-overflow: ellipsis;
 	}
-	#page-loader .loader-checklist li .ck-sub:empty { display: none; }
+	/* 空的 ck-sub 不再需要特殊分支：高度已经写死在上面那条规则里 */
 
 	/* 进行中：与 .done / .warn 同特异性，靠源码顺序决定优先级 */
 	#page-loader .loader-checklist li.running {
@@ -147,7 +165,9 @@ const checklistFirst = [
 		color: oklch(0.55 0.02 var(--hue, 250));
 	}
 	#page-loader .ck-res-log {
-		max-height: 120px; overflow-y: auto;
+		/* 同样从"上限"改成固定高度：日志行数是随加载增长的，
+		   用 max-height 会让这块面板一路长高，进而顶动整列。 */
+		height: 120px; overflow-y: auto;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 11px; line-height: 16px;
 		color: oklch(0.5 0.02 var(--hue, 250));
@@ -665,7 +685,10 @@ const checklistFirst = [
 		}
 
 		function startTick() {
-			if (!tickTimer) tickTimer = setInterval(tick, 100);
+			// 原来 100ms（10Hz）。每个 tick 都要写 5 行 meta、必要时整块重建资源面板，
+			// 而 pendingResources() 一次就是 4 次 querySelectorAll —— 实测加载期
+			// 文档自身的长任务（115/98/53ms）多半出自这里。250ms 肉眼看不出差别。
+			if (!tickTimer) tickTimer = setInterval(tick, 250);
 		}
 
 		function stopTick() {
@@ -749,7 +772,12 @@ const checklistFirst = [
 			checkedCount++;
 			stepAt = performance.now(); // 重置档位内爬升
 			updateBar(stepAt);
-			if (item.id === "window:load") finishResPanel();
+			// 心跳已降到 250ms，最后一帧不能停在旧数据上：同步刷一次面板再收尾
+			if (item.id === "window:load") {
+				resDirty = false;
+				renderRes();
+				finishResPanel();
+			}
 			if (checkedCount === checklist.length) {
 				clearWarnTimers();
 				scheduleHide();
@@ -764,6 +792,7 @@ const checklistFirst = [
 			// （若将来让 loader 在 swup 切页时也显示，必须重建观察者并按时戳过滤，
 			//   否则 buffered:true 会把整份历史重放一遍，导致重复计入）
 			if (resObserver) { resObserver.disconnect(); resObserver = null; }
+			if (loadCapTimer) { clearTimeout(loadCapTimer); loadCapTimer = null; }
 			checklist = [];
 			checkedCount = 0;
 			resEntries = [];
@@ -774,6 +803,7 @@ const checklistFirst = [
 		}
 
 		var hideTimer = null;
+		var loadCapTimer = null; // window:load 档位的硬上限（见 startFirstLoad）
 		function scheduleHide() {
 			if (hideTimer) clearTimeout(hideTimer);
 			hideTimer = setTimeout(hideLoader, 400);
@@ -867,6 +897,15 @@ const checklistFirst = [
 				// window:load 给到 8 秒：慢速移动网络下 5 秒很正常，
 				// 用 5 秒会让访客在正常加载时也看到"某项可能卡住"
 				warnOnStuck("window:load", 8);
+
+				// 但这一档必须加硬上限。遮罩盖着整个视口时，LCP 元素要等遮罩淡出
+				// 才算"被画出来"（Chrome 把被完全遮挡的首屏元素推迟到遮挡消失），
+				// 于是任何一个把 window:load 拖住的第三方资源都会直接变成 LCP：
+				// 实测图标 API 挂死那次，图片 90ms 就下完了，LCP 却是 6.4s，
+				// 拆解出来 elementRenderDelay = 9911ms —— 全是遮罩挡着的。
+				// 到点就收工，剩下的资源在后台继续加载，不再拖住首屏。
+				var LOAD_CAP_MS = 2500;
+				loadCapTimer = setTimeout(function () { check("window:load"); }, LOAD_CAP_MS);
 			}
 
 			document.addEventListener("swup:enable", function () { check("swup:enable"); });

@@ -462,6 +462,11 @@ function showBanner() {
 	banner.classList.remove('opacity-0', 'scale-105');
 }
 
+/* P0-5 回退实验：OverlayScrollbars 改回"首绘前"初始化。
+   推迟到 load 之后虽然省主线程，但它在接管 body 时会重建滚动容器，
+   整个 .main-grid-wrapper 被重新定位（实测跳 ~47px → CLS 0.0504，且每次必现）。
+   视觉跳变比那点主线程开销严重，先回退，用数据决定去留。 */
+
 function init() {
 	loadTheme();
 	loadHue();

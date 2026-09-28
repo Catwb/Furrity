@@ -266,6 +266,11 @@ export default defineConfig({
 		}),
 	},
 	vite: {
+		// TEMP-P0-VERIFY: 本地工具链（astro 7.2.0 + vite 8.2.0 + Node 24）会把纯 CJS 的
+		// picomatch 内联进 ESM 模块图并报 "require is not defined"。显式 external 可绕过。
+		ssr: {
+			external: ["picomatch"],
+		},
 		optimizeDeps: {
 			include: ["photoswipe"],
 		},

@@ -26,6 +26,10 @@ export const zh_CN: Translation = {
 
 	[Key.themeColor]: "主题色",
 
+	[Key.uiStyle]: "界面风格",
+	[Key.uiStyleFlat]: "扁平",
+	[Key.uiStyleNeu]: "拟态",
+
 	[Key.lightMode]: "亮色",
 	[Key.darkMode]: "暗色",
 	[Key.systemMode]: "跟随系统",

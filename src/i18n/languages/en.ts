@@ -26,6 +26,10 @@ export const en: Translation = {
 
 	[Key.themeColor]: "Theme Color",
 
+	[Key.uiStyle]: "Interface Style",
+	[Key.uiStyleFlat]: "Flat",
+	[Key.uiStyleNeu]: "Soft",
+
 	[Key.lightMode]: "Light",
 	[Key.darkMode]: "Dark",
 	[Key.systemMode]: "System",

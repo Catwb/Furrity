@@ -2,7 +2,11 @@ import {
 	AUTO_MODE,
 	DARK_MODE,
 	DEFAULT_THEME,
+	DEFAULT_UI_STYLE,
 	LIGHT_MODE,
+	UI_STYLE_FLAT,
+	UI_STYLE_NEU,
+	type UI_STYLE,
 } from "@constants/constants.ts";
 import { expressiveCodeConfig } from "@/config/site";
 import type { LIGHT_DARK_MODE } from "@/types/config";
@@ -27,6 +31,31 @@ export function setHue(hue: number): void {
 		return;
 	}
 	r.style.setProperty("--hue", String(hue));
+}
+
+export function getUiStyle(): UI_STYLE {
+	if (typeof localStorage === "undefined") return DEFAULT_UI_STYLE;
+	return localStorage.getItem("uiStyle") === UI_STYLE_NEU
+		? UI_STYLE_NEU
+		: UI_STYLE_FLAT;
+}
+
+/**
+ * Applies the interface style to <html>. "flat" removes the attribute entirely
+ * so the default look carries no extra selector matching at all.
+ */
+export function applyUiStyleToDocument(style: UI_STYLE): void {
+	const root = document.documentElement;
+	if (style === UI_STYLE_NEU) {
+		root.setAttribute("data-ui-style", UI_STYLE_NEU);
+	} else {
+		root.removeAttribute("data-ui-style");
+	}
+}
+
+export function setUiStyle(style: UI_STYLE): void {
+	localStorage.setItem("uiStyle", style);
+	applyUiStyleToDocument(style);
 }
 
 export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {

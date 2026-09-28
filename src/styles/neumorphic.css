@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Neumorphic layer — opt-in via <html data-ui-style="neu">
+   Toggled from the palette panel (DisplaySettings.svelte), persisted in
+   localStorage["uiStyle"], applied before first paint by the inline script in
+   Layout.astro (so switching never flashes the flat look).
+
+   Two rules of composition, because this theme is not a flat-coloured canvas:
+
+   * SURFACES (cards, floating panels) get *soft elevation only*: a wide,
+     downward ambient shadow plus an inner top highlight. The classic outer
+     white highlight is deliberately NOT used here. Measured in the browser at
+     1:1, an outer highlight spills past the card edge and reads as a blurry
+     white smear over the photographic wallpaper (siteConfig.background), and a
+     tight blur makes a 900x150 card's 1.25rem corners look chopped rather than
+     softened. Both are geometry facts, not taste — see the numbers in the
+     commit discussion.
+
+   * CONTROLS (buttons, chips, slider, search field) sit *on* a surface, so they
+     keep the real neumorphic duality: highlight + shade at rest, inset when
+     pressed. This is where the soft-UI read actually comes from.
+
+   Markdown content surfaces (code blocks, admonitions, embedded players, share
+   poster) are deliberately left flat so long-form reading keeps full contrast.
+
+   Every value below is a knob: tune these, not the rules further down.
+   ========================================================================== */
+
+:root[data-ui-style="neu"] {
+	/* --- surface palette ---------------------------------------------------
+	   Neumorphism needs a mid-tone base. On the theme's pure white card the
+	   inner highlight has nowhere to go (255 is the ceiling) — measured, the
+	   inner top rim was +0 on white, which is exactly why an earlier revision
+	   of this file read as a plain soft-shadow card with no neumorphic
+	   character at all. These overrides give this mode its own plate colour;
+	   they are scoped to data-ui-style="neu", so the flat look keeps pure white
+	   and this changes nothing unless the switch is on. This single group is
+	   the main knob of the whole layer. */
+	--card-bg: oklch(0.93 0.008 var(--hue, 35));
+	--page-bg: oklch(0.90 0.008 var(--hue, 35));
+	--float-panel-bg: oklch(0.93 0.008 var(--hue, 35));
+
+	/* Controls sit on the SAME plate as the card. That colour identity is what
+	   makes their two-sided shadow read as neumorphic rather than as a drop
+	   shadow — also why --btn-regular-bg is left alone: it feeds inline code. */
+	--neu-surface: oklch(0.93 0.008 var(--hue, 35));
+
+	/* two-sided material, for controls */
+	--neu-light: rgba(255, 255, 255, 0.95);
+	--neu-dark: oklch(0.5 0.03 var(--hue, 35) / 0.5);
+
+	/* the card's own lit/shaded rims, drawn INSIDE the plate: an outer highlight
+	   would land on the photographic wallpaper instead of on the card */
+	--neu-inner-light: rgba(255, 255, 255, 0.95);
+	--neu-inner-dark: oklch(0.6 0.02 var(--hue, 35) / 0.16);
+
+	--neu-contact: rgba(0, 0, 0, 0.08);
+	--neu-ambient: oklch(0.45 0.02 var(--hue, 35) / 0.3);
+
+	/* accessibility backstop: a shadow must never be the only affordance */
+	--neu-hairline: rgba(0, 0, 0, 0.06);
+
+	--neu-raised: -6px -6px 18px var(--neu-light), 10px 10px 26px var(--neu-dark);
+	--neu-raised-sm: -3px -3px 9px var(--neu-light), 5px 5px 12px var(--neu-dark);
+	--neu-pressed: inset 3px 3px 8px var(--neu-dark),
+		inset -3px -3px 8px var(--neu-light);
+	--neu-groove: inset 2px 2px 6px var(--neu-dark),
+		inset -2px -2px 6px var(--neu-light);
+
+	/* A surface reads as raised through a lit rim plus a shaded rim, and a wide
+	   downward ambient shadow for the actual elevation. */
+	--neu-plate:
+		inset 1px 1px 2px var(--neu-inner-light),
+		inset -1px -1px 3px var(--neu-inner-dark),
+		0 1px 2px var(--neu-contact),
+		0 12px 30px -14px var(--neu-ambient);
+}
+
+/* Dark mode: depth is carried by the highlight, the shade stays a broad
+   occlusion (there is no light source below in a dark room). */
+:root.dark[data-ui-style="neu"] {
+	--card-bg: oklch(0.27 0.015 var(--hue, 35));
+	--page-bg: oklch(0.19 0.015 var(--hue, 35));
+	--float-panel-bg: oklch(0.27 0.015 var(--hue, 35));
+	--neu-surface: oklch(0.27 0.015 var(--hue, 35));
+
+	--neu-light: rgba(255, 255, 255, 0.06);
+	--neu-dark: rgba(0, 0, 0, 0.55);
+	--neu-inner-light: rgba(255, 255, 255, 0.07);
+	--neu-inner-dark: rgba(0, 0, 0, 0.35);
+	--neu-contact: rgba(0, 0, 0, 0.5);
+	--neu-ambient: rgba(0, 0, 0, 0.5);
+	--neu-hairline: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Surfaces: a plate, not an outer highlight -------------------------- */
+:root[data-ui-style="neu"] .card-base {
+	box-shadow: var(--neu-plate);
+}
+
+/* the flat look used an almost invisible drop-shadow filter; drop it */
+:root[data-ui-style="neu"] .card-shadow {
+	filter: none;
+}
+
+/* Floating panels (palette panel, nav menu, search): the same plate plus a
+   hairline ring, so an overlay still separates from whatever is behind it. */
+:root[data-ui-style="neu"] .float-panel {
+	box-shadow: var(--neu-plate), 0 0 0 1px var(--neu-hairline);
+}
+
+/* --- Controls: raised at rest, pressed while active -------------------- */
+:root[data-ui-style="neu"] .btn-regular,
+:root[data-ui-style="neu"] .btn-card,
+:root[data-ui-style="neu"] .meta-icon {
+	background: var(--neu-surface);
+	border: 1px solid var(--neu-hairline);
+	box-shadow: var(--neu-raised-sm);
+}
+
+:root[data-ui-style="neu"] .btn-regular:hover,
+:root[data-ui-style="neu"] .btn-card:hover {
+	background: var(--neu-surface);
+	box-shadow: var(--neu-raised);
+}
+
+:root[data-ui-style="neu"] .btn-regular:active,
+:root[data-ui-style="neu"] .btn-card:active {
+	background: var(--neu-surface);
+	box-shadow: var(--neu-pressed);
+}
+
+/* Plain buttons (nav links, icon buttons) stay flat at rest and only pick up
+   the material on interaction — otherwise the whole navbar and every sidebar
+   row would read as a row of buttons. */
+:root[data-ui-style="neu"] .btn-plain.scale-animation:hover {
+	box-shadow: var(--neu-raised-sm);
+}
+
+:root[data-ui-style="neu"] .btn-plain.scale-animation:active {
+	box-shadow: var(--neu-pressed);
+}
+
+/* --- Inset grooves: hue slider track and the search field --------------- */
+:root[data-ui-style="neu"] #display-setting input[type="range"] {
+	box-shadow: var(--neu-groove);
+}
+
+:root[data-ui-style="neu"] #search-bar-inside {
+	box-shadow: var(--neu-groove);
+}
+
+/* --- TOC active indicator (already hue-tinted) gets the same material --- */
+:root[data-ui-style="neu"] #active-indicator {
+	box-shadow: var(--neu-raised-sm);
+}

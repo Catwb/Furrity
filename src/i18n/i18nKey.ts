@@ -23,6 +23,10 @@ enum I18nKey {
 
 	themeColor = "themeColor",
 
+	uiStyle = "uiStyle",
+	uiStyleFlat = "uiStyleFlat",
+	uiStyleNeu = "uiStyleNeu",
+
 	lightMode = "lightMode",
 	darkMode = "darkMode",
 	systemMode = "systemMode",

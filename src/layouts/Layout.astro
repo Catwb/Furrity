@@ -11,14 +11,18 @@ import {
 	BANNER_HEIGHT_HOME,
 	DARK_MODE,
 	DEFAULT_THEME,
+	DEFAULT_UI_STYLE,
 	LIGHT_MODE,
 	PAGE_WIDTH,
 	PAGE_WIDTH_WIDE,
+	UI_STYLE_FLAT,
+	UI_STYLE_NEU,
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
 import "../styles/tag-plugins-dark.css";
+import "../styles/neumorphic.css";
 import "photoswipe/style.css";
 
 interface Props {
@@ -154,7 +158,7 @@ const canonicalUrl = `${canonicalOrigin}${Astro.url.pathname}`;
 		))}
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue, DEFAULT_UI_STYLE, UI_STYLE_FLAT, UI_STYLE_NEU}}>
 			const root = document.documentElement;
 
 			// Load the theme from local storage
@@ -177,6 +181,15 @@ const canonicalUrl = `${canonicalOrigin}${Astro.url.pathname}`;
 			// Load the hue from local storage
 			const hue = localStorage.getItem('hue') || configHue;
 			root.style.setProperty('--hue', hue);
+
+			// Load the interface style before the first paint, otherwise the page
+			// renders flat and then jumps to neumorphic on hydration
+			const uiStyle = localStorage.getItem('uiStyle') || DEFAULT_UI_STYLE;
+			if (uiStyle === UI_STYLE_NEU) {
+				root.setAttribute('data-ui-style', UI_STYLE_NEU);
+			} else if (uiStyle === UI_STYLE_FLAT) {
+				root.removeAttribute('data-ui-style');
+			}
 
 			// Set an immediate vh-based value (no geometry read, no reflow),
 			// then refine to exact pixels after first paint.
@@ -275,7 +288,7 @@ import {
 	// SizeObserverPlugin,
 	// ClickScrollPlugin
 } from 'overlayscrollbars';
-import {getHue, getStoredTheme, setHue, setTheme} from "../utils/setting-utils";
+import {getHue, getStoredTheme, getUiStyle, setHue, setTheme, setUiStyle} from "../utils/setting-utils";
 import {pathsEqual, url} from "../utils/url-utils";
 import {
 	BANNER_HEIGHT,
@@ -357,6 +370,10 @@ function loadTheme() {
 
 function loadHue() {
 	setHue(getHue())
+}
+
+function loadUiStyle() {
+	setUiStyle(getUiStyle())
 }
 
 let bodyScrollbarInitialized = false
@@ -448,6 +465,7 @@ function showBanner() {
 function init() {
 	loadTheme();
 	loadHue();
+	loadUiStyle();
 	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
 			initBodyScrollbar();

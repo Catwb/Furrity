@@ -118,6 +118,14 @@ export default defineConfig({
 			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
 			// the default value `transition-` cause transition delay
 			// when the Tailwind class `transition-all` is used
+			// loadOnIdle 默认 true：swup 会走 onIdleAfterLoad —— 先等真正的 window.load，
+			// 再等一次 requestIdleCallback，然后才动态 import 9 个 chunk（6 个插件 + 核心
+			// + 共享依赖）。这条链上任何一环出问题（load 被资源挂住、idle 回调不触发、
+			// 某个 chunk 抓取失败），swup 都永不初始化；而它没有任何错误处理，只会静默
+			// 失败，唯一症状是 Console 里一条 unhandled rejection。
+			// 设成 false 后这些 import 变成页面初始模块图里的静态导入，和页面一起并行
+			// 加载，不再依赖 load 与 idle。
+			loadOnIdle: false,
 			containers: ["main", "#right-sidebar-container"],
 			fragments: [
 				{

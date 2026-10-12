@@ -190,10 +190,10 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				color: "#CEF7FB",
 			},
 			{
-				name: "CcoMm",
-				url: "https://blog.ccomm.top/",
+				name: "qwwp",
+				url: "https://qwwp.top/",
 				description: "你要吃C4吗？",
-				avatar: "https://avatars.githubusercontent.com/u/147143261",
+				avatar: "https://qwwp.top/images/avatar.jpg",
 			},
 			{
 				name: "Noah's blog",

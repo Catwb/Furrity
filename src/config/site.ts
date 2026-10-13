@@ -183,7 +183,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/avatar.jpg",
+	avatar: "assets/images/avatar.png",
 	name: "绮曜",
 	bio: "人生近看是悲剧，远看是喜剧",
 	links: [

@@ -1,5 +1,5 @@
 {
-"Emoji": {
+    "Emoji": {
         "type": "emoji",
         "container": [
             {
@@ -625,7 +625,7 @@
             }
         ]
     },
-    "<img src=\"https://testingcf.jsdelivr.net/gh/infinitesum/Twikoo-emoji@master/Blob/ablobcatheart.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"bochi\">": {
+    "BlobCat静态": {
         "type": "image",
         "container": [
             {
@@ -918,7 +918,7 @@
             }
         ]
     },
-    "<img src=\"https://owo.imaegoo.com/bilibili/6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"bochi\">": {
+    "Bilibili": {
         "type": "image",
         "container": [
             {
@@ -1007,7 +1007,7 @@
             }
         ]
     },
-    "<img src=\"https://testingcf.jsdelivr.net/gh/2x-ercha/twikoo-magic@master/image/罗小黑/你好呀.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"bochi\">":{
+    "罗小黑":{
       "type":"image",
       "container":[
         {
@@ -1977,7 +1977,7 @@
         }
         ]
     },
-    "<img src=\"https://testingcf.jsdelivr.net/gh/cdn-x/emoticons/blobcat/approach.gif\" style=\"width: 30px;top: 4px;position: relative;\" title=\"blobcatsplus\">": {
+    "BlobcatPlus": {
         "type": "image",
         "container": [
             {
@@ -2306,7 +2306,7 @@
             }
         ]
     },
-    "<img src=\"https://testingcf.jsdelivr.net/gh/Catwb/Blobcats/floof/afloofLoad.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"floof\">": {
+    "floof": {
     "type": "image",
     "container": [
       {
@@ -2427,7 +2427,7 @@
       }
     ]
   },
-  "<img src=\"https://testingcf.jsdelivr.net/gh/Catwb/Blobcats/neocat/neocat.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"neocat\">": {
+    "neocat": {
     "type": "image",
     "container": [
       {
@@ -3440,7 +3440,7 @@
       }
     ]
   },
-  "<img src=\"https://testingcf.jsdelivr.net/gh/Catwb/Blobcats/neofox/neofox.png\" style=\"width: 30px;top: 4px;position: relative;\" title=\"neofox\">": {
+  "neofox": {
     "type": "image",
     "container": [
       {

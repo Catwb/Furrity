@@ -123,17 +123,25 @@ export const siteConfig: SiteConfig = {
 export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
-		LinkPreset.Friends,
+		{
+			name: "友链",
+			children: [
+				{
+					name: "友链列表",
+					url: "/links/",
+				},
+				{
+					name: "朋友圈",
+					url: "/fcircle/",
+				},
+			],
+		},
 		{
 			name: "页面",
 			children: [
 				{
 					name: "博客",
 					url: "/",
-				},
-				{
-					name: "朋友圈",
-					url: "/fcircle/",
 				},
 				{
 					name: "关于",

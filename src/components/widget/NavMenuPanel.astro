@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { type NavBarLink } from "../../types/config";
 import { url } from "../../utils/url-utils";
 
@@ -9,61 +8,190 @@ interface Props {
 
 const links = Astro.props.links;
 
-type FlatNavItem = { name: string; url: string; external?: boolean; depth: number };
-function flattenNavItems(items: NavBarLink[], depth: number = 0): FlatNavItem[] {
-	const result: FlatNavItem[] = [];
-	for (const item of items) {
-		if (item.url) {
-			result.push({ name: item.name, url: item.url, external: item.external, depth });
-		}
-		if (item.children && item.children.length > 0) {
-			result.push(...flattenNavItems(item.children, depth + 1));
-		}
-	}
-	return result;
+/**
+ * 移动端多级菜单：把手风琴折叠所需的结构递归生成出来。
+ *
+ * 设计要点：
+ * - 带 children 的项渲染成按钮（父级），点击展开/收起自己的子列表；
+ * - 父级自身若也带 url，会在子列表末尾补一条自身入口，避免分组后点不到它；
+ * - 折叠动画用 grid-template-rows 0fr→1fr 实现，无需测量高度，
+ *   任意嵌套深度都适用；
+ * - 图标使用内联 SVG，不依赖页面里是否已定义同名 <symbol>。
+ */
+
+const ICON_CHEVRON_RIGHT = `<svg width="1em" height="1em" viewBox="0 0 24 24" class="transition shrink-0 text-[1.25rem] text-[var(--primary)]"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"/></svg>`;
+
+const ICON_EXPAND_MORE = `<svg width="1em" height="1em" viewBox="0 0 24 24" class="nav-submenu-arrow transition shrink-0 text-[1.25rem] text-[var(--primary)]"><path fill="currentColor" d="m12 15.375l-6-6l1.4-1.4l4.6 4.6l4.6-4.6l1.4 1.4z"/></svg>`;
+
+const ICON_EXTERNAL = `<svg width="1em" height="1em" viewBox="0 0 512 512" class="transition shrink-0 text-[0.75rem] text-black/25 dark:text-white/25"><path fill="currentColor" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32zM80 32C35.8 32 0 67.8 0 112v320c0 44.2 35.8 80 80 80h320c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v112c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16h112c17.7 0 32-14.3 32-32s-14.3-32-32-32z"/></svg>`;
+
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;");
 }
+
+const rowClass =
+	"group flex justify-between items-center w-full py-2 pl-3 pr-1 rounded-lg gap-8 text-left hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition";
+
+const labelHtml = (name: string) =>
+	`<div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">${escapeHtml(name)}</div>`;
+
+// 行内已带 pl-3 (0.75rem)；层级缩进交给嵌套列表的 margin-left 自然累加，
+// 不再额外叠加 padding，避免深层级被推得太靠右。
+const indentStyle = (_depth: number) => "";
+
+const renderItems = (items: NavBarLink[], depth: number): string =>
+	items
+		.map((item) => {
+			const children = item.children ?? [];
+			const hasChildren = children.length > 0;
+			const href = item.external ? (item.url ?? "/") : url(item.url ?? "/");
+			const target = item.external ? ' target="_blank" rel="noopener"' : "";
+			const trailingIcon = item.external ? ICON_EXTERNAL : ICON_CHEVRON_RIGHT;
+
+			// 叶子节点：直接是链接
+			if (!hasChildren) {
+				return `<li>
+	<a href="${escapeHtml(href)}"${target} class="${rowClass}" ${indentStyle(depth)}>
+		${labelHtml(item.name)}
+		${trailingIcon}
+	</a>
+</li>`;
+			}
+
+			// 父级若自身带 url，在子列表末尾补一条自身入口
+			const selfEntry = item.url
+				? `<li>
+	<a href="${escapeHtml(href)}"${target} class="${rowClass}" ${indentStyle(depth + 1)}>
+		${labelHtml(item.name)}
+		${trailingIcon}
+	</a>
+</li>`
+				: "";
+
+			return `<li data-submenu data-open="false">
+	<button type="button" data-submenu-btn aria-expanded="false" class="nav-submenu-btn ${rowClass}" ${indentStyle(depth)}>
+		${labelHtml(item.name)}
+		${ICON_EXPAND_MORE}
+	</button>
+	<div data-submenu-panel class="nav-submenu-panel">
+		<ul class="nav-submenu-list">
+			${renderItems(children, depth + 1)}
+			${selfEntry}
+		</ul>
+	</div>
+</li>`;
+		})
+		.join("");
+
+const itemsHtml = renderItems(links, 0);
 ---
 
-<div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all fixed right-4 px-2 py-2"]}>
-    {links.map((link) => {
-        const items = flattenNavItems([link]);
-        return items.map((item, i) => (
-            item.depth === 0 && i > 0 ? (
-                <div style={`padding-left: ${item.depth * 1.25}rem`}>
-                    <a href={item.external ? item.url : url(item.url)}
-                       class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
-                            hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
-                       target={item.external ? "_blank" : null}
-                    >
-                        <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
-                            {item.name}
-                        </div>
-                        {!item.external && <Icon name="material-symbols:chevron-right-rounded"
-                              class="transition text-[1.25rem] text-[var(--primary)]"
-                        ></Icon>}
-                        {item.external && <Icon name="fa6-solid:arrow-up-right-from-square"
-                              class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
-                        ></Icon>}
-                    </a>
-                </div>
-            ) : (
-                <a href={item.external ? item.url : url(item.url)}
-                   class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
-                        hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
-                   style={item.depth > 0 ? `padding-left: ${0.75 + item.depth * 1.25}rem` : ''}
-                   target={item.external ? "_blank" : null}
-                >
-                    <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
-                        {item.name}
-                    </div>
-                    {!item.external && <Icon name="material-symbols:chevron-right-rounded"
-                          class="transition text-[1.25rem] text-[var(--primary)]"
-                    ></Icon>}
-                    {item.external && <Icon name="fa6-solid:arrow-up-right-from-square"
-                          class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
-                    ></Icon>}
-                </a>
-            )
-        ));
-    })}
+<div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all fixed right-4 px-2 py-2 nav-menu-multi"]}>
+	<ul class="nav-menu-list">
+		<Fragment set:html={itemsHtml} />
+	</ul>
 </div>
+
+<style is:global>
+	/* 展开/收起：外层 grid 0fr↔1fr，内层 ul 承担实际内容。
+	   用一层包装保证 0fr 作用于「整段子列表」而不是第一行。 */
+	.nav-menu-multi .nav-submenu-panel {
+		display: grid;
+		grid-template-rows: 0fr;
+		visibility: hidden;
+		transition:
+			grid-template-rows 200ms ease,
+			visibility 0s linear 200ms;
+	}
+
+	.nav-menu-multi .nav-submenu-panel > .nav-submenu-list {
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.nav-menu-multi [data-submenu][data-open="true"] > .nav-submenu-panel {
+		grid-template-rows: 1fr;
+		visibility: visible;
+		transition:
+			grid-template-rows 200ms ease,
+			visibility 0s;
+	}
+
+	.nav-menu-multi [data-submenu][data-open="true"] > .nav-submenu-btn .nav-submenu-arrow {
+		transform: rotate(180deg);
+	}
+
+	/* 复位列表默认样式（Tailwind base 之后仍需显式处理嵌套 ul） */
+	.nav-menu-multi ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* 展开后给子列表一条左侧引导线，并作为唯一的层级缩进来源 */
+	.nav-menu-multi .nav-submenu-panel > .nav-submenu-list {
+		border-left: 1px solid var(--line-divider);
+		margin-left: 1.25rem;
+	}
+
+	/* 面板过长时内部滚动 */
+	.nav-menu-multi {
+		max-height: calc(100vh - 8rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.nav-menu-multi .nav-submenu-panel,
+		.nav-menu-multi .nav-submenu-arrow {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	// swup 会重复执行内联脚本，用全局守卫避免重复绑定
+	const w = window as unknown as { __navMenuMultiInit?: boolean };
+
+	const initAccordion = () => {
+		const panel = document.getElementById("nav-menu-panel");
+		if (!panel || panel.dataset.accordionReady === "true") return;
+		panel.dataset.accordionReady = "true";
+
+		panel.querySelectorAll<HTMLLIElement>("li[data-submenu]").forEach((li) => {
+			const btn = li.querySelector<HTMLButtonElement>(":scope > [data-submenu-btn]");
+			if (!btn) return;
+
+			btn.addEventListener("click", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				const willOpen = li.dataset.open !== "true";
+
+				// 手风琴：同一层级内只允许一个展开
+				li.parentElement
+					?.querySelectorAll<HTMLLIElement>(":scope > li[data-submenu][data-open='true']")
+					.forEach((sibling) => {
+						if (sibling === li) return;
+						sibling.dataset.open = "false";
+						sibling
+							.querySelector<HTMLButtonElement>(":scope > [data-submenu-btn]")
+							?.setAttribute("aria-expanded", "false");
+					});
+
+				li.dataset.open = willOpen ? "true" : "false";
+				btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+			});
+		});
+	};
+
+	if (!w.__navMenuMultiInit) {
+		w.__navMenuMultiInit = true;
+		initAccordion();
+		document.addEventListener("astro:page-load", initAccordion);
+	}
+</script>

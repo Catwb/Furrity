@@ -191,6 +191,14 @@ export default defineConfig({
 					delHue: 0,
 					insHue: 180,
 					markHue: 250
+				},
+				// 折叠区块展开后，插件会把展开的行包进 .content-lines，并叠加一层
+				// 半透明的 editor.foldBackground（即 --ec-cs-openBgColCollapsible），
+				// 于是"展开部分"比其余代码行亮一点，看起来是两个色块。
+				// 这里把展开区背景改回透明，让它继承 pre 的 codeBackground。
+				collapsibleSections: {
+					openBackgroundColor: "transparent",
+					openBackgroundColorCollapsible: "transparent"
 				}
 			},
 			frames: {

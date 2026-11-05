@@ -140,10 +140,6 @@ export const navBarConfig: NavBarConfig = {
 			name: "页面",
 			children: [
 				{
-					name: "博客",
-					url: "/",
-				},
-				{
 					name: "关于",
 					url: "/about/",
 				},
@@ -159,16 +155,6 @@ export const navBarConfig: NavBarConfig = {
 					name: "加密",
 					url: "/encrypt/",
 				},
-				{
-					name: "状态面板",
-					url: "https://status.245179.xyz/",
-					external: true,
-				},
-				{
-					name: "音乐馆",
-					url: "https://qymusic.netlify.app/",
-					external: true,
-				},
 			],
 		},
 		LinkPreset.Archive,
@@ -179,6 +165,16 @@ export const navBarConfig: NavBarConfig = {
 				{
 					name: "GitHub",
 					url: "https://github.com/Catwb",
+					external: true,
+				},
+				{
+					name: "状态面板",
+					url: "https://status.245179.xyz/",
+					external: true,
+				},
+				{
+					name: "音乐馆",
+					url: "https://qymusic.netlify.app/",
 					external: true,
 				},
 				{

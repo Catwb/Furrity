@@ -34,8 +34,10 @@
 .dark .tag-plugin.colorful.button[color="purple"] { --btn-bg: oklch(0.3 0.08 290); --btn-bg-hover: oklch(0.35 0.1 290); }
 
 /* --- Checkbox --- */
+/* 只调整「未指定 color」时的回退色，不能直接写 background，
+   否则会盖掉 color="red" 等显式指定的颜色 */
 .dark .tag-plugin.checkbox .icon.unchecked {
-  background: #555;
+  --checkbox-fallback: #555;
 }
 
 /* --- Folding --- */

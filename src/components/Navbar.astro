@@ -11,6 +11,9 @@ import NavMenuPanel from "./widget/NavMenuPanel.astro";
 
 const className = Astro.props.class;
 
+// 导航栏站点图标：跟随 siteConfig.favicon 的第一个条目，避免与站点图标脱节
+const siteIconSrc = siteConfig.favicon[0]?.src;
+
 let links: NavBarLink[] = navBarConfig.links.map(
 	(item: NavBarLink | LinkPreset): NavBarLink => {
 		if (typeof item === "number") {
@@ -44,7 +47,13 @@ const linkChildren = links.map((l) =>
         "card-base !overflow-visible max-w-[var(--page-width-wide)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4"]}>
         <a href={url('/')} class="btn-plain scale-animation rounded-lg h-[3.25rem] px-5 font-bold active:scale-95">
             <div class="flex flex-row text-[var(--primary)] items-center text-md">
-                <Icon name="fa6-solid:paw" class="text-[1.5rem] mb-1 mr-2" />
+                {siteIconSrc ? (
+                    <img src={siteIconSrc} alt={siteConfig.title}
+                         class="w-[1.5rem] h-[1.5rem] mb-1 mr-2 rounded-md object-cover"
+                         loading="eager" decoding="async" />
+                ) : (
+                    <Icon name="fa6-solid:paw" class="text-[1.5rem] mb-1 mr-2" />
+                )}
                 {siteConfig.title}
             </div>
         </a>

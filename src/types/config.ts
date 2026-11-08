@@ -51,6 +51,32 @@ export type SiteConfig = {
 	};
 	abbrlink?: AbbrlinkConfig;
 	outdateWarning?: OutdateWarningConfig;
+	island?: IslandConfig;
+};
+
+/**
+ * 灵动岛 / 流体云配置
+ *
+ * mode:
+ *   "single" —— 同一时刻只显示优先级最高的一条（灵动岛式，推荐）
+ *   "stack"  —— 最多同时显示 maxStack 条，多余的折成 "+N"（流体云式）
+ * size 等视觉细节见 DynamicIsland.astro，这里只留开关和配额。
+ */
+export type IslandProvider = "player" | "loader" | "search" | "nav" | "notice";
+
+export type IslandConfig = {
+	enable: boolean;
+	mode: "single" | "stack";
+	/** stack 模式下最多同时展示几条，超出折叠为 +N */
+	maxStack: number;
+	/**
+	 * 岛自身不活跃（如音乐暂停）后，等多久收起。0 = 立刻收起。
+	 *
+	 * 这是"岛的任务"活跃度，不是用户有没有在操作：
+	 * 音乐放着你一直不动，岛也一直显示；一暂停，岛就自己收起来。
+	 */
+	inactiveGraceMs?: number;
+	providers: IslandProvider[];
 };
 
 export type TwikooConfig = {

@@ -1,4 +1,5 @@
 import type { AstroIntegration } from "@swup/astro";
+import type { IslandBus } from "./scripts/island/bus";
 
 declare global {
 	interface Window {
@@ -10,6 +11,42 @@ declare global {
 					data: () => Promise<SearchResult>;
 				}>;
 			}>;
+		};
+		// 下面几个都是"脚本可能被重复执行"的全局守卫，见各自文件头注释
+		__islandBus?: IslandBus;
+		__islandInit?: boolean;
+		__islandDestroy?: () => void;
+		/** MusicManager.astro 暴露的播放器门面（见该文件末尾） */
+		__fireflyMusic?: {
+			init: () => Promise<void> | void;
+			getState: () => {
+				playlist: Array<{ name: string; artist: string; url: string; pic: string; lrc: string }>;
+				currentIndex: number;
+				track: { name: string; artist: string; url: string; pic: string; lrc: string } | null;
+				isPlaying: boolean;
+				playMode: number;
+				volume: number;
+				isMuted: boolean;
+				currentTime: number;
+				duration: number;
+				progress: number;
+				currentTimeStr: string;
+				durationStr: string;
+				lyrics: Array<{ time: number; text: string }>;
+				currentLrcIndex: number;
+				initialized: boolean;
+				error: string | null;
+			};
+			togglePlay: () => void;
+			playNext: () => void;
+			playPrev: () => void;
+			cyclePlayMode: () => void;
+			setVolume: (val: number) => void;
+			toggleMute: () => void;
+			seek: (percent: number) => void;
+			seekToTime: (time: number) => void;
+			playTrackByIndex: (index: number) => void;
+			loadTrack: (index: number, autoPlay?: boolean) => void;
 		};
 	}
 }

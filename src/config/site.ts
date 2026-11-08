@@ -113,6 +113,17 @@ export const siteConfig: SiteConfig = {
 	canonical: {
 		origin: "https://blog.furryawa.com",
 	},
+	island: {
+		enable: false,
+		mode: "single",
+		maxStack: 3,
+		// 岛自身"不活跃"（比如音乐暂停）后，等多久收起。0 = 立刻收起。
+		// 注意：这是岛的任务活跃度，不是用户有没有在操作 ——
+		// 音乐放着你一直不动，岛也一直显示。
+		inactiveGraceMs: 1500,
+		// 关掉某项就把它从数组里删掉；全部删空等于禁用
+		providers: ["loader", "player", "nav", "notice"],
+	},
 	analytics: {
 		enable: true,
 		url: "https://analyse.245179.xyz/tracker.min.js",

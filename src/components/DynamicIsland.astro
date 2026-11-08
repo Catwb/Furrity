@@ -1,0 +1,838 @@
+---
+import { siteConfig } from "../config/site";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+
+const labelPlay = i18n(I18nKey.musicPlay);
+const labelPause = i18n(I18nKey.musicPause);
+const labelPrev = i18n(I18nKey.musicPrev);
+const labelNext = i18n(I18nKey.musicNext);
+---
+
+<!--
+  灵动岛挂载点 —— 独立悬浮层，浮在导航栏下方。
+
+  为什么挂在 #top-row 里（见 MainGridLayout.astro）：
+  #top-row 是 fixed + z-50 的壳，而且不在 swup 的 containers 里
+  （astro.config.mjs:129 只有 main 和 #right-sidebar-container），
+  所以岛能跨页存活 —— 换页时不会被连根拔起重建，形变动画不会每次从零开始。
+
+  为什么剥离出来悬浮、而不是嵌进导航栏：
+  嵌进导航要在中间挖缺口、还要按导航剩余宽度逐级降档，逻辑绕且脆弱
+  （实测踩过：左右两组宽度不等导致偏 11px、手机端把调色板按钮盖住）。
+  悬浮之后位置只跟视口有关，与导航内容完全解耦。
+-->
+<div id="island-slot" data-visible="false">
+  <div id="dynamic-island" role="status" aria-live="polite" aria-atomic="true"
+       data-state="dormant" data-size="dormant" data-count="0">
+    <span class="island-poster" data-poster aria-hidden="true"></span>
+
+    <span class="island-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+
+    <span class="island-text">
+      <span class="island-title" data-title></span>
+      <span class="island-sub" data-artist></span>
+    </span>
+
+    <span class="island-lyric" data-lyric></span>
+
+    <span class="island-actions">
+      <button type="button" class="island-btn" data-act="prev" aria-label={labelPrev} tabindex="-1">
+        <svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M220-240v-480h80v480h-80Zm520 0L380-480l360-240v480Z"/></svg>
+      </button>
+      <button type="button" class="island-btn island-btn-play" data-act="play" aria-label={labelPlay}>
+        <svg class="i-play" viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M320-200v-560l440 280-440 280Z"/></svg>
+        <svg class="i-pause" viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M560-200v-560h160v560H560Zm-320 0v-560h160v560H240Z"/></svg>
+      </button>
+      <button type="button" class="island-btn" data-act="next" aria-label={labelNext} tabindex="-1">
+        <svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Z"/></svg>
+      </button>
+    </span>
+
+    <span class="island-more" aria-hidden="true"></span>
+    <span class="island-progress" aria-hidden="true"></span>
+  </div>
+</div>
+
+<style is:global>
+/* ==========================================================================
+   灵动岛 —— 独立悬浮层，位于导航栏正下方居中。
+   尺寸只由两个变量驱动（--island-w / --island-h），形变交给 transition，
+   圆角恒为 9999px，于是"药丸长大"这个动作本身是免费的。
+   ========================================================================== */
+
+#island-slot {
+	position: absolute;
+	/* 4.5rem 是导航栏高度（Layout.astro 的 html 在手机上用 14px 根字号，
+	   所以 4.5rem = 63px，桌面 16px 根字号 = 72px —— 用 rem 自动跟随） */
+	top: calc(4.5rem + 0.5rem);
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform: translateX(-50%);
+	pointer-events: none;
+	z-index: 60;
+	transition:
+		top 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		opacity 220ms linear,
+		transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#island-slot[data-visible="false"] {
+	opacity: 0;
+	transform: translateX(-50%) scale(0.86);
+	/* 隐藏时必须让开指针：否则一个看不见的胶囊仍会吞掉正文的点击 */
+	visibility: hidden;
+	transition:
+		top 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		opacity 260ms linear,
+		transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		visibility 0s linear 260ms;
+}
+
+#island-slot[data-visible="true"] {
+	visibility: visible;
+	transition:
+		top 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		opacity 260ms linear,
+		transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		visibility 0s linear 0s;
+}
+
+#island-slot[data-visible="false"] #dynamic-island {
+	pointer-events: none;
+}
+
+/* 导航栏滚走之后，岛升到视口顶部接管 —— 纯 CSS，不新增滚动监听。
+   注意：绝不能用 window.onscroll，Layout.astro:634 是直接赋值占用的。 */
+#top-row:has(#navbar-wrapper.navbar-hidden) #island-slot {
+	top: 0.75rem;
+}
+
+#dynamic-island {
+	--island-w: 2.5rem;
+	--island-h: 2.5rem;
+	--island-progress: 0%;
+	--island-poster: none;
+
+	/* 前景色必须自己定义，不能借 --deep-text ——
+	   那个变量在 variables.styl 里只给了单值（oklch 0.25），亮暗模式共用，
+	   放到暗色底上就是深灰压深黑，实测完全读不出来。 */
+	--island-fg: oklch(0.28 0.02 var(--hue));
+	--island-fg-soft: oklch(0.52 0.06 var(--hue));
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	box-sizing: border-box;
+	width: var(--island-w);
+	height: var(--island-h);
+	/* 悬浮层不能超出视口：窄屏上 expanded 的 21rem 会顶到屏幕外 */
+	max-width: calc(100vw - 1.5rem);
+	padding-inline: 0.25rem;
+	border-radius: 9999px;
+	overflow: clip;
+	contain: layout paint;
+	pointer-events: auto;
+	cursor: pointer;
+	isolation: isolate;
+
+	/* 颜色全部走主题变量：--hue 会被 DisplaySettings 的滑块实时改写，
+	   写死任何色值都会在用户拖滑块的瞬间破相 */
+	background: color-mix(in oklch, var(--card-bg) 76%, transparent);
+	border: 1px solid color-mix(in oklch, var(--primary) 22%, transparent);
+	/* 悬浮层要有明确的"浮起来"的观感：它是压在内容之上的，
+	   没有这层阴影会显得像内容的一部分 */
+	box-shadow:
+		0 0 0 1px color-mix(in oklch, var(--primary) 8%, transparent),
+		0 12px 30px -12px color-mix(in oklch, var(--primary) 48%, transparent),
+		0 3px 10px -4px rgb(0 0 0 / 0.22);
+
+	-webkit-backdrop-filter: blur(18px) saturate(1.6);
+	backdrop-filter: blur(18px) saturate(1.6);
+
+	transition:
+		width 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		height 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+		background-color 200ms linear,
+		border-color 200ms linear,
+		box-shadow 200ms linear;
+}
+
+#dynamic-island[data-size="dormant"] {
+	--island-w: 0.75rem;
+	--island-h: 0.75rem;
+}
+
+#dynamic-island[data-size="mini"] {
+	--island-w: 2.5rem;
+	--island-h: 2.5rem;
+}
+
+/* slim：只留封面 + 播放键，窄屏时用 */
+#dynamic-island[data-size="slim"] {
+	--island-w: 6.5rem;
+	--island-h: 2.25rem;
+}
+
+#dynamic-island[data-size="compact"] {
+	--island-w: 13rem;
+	--island-h: 2.5rem;
+}
+
+#dynamic-island[data-size="expanded"] {
+	--island-w: 21rem;
+	--island-h: 3.5rem;
+}
+
+#dynamic-island:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 3px;
+}
+
+/* 缓慢旋转的流体高光 —— 整个岛唯一的"贵"元素 */
+#dynamic-island::before {
+	content: "";
+	position: absolute;
+	inset: -40%;
+	z-index: -1;
+	background: conic-gradient(
+		from 0deg,
+		color-mix(in oklch, var(--primary) 55%, transparent),
+		transparent 32%,
+		transparent 68%,
+		color-mix(in oklch, var(--secondary) 55%, transparent)
+	);
+	opacity: 0.22;
+	mix-blend-mode: plus-lighter;
+	animation: island-sheen 22s linear infinite;
+	pointer-events: none;
+}
+
+@keyframes island-sheen {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---- 内容块 ---- */
+.island-poster {
+	flex: 0 0 auto;
+	width: 1.75rem;
+	height: 1.75rem;
+	border-radius: 9999px;
+	background-image: var(--island-poster);
+	background-size: cover;
+	background-position: center;
+	background-color: color-mix(in oklch, var(--primary) 18%, transparent);
+	transition:
+		width 320ms ease,
+		opacity 200ms linear;
+}
+
+.island-text {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-width: 0;
+	flex: 1 1 auto;
+	line-height: 1.1;
+	opacity: 0;
+	transition: opacity 180ms linear 60ms;
+}
+
+.island-title,
+.island-sub,
+.island-lyric {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.island-title {
+	font-size: 0.8125rem;
+	font-weight: 700;
+	color: var(--island-fg);
+}
+
+.island-sub {
+	font-size: 0.6875rem;
+	color: var(--island-fg-soft);
+}
+
+.island-lyric {
+	display: none;
+	font-size: 0.6875rem;
+	color: var(--primary);
+	min-width: 0;
+	flex: 0 1 auto;
+	max-width: 8rem;
+}
+
+.island-actions {
+	display: none;
+	align-items: center;
+	gap: 0.125rem;
+	flex: 0 0 auto;
+}
+
+.island-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	border: 0;
+	border-radius: 9999px;
+	background: transparent;
+	color: var(--island-fg);
+	transition:
+		background-color 160ms linear,
+		transform 160ms ease;
+}
+
+.island-btn svg {
+	width: 1.05rem;
+	height: 1.05rem;
+}
+
+.island-btn:hover {
+	background: color-mix(in oklch, var(--primary) 16%, transparent);
+}
+
+.island-btn:active {
+	transform: scale(0.9);
+}
+
+.island-btn-play {
+	background: color-mix(in oklch, var(--primary) 18%, transparent);
+}
+
+.island-btn-play .i-pause {
+	display: none;
+}
+
+.island-btn-play[data-playing="true"] .i-pause {
+	display: block;
+}
+
+.island-btn-play[data-playing="true"] .i-play {
+	display: none;
+}
+
+/* 多任务时的 +N 徽标 */
+.island-more {
+	display: none;
+	flex: 0 0 auto;
+	padding-inline: 0.375rem;
+	height: 1.25rem;
+	align-items: center;
+	border-radius: 9999px;
+	font-size: 0.625rem;
+	font-weight: 700;
+	color: var(--primary);
+	background: color-mix(in oklch, var(--primary) 14%, transparent);
+}
+
+/* EQ 三柱：纯 CSS —— 常驻 rAF 在低端机上必掉帧 */
+.island-eq {
+	display: none;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 2px;
+	width: 100%;
+	height: 0.875rem;
+}
+
+.island-eq i {
+	display: block;
+	width: 2px;
+	border-radius: 1px;
+	background: var(--primary);
+	animation: island-eq 1s ease-in-out infinite;
+}
+
+.island-eq i:nth-child(1) {
+	animation-duration: 0.82s;
+	height: 6px;
+}
+
+.island-eq i:nth-child(2) {
+	animation-duration: 0.62s;
+	animation-delay: 0.14s;
+	height: 12px;
+}
+
+.island-eq i:nth-child(3) {
+	animation-duration: 1.02s;
+	animation-delay: 0.28s;
+	height: 8px;
+}
+
+@keyframes island-eq {
+	0%,
+	100% {
+		transform: scaleY(0.4);
+	}
+	50% {
+		transform: scaleY(1.15);
+	}
+}
+
+/* ---- 进度条 ---- */
+.island-progress {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 2px;
+	width: var(--island-progress);
+	background: linear-gradient(90deg, var(--primary), var(--secondary));
+	border-radius: 9999px;
+	transition: width 220ms linear;
+	pointer-events: none;
+}
+
+/* ==========================================================================
+   状态 → 可见元素的映射（唯一决定"看到什么"的地方）
+   ========================================================================== */
+
+#dynamic-island[data-size="dormant"] {
+	opacity: 0;
+}
+
+#dynamic-island[data-size="mini"] .island-poster,
+#dynamic-island[data-size="mini"] .island-text,
+#dynamic-island[data-size="mini"] .island-actions,
+#dynamic-island[data-size="mini"] .island-lyric,
+#dynamic-island[data-size="mini"] .island-more,
+#dynamic-island[data-size="mini"] .island-progress {
+	display: none;
+}
+
+#dynamic-island[data-size="mini"][data-state="playing"] .island-eq {
+	display: flex;
+}
+
+#dynamic-island[data-size="mini"][data-state="playing"]::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent);
+	pointer-events: none;
+}
+
+/* 暂停时的静息点：一个发亮的小圆 */
+#dynamic-island[data-size="mini"][data-state="paused"]::after {
+	content: "";
+	position: absolute;
+	inset: 0.875rem;
+	border-radius: 9999px;
+	background: color-mix(in oklch, var(--primary) 55%, transparent);
+	pointer-events: none;
+}
+
+#dynamic-island[data-size="compact"] .island-text,
+#dynamic-island[data-size="expanded"] .island-text {
+	opacity: 1;
+}
+
+/* slim：文字让位给封面+播放键 */
+#dynamic-island[data-size="slim"] .island-text {
+	opacity: 0;
+	width: 0;
+	flex: 0 0 0;
+	overflow: hidden;
+}
+
+#dynamic-island[data-size="slim"] .island-poster {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+#dynamic-island[data-size="compact"] .island-actions,
+#dynamic-island[data-size="expanded"] .island-actions,
+#dynamic-island[data-size="slim"] .island-actions {
+	display: flex;
+}
+
+/* compact / slim 只给一个播放键，prev/next 留给 expanded，省宽度 */
+#dynamic-island[data-size="compact"] .island-actions [data-act="prev"],
+#dynamic-island[data-size="compact"] .island-actions [data-act="next"],
+#dynamic-island[data-size="slim"] .island-actions [data-act="prev"],
+#dynamic-island[data-size="slim"] .island-actions [data-act="next"] {
+	display: none;
+}
+
+#dynamic-island[data-size="expanded"] .island-lyric {
+	display: block;
+}
+
+#dynamic-island[data-size="expanded"] .island-poster {
+	width: 2.5rem;
+	height: 2.5rem;
+}
+
+#dynamic-island[data-count="2"] .island-more,
+#dynamic-island[data-count="3"] .island-more {
+	display: inline-flex;
+}
+
+/* 非播放类状态不给播放键，避免点了个没反应的按钮 */
+#dynamic-island[data-state="loading"] .island-actions,
+#dynamic-island[data-state="navigating"] .island-actions,
+#dynamic-island[data-state="notice"] .island-actions {
+	display: none;
+}
+
+#dynamic-island[data-state="loading"] .island-poster,
+#dynamic-island[data-state="navigating"] .island-poster {
+	background-image: none;
+	background-color: color-mix(in oklch, var(--primary) 30%, transparent);
+	animation: island-pulse 1.4s ease-in-out infinite;
+}
+
+#dynamic-island[data-state="notice"] .island-poster {
+	background-image: none;
+	animation: none;
+	background-color: color-mix(in oklch, var(--accent) 45%, transparent);
+}
+
+@keyframes island-pulse {
+	0%,
+	100% {
+		transform: scale(0.82);
+		opacity: 0.7;
+	}
+	50% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* 暗色：底片加深一档保证对比（实测 76% 透明会透出背景图，深灰字读不出来），
+   前景整体翻成浅色 */
+:root.dark #dynamic-island {
+	--island-fg: oklch(0.96 0.01 var(--hue));
+	--island-fg-soft: oklch(0.78 0.06 var(--hue));
+	background: color-mix(in oklch, var(--card-bg) 92%, transparent);
+	border-color: color-mix(in oklch, var(--primary) 30%, transparent);
+}
+
+/* ==========================================================================
+   neu（拟态）模式：底板被改写成 oklch(0.93 …)，白胶囊会糊成一片，
+   这里换成内阴影的软浮雕，并把流体高光关掉（它是"亮面"语言，和拟态打架）
+   ========================================================================== */
+:root[data-ui-style="neu"] #dynamic-island {
+	background: var(--card-bg);
+	border-color: transparent;
+	box-shadow:
+		inset 1px 1px 2px rgb(255 255 255 / 0.95),
+		inset -1px -1px 3px color-mix(in oklch, var(--neu-dark) 60%, transparent),
+		0 10px 24px -12px color-mix(in oklch, var(--neu-ambient) 80%, transparent);
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+}
+
+:root[data-ui-style="neu"] #dynamic-island::before {
+	display: none;
+}
+
+:root[data-ui-style="neu"].dark #dynamic-island {
+	--island-fg: oklch(0.95 0.01 var(--hue));
+	--island-fg-soft: oklch(0.76 0.05 var(--hue));
+}
+
+/* ==========================================================================
+   窄屏 / 动效偏好
+   ========================================================================== */
+@media (max-width: 767px) {
+	/* 手机上悬浮层要收窄，否则 13rem 的胶囊会盖住太多正文 */
+	#dynamic-island[data-size="compact"] {
+		--island-w: min(13rem, 72vw);
+	}
+
+	#dynamic-island[data-size="expanded"] {
+		--island-w: min(21rem, 92vw);
+		--island-h: 3.25rem;
+	}
+
+	#dynamic-island[data-size="expanded"] .island-lyric {
+		max-width: 5rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#island-slot,
+	#dynamic-island,
+	#dynamic-island::before {
+		transition-duration: 120ms;
+		animation: none;
+	}
+
+	.island-eq i {
+		animation: none;
+		transform: scaleY(1);
+	}
+}
+</style>
+
+<script>
+import { siteConfig } from "../config/site";
+import { getBus, type IslandBus, type IslandSnapshot } from "../scripts/island/bus";
+import { installLoaderProvider } from "../scripts/island/providers/loader";
+import { installMusicProvider } from "../scripts/island/providers/music";
+import { installNavProvider } from "../scripts/island/providers/nav";
+
+type Size = "dormant" | "mini" | "slim" | "compact" | "expanded";
+
+const RANK: Record<Size, number> = {
+	dormant: 0,
+	mini: 1,
+	slim: 2,
+	compact: 3,
+	expanded: 4,
+};
+
+function boot(): void {
+	const cfg = siteConfig.island;
+	if (!cfg?.enable) return;
+
+	const slot = document.getElementById("island-slot");
+	const root = document.getElementById("dynamic-island");
+	if (!slot || !root) return;
+
+	const bus: IslandBus = getBus(cfg.maxStack ?? 3);
+	const cleanups: Array<() => void> = [];
+	const enabled = new Set(cfg.providers ?? ["player", "loader", "nav", "notice"]);
+
+	if (enabled.has("player")) cleanups.push(installMusicProvider(bus));
+	if (enabled.has("loader")) cleanups.push(installLoaderProvider(bus));
+	if (enabled.has("nav") || enabled.has("notice")) cleanups.push(installNavProvider(bus));
+
+	/* 悬浮模式不需要和导航栏抢空间，位置完全由 CSS 决定（见上面 #island-slot）。
+	   这里只管两件事：内容怎么画、hover 时放大到哪一档。 */
+
+	let lifted = false;
+	let lastSnapshot: IslandSnapshot = bus.snapshot;
+	/** 触屏展开后的自动收起计时器（桌面靠 pointerleave，不用它） */
+	let autoCollapseTimer = 0;
+	let resizeTimer = 0;
+
+	/* ---- 岛自身不活跃时自动隐藏 ----
+	   这里说的"不活跃"是**岛的任务**不活跃，不是用户没在操作：
+	     · 音乐暂停       → player 这条 active:false → 岛收起
+	     · 音乐播放中     → active:true  → 岛一直显示（用户不动也显示）
+	     · 载入 / 换页    → active:true  → 显示
+	   给一点宽限时间再收，免得你一按暂停它就"啪"地消失，看不出发生了什么。 */
+	const INACTIVE_GRACE_MS = cfg.inactiveGraceMs ?? 1500;
+	let inactiveHidden = false;
+	let inactiveTimer = 0;
+
+	function combine(a: Size, b: Size): Size {
+		return RANK[a] <= RANK[b] ? a : b;
+	}
+
+	/**
+	 * 可见性 = 有内容 且 未被判定为"不活跃已收起"。
+	 *
+	 * 注意这里**不直接读** lead.active：活跃度的时间判定（宽限期）由
+	 * syncActiveState 负责，它才是唯一决定 inactiveHidden 的地方。
+	 * 之前这里多写了一句 lead.active !== false，等于绕过宽限立刻隐藏，
+	 * 实测暂停 0.5s 就消失了 —— 职责必须只留在一处。
+	 */
+	function applyChrome(): void {
+		const show = !!lastSnapshot.lead && !inactiveHidden;
+		slot!.dataset.visible = show ? "true" : "false";
+		if (show) {
+			root!.setAttribute("tabindex", "0");
+		} else {
+			root!.removeAttribute("tabindex");
+		}
+	}
+
+	/** 根据 lead 的活跃度决定显示还是延时收起 */
+	function syncActiveState(): void {
+		const lead = lastSnapshot.lead;
+
+		if (!lead || lead.active === false) {
+			// 不活跃：给个宽限，然后收起。
+			// 已经在计时 / 已经收起就不要再排一次 —— 否则每次 repaint 都重置计时器，
+			// 只要还有零星事件（比如歌词索引变化）它就永远不会真的收起。
+			if (inactiveHidden || inactiveTimer) return;
+			inactiveTimer = window.setTimeout(() => {
+				inactiveTimer = 0;
+				// 展开态下先不打扰用户，等他收起来再说
+				if (lifted || root!.matches(":hover")) {
+					syncActiveState();
+					return;
+				}
+				if (lastSnapshot.lead?.active !== false) return; // 期间又活跃了
+				inactiveHidden = true;
+				applyChrome();
+			}, INACTIVE_GRACE_MS);
+			return;
+		}
+
+		// 活跃：取消待执行的收起
+		clearTimeout(inactiveTimer);
+		inactiveTimer = 0;
+
+		/* 已经收起时，是否允许这条 lead 把岛重新叫醒？
+		   换页提示（nav）设了 wake:false —— 翻页不该把藏起来的岛弹出来。
+		   岛本来就显示着的话不受影响，照样能显示"载入中"。 */
+		if (inactiveHidden && lead.wake === false) return;
+
+		if (inactiveHidden) {
+			inactiveHidden = false;
+			applyChrome();
+		}
+	}
+
+	/** 展开态一变就告诉总线，provider 靠它决定要不要接 4Hz 的 fm:time */
+	function setLifted(v: boolean): void {
+		if (lifted === v) return;
+		lifted = v;
+		// 收起时务必清掉计时器，否则它会在已经收起之后又触发一次
+		if (!v) {
+			clearTimeout(autoCollapseTimer);
+			autoCollapseTimer = 0;
+		}
+		bus.setExpanded(v);
+		repaint();
+	}
+
+	function repaint(): void {
+		const snap = lastSnapshot;
+		const lead = snap.lead;
+
+		if (!lead) {
+			root!.dataset.state = "dormant";
+			root!.dataset.size = "dormant";
+			root!.dataset.count = "0";
+			clearTimeout(inactiveTimer);
+			inactiveHidden = false;
+			applyChrome();
+			return;
+		}
+
+		let w: Size = snap.size === "dormant" ? "mini" : snap.size;
+		if (lifted) w = "expanded";
+
+		// 窄屏上不让岛长到 expanded 那么宽，否则会盖住大半屏正文
+		if (window.innerWidth < 768 && w === "expanded" && !lifted) w = "compact";
+
+		root!.dataset.size = combine(w, "expanded");
+		root!.dataset.count = String(snap.active.length);
+		applyChrome();
+		syncActiveState();
+
+		lead.render(root!);
+
+		const more = root!.querySelector<HTMLElement>(".island-more");
+		if (more) {
+			const extra = snap.active.length - 1;
+			more.textContent = extra > 0 ? `+${extra}` : "";
+		}
+	}
+
+	function paint(snap: IslandSnapshot): void {
+		lastSnapshot = snap;
+		repaint();
+	}
+
+	/* ---------------- 交互 ---------------- */
+
+	/** 展开后多久自动收起（触屏）。桌面靠 pointerleave，不需要这个。 */
+	const AUTO_COLLAPSE_MS = 6000;
+
+	function scheduleAutoCollapse(): void {
+		clearTimeout(autoCollapseTimer);
+		if (!lifted) return;
+		autoCollapseTimer = window.setTimeout(() => setLifted(false), AUTO_COLLAPSE_MS);
+	}
+
+	root.addEventListener("click", (e) => {
+		const target = e.target as HTMLElement;
+		const act = target.closest<HTMLElement>("[data-act]")?.dataset.act;
+		e.stopPropagation();
+
+		if (act === "play") return window.__fireflyMusic?.togglePlay();
+		if (act === "prev") return window.__fireflyMusic?.playPrev();
+		if (act === "next") return window.__fireflyMusic?.playNext();
+
+		// 点空白：触屏没有 hover，靠这个展开 / 收起
+		setLifted(!lifted);
+		scheduleAutoCollapse();
+	});
+
+	root.addEventListener("keydown", (e) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			setLifted(!lifted);
+			scheduleAutoCollapse();
+		}
+	});
+
+	if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+		root.addEventListener("pointerenter", () => {
+			if (lastSnapshot.lead) setLifted(true);
+		});
+		root.addEventListener("pointerleave", () => setLifted(false));
+	}
+
+	/* ---------------- 点外部收起 ----------------
+	   手机上最自然的收起方式就是点空白处。之前只绑了"点岛自身切换"，
+	   于是展开后点正文没反应，看起来像"收不起来"。
+	   用 pointerdown 而不是 click：触屏上 click 有 300ms 延迟感，
+	   而且用户开始滚动时 pointerdown 会先到，能立刻收起来。
+	   岛内部的点击已经 stopPropagation，不会走到这里。 */
+	const onOutsidePointerDown = (e: Event) => {
+		if (!lifted) return;
+		const t = e.target;
+		if (!(t instanceof Node)) return;
+		if (root!.contains(t)) return;
+		setLifted(false);
+	};
+
+	document.addEventListener("pointerdown", onOutsidePointerDown, { passive: true });
+	cleanups.push(() =>
+		document.removeEventListener("pointerdown", onOutsidePointerDown),
+	);
+
+	/* 订阅放在所有函数声明之后：repaint 里会用到 lifted / lastSnapshot，
+	   放前面订阅会让首帧回调踩 TDZ。 */
+	bus.subscribe(paint);
+
+	// 视口跨过 768 时，窄屏/宽屏的尺寸规则要重算一次
+	window.addEventListener(
+		"resize",
+		() => {
+			clearTimeout(resizeTimer);
+			resizeTimer = window.setTimeout(repaint, 120);
+		},
+		{ passive: true },
+	);
+
+	document.addEventListener("astro:page-load", repaint);
+
+	window.__islandDestroy = () => {
+		clearTimeout(inactiveTimer);
+		clearTimeout(autoCollapseTimer);
+		clearTimeout(resizeTimer);
+		for (const fn of cleanups) fn();
+	};
+}
+
+if (window.__islandInit !== true) {
+	window.__islandInit = true;
+	try {
+		boot();
+	} catch (err) {
+		// 岛是锦上添花的东西，绝不能因为它把整页功能带崩
+		console.warn("[island] init failed:", err);
+	}
+}
+</script>

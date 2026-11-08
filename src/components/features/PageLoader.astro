@@ -700,6 +700,12 @@ const checklistFirst = [
 		function setProgress(p) {
 			if (barEl) barEl.style.setProperty("--width", p + "%");
 			if (percentEl) percentEl.textContent = Math.round(p) + "%";
+			// 灵动岛订阅这个事件，而不是去 MutationObserver 扒上面那行文本：
+			// 少一次布局读取，也不依赖 loader 的内部 DOM 结构。
+			// 岛没启用时这条事件没人听，开销可忽略。
+			window.dispatchEvent(
+				new CustomEvent("loader:progress", { detail: { percent: p } }),
+			);
 		}
 
 		// 进度条不再"只在档位完成时硬跳"：

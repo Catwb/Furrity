@@ -1,5 +1,6 @@
 ---
 import BackToTop from "@components/control/BackToTop.astro";
+import DynamicIsland from "@components/DynamicIsland.astro";
 import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 import SideBar from "@components/widget/SideBar.astro";
@@ -74,6 +75,17 @@ const mainPanelTop = siteConfig.banner.enable
             <Navbar></Navbar>
         </div>
     </div>
+    <!--
+        灵动岛挂在这里，不挂进 <main> / #right-sidebar-container：
+        那两个是 swup 的 containers（astro.config.mjs:129），每次换页整体替换，
+        岛会被销毁重建，形变动画每次从零开始。放在 #top-row 里可以跨页存活
+        —— navbar 本身就在这两个容器之外。
+
+        它是独立悬浮层：absolute + left:50%，相对 #top-row（fixed，全宽），
+        纵向落在 navbar 正下方（见 DynamicIsland.astro 的 #island-slot）。
+        #top-row 是 z-50，正文是 z-30，所以岛天然浮在内容之上。
+    -->
+    {siteConfig.island?.enable && <DynamicIsland />}
 </div>
 
 <!-- Banner / Hero -->

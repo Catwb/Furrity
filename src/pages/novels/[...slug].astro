@@ -209,32 +209,6 @@ const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < chapters.lengt
     )}
 </MainGridLayout>
 
-<script>
-const toggle = document.getElementById("reading-mode-toggle");
-const content = document.getElementById("chapter-content");
-const mainGrid = document.getElementById("main-grid");
-
-function applyReadingMode(enabled: boolean) {
-    if (!content || !mainGrid) return;
-    content.classList.toggle("reading-mode", enabled);
-    mainGrid.classList.toggle("reading-mode", enabled);
-}
-
-if (toggle && !toggle.dataset.readingModeInit) {
-    toggle.dataset.readingModeInit = "true";
-    const saved = localStorage.getItem("novel-reading-mode") === "true";
-    applyReadingMode(saved);
-    toggle.classList.toggle("text-[var(--primary)]", saved);
-
-    toggle.addEventListener("click", () => {
-        const enabled = !content?.classList.contains("reading-mode");
-        applyReadingMode(enabled);
-        localStorage.setItem("novel-reading-mode", String(enabled));
-        toggle.classList.toggle("text-[var(--primary)]", enabled);
-    });
-}
-</script>
-
 <style is:global>
     .novel-content p {
         text-indent: 2em;
@@ -244,9 +218,24 @@ if (toggle && !toggle.dataset.readingModeInit) {
         text-indent: 0;
     }
 
-    #main-grid.reading-mode {
-        grid-template-columns: 0 auto !important;
-        overflow: hidden;
+    /*
+      阅读模式：只在桌面端收起两侧栏，让正文居中变窄。
+      移动端本来就是单列，再套 0 auto 会把正文压成 0 宽（内容直接消失），
+      所以网格改动必须限定在 lg 断点内。
+    */
+    @media (min-width: 1024px) {
+        #main-grid.reading-mode {
+            grid-template-columns: minmax(0, 1fr) !important;
+            overflow: hidden;
+        }
+        #main-grid.reading-mode #left-sidebar,
+        #main-grid.reading-mode #right-sidebar-container {
+            display: none !important;
+        }
+        #main-grid.reading-mode main {
+            grid-column: 1 !important;
+            grid-row: 1 !important;
+        }
     }
     #chapter-content.reading-mode {
         max-width: 48rem;

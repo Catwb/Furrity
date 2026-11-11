@@ -2,6 +2,12 @@ import type { AstroIntegration } from "@swup/astro";
 import type { IslandBus } from "./scripts/island/bus";
 
 declare global {
+	// @swup/astro 在 swup 的 page:view 上派发，用来模拟 Astro 的页面加载生命周期
+	interface DocumentEventMap {
+		"astro:page-load": Event;
+		"swup:enable": Event;
+	}
+
 	interface Window {
 		// type from '@swup/astro' is incorrect
 		swup: AstroIntegration;

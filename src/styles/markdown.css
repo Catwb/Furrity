@@ -4,6 +4,9 @@
     }
 
     h1, h2, h3, h4, h5, h6 {
+        /* 兜底：带 hash 直接打开、浏览器前进后退这类原生锚点跳转时，别让标题贴边 */
+        scroll-margin-top: 5.5rem;
+
         .anchor {
             @apply transition -m-0.5 ml-[0.2ch] p-0.5 select-none opacity-0 no-underline !important;
 

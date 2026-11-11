@@ -544,6 +544,23 @@ document.addEventListener('astro:page-load', syncNovelReadingMode);
 syncNovelReadingMode();
 
 const setup = () => {
+	/*
+	 * swup 的 scroll 插件用「元素顶部 - offset」自己算锚点落点，而 offset 默认是 0，
+	 * 于是点目录跳转后标题会顶到视口最上沿、被固定导航栏盖住。
+	 * @swup/astro 只把 smoothScrolling 当开关传下去，没暴露 offset，只能拿到实例后补。
+	 */
+	const scrollPlugin = (
+		window.swup as unknown as {
+			findPlugin?: (name: string) => { options: Record<string, unknown> } | undefined;
+		}
+	)?.findPlugin?.('SwupScrollPlugin');
+	if (scrollPlugin) {
+		scrollPlugin.options.offset = () => {
+			const nav = document.getElementById('navbar-wrapper');
+			return (nav?.getBoundingClientRect().height ?? 72) + 16;
+		};
+	}
+
 	// TODO: temp solution to change the height of the banner
 /*
 	window.swup.hooks.on('animation:out:start', () => {

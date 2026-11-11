@@ -107,7 +107,7 @@ const mainPanelTop = siteConfig.banner.enable
 </div>}
 
 <!-- Main content -->
-<div class="absolute w-full z-30 pointer-events-none" style={`top: ${mainPanelTop}`}>
+<div id="main-panel" class="absolute w-full z-30 pointer-events-none" style={`top: ${mainPanelTop}`}>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
     <div class="main-grid-wrapper relative mx-auto pointer-events-auto">
         <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-1 mx-auto gap-4 px-0 md:px-4"
@@ -132,7 +132,11 @@ const mainPanelTop = siteConfig.banner.enable
                 side="left"
             />}
 
-            <div id="right-sidebar-container" data-active={String(hasRightSidebar)} class:list={["order-3 lg:order-none", {
+            <!--
+                data-article 让移动端只把「文章页的目录」变成底部抽屉，
+                普通页面的右侧栏（公告/分类/标签）仍然留在文档流里。
+            -->
+            <div id="right-sidebar-container" data-active={String(hasRightSidebar)} data-article={String(isArticlePage)} data-toc-open="false" class:list={["order-3 lg:order-none", {
                 "hidden": !hasRightSidebar,
             }]}>
                 {isArticlePage
@@ -173,6 +177,20 @@ const mainPanelTop = siteConfig.banner.enable
                 <Footer></Footer>
             </div>
         </div>
+
+        <!--
+            移动端目录抽屉的遮罩与入口。
+            这两个节点必须留在 swup 容器（main / #right-sidebar-container）之外：
+            放进去的话，换页时 #swup-container 的 translate-y 动画会让 fixed 元素
+            以它为参照而不是视口，遮罩会整体错位。
+            代价是它们跨页存活，所以显隐由 JS 在 astro:page-load 时按当前页有没有
+            目录重新判断（见文件末尾脚本）。
+        -->
+        <div id="mobile-toc-overlay" class="mobile-toc-overlay" aria-hidden="true"></div>
+        <button id="mobile-toc-toggle" type="button" class="mobile-toc-toggle btn-card"
+                data-visible="false" aria-label="目录" aria-expanded="false" aria-controls="right-sidebar-container">
+            <Icon name="material-symbols:list-alt-rounded"></Icon>
+        </button>
 
         <BackToTop></BackToTop>
 
@@ -270,6 +288,118 @@ const mainPanelTop = siteConfig.banner.enable
 .tag-plugin.tabs .tab-panel.active {
   display: block;
 }
+
+/* ==========================================================================
+   移动端目录抽屉
+   --------------------------------------------------------------------------
+   桌面端的目录在右侧栏里，移动端它会被排到正文、左侧栏之后（order-3），
+   也就是页面最底部 —— 读文章时根本翻不到。
+   这里把文章页的 #right-sidebar-container 从文档流里拎出来，做成底部抽屉；
+   复用同一个 DOM 而不是克隆，是因为 TOC 是 custom element，内部用全局的
+   #toc / #toc-inner-wrapper 查询锚点，两份实例会互相抢高亮。
+   ========================================================================== */
+.mobile-toc-overlay,
+.mobile-toc-toggle {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  /*
+     抽屉和遮罩都在 #main-panel（z-30）里，z-index 再高也压不过 z-50 的导航栏，
+     所以抽屉打开时把整个面板提到导航栏之上。正文此时被遮罩盖住，不受影响。
+  */
+  #main-panel:has(#right-sidebar-container[data-toc-open="true"]) {
+    z-index: 65;
+  }
+
+  /* 显隐由 JS 按当前页是否有目录决定，默认不出现 */
+  .mobile-toc-toggle[data-visible="true"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: 1rem;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1rem;
+    z-index: 45;
+    color: var(--primary);
+    font-size: 1.5rem;
+    box-shadow: 0 8px 24px -12px oklch(0.5 0.1 var(--hue));
+  }
+
+  .mobile-toc-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 55;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms ease;
+  }
+  .mobile-toc-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #right-sidebar-container[data-article="true"] {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    height: 60vh;
+    max-height: 60vh;
+    z-index: 60;
+    padding: 0;
+    border-radius: 1.25rem 1.25rem 0 0;
+    background: var(--card-bg);
+    box-shadow: 0 -10px 34px -16px rgba(0, 0, 0, 0.35);
+    transform: translateY(100%);
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
+    order: unset;
+  }
+  #right-sidebar-container[data-article="true"][data-toc-open="true"] {
+    transform: translateY(0);
+  }
+
+  /* 顶部把手，暗示可以点遮罩收起 */
+  #right-sidebar-container[data-article="true"]::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0.15;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  /* 抽屉里取消 sticky 与 toc-hide，让目录直接铺满并自行滚动 */
+  #right-sidebar-container[data-article="true"] #toc-wrapper {
+    height: 100%;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  #right-sidebar-container[data-article="true"] #toc-inner-wrapper {
+    position: static;
+    top: auto;
+    height: 100%;
+    max-height: 100%;
+    padding: 1.5rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+  #right-sidebar-container[data-article="true"] #toc > div {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
 </style>
 <script is:inline>
 document.addEventListener("click",function(e){
@@ -281,4 +411,73 @@ document.addEventListener("click",function(e){
   var p=t.querySelectorAll(".tab-panel");
   if(p[b.getAttribute("data-tab")])p[b.getAttribute("data-tab")].classList.add("active");
 });
+</script>
+
+<script>
+/* ==========================================================================
+   移动端目录抽屉
+   --------------------------------------------------------------------------
+   监听器挂在 document 上而不是按钮上：#right-sidebar-container 是 swup 容器，
+   每次换页内容都会被替换，直接绑在按钮上的监听器会跟着旧节点一起消失。
+   ========================================================================== */
+const TOC_OPEN_ATTR = "data-toc-open";
+
+function setMobileTocOpen(open: boolean) {
+	const container = document.getElementById("right-sidebar-container");
+	if (!container) return;
+	container.setAttribute(TOC_OPEN_ATTR, String(open));
+	document.getElementById("mobile-toc-overlay")?.classList.toggle("is-open", open);
+	document.getElementById("mobile-toc-toggle")?.setAttribute("aria-expanded", String(open));
+
+	// 抽屉比正文晚出现，打开时把当前阅读到的条目滚进可视区
+	if (!open) return;
+	const wrapper = document.getElementById("toc-inner-wrapper");
+	const active = document.querySelector("#toc a.visible");
+	if (!wrapper || !active) return;
+	const delta = active.getBoundingClientRect().top - wrapper.getBoundingClientRect().top;
+	wrapper.scrollTo({
+		top: Math.max(0, wrapper.scrollTop + delta - wrapper.clientHeight * 0.3),
+		behavior: "smooth",
+	});
+}
+
+/**
+ * swup 只替换容器内容、不替换容器本身，所以 #right-sidebar-container 上的
+ * data-article 和容器外的目录按钮，换页后都还停在上一页的状态，得手动同步。
+ */
+function syncMobileTocState() {
+	const container = document.getElementById("right-sidebar-container");
+	// 用实际的目录锚点判断：#toc-wrapper 在文章页总会渲染，即使这篇文章没有小标题
+	const isArticle = !!container?.querySelector("#toc a[href^='#']");
+	container?.setAttribute("data-article", String(isArticle));
+	document.getElementById("mobile-toc-toggle")?.setAttribute("data-visible", String(isArticle));
+	setMobileTocOpen(false);
+}
+
+document.addEventListener("click", (event) => {
+	const target = event.target;
+	if (!(target instanceof Element)) return;
+
+	if (target.closest("#mobile-toc-toggle")) {
+		const container = document.getElementById("right-sidebar-container");
+		setMobileTocOpen(container?.getAttribute(TOC_OPEN_ATTR) !== "true");
+		return;
+	}
+
+	if (target.closest("#mobile-toc-overlay")) {
+		setMobileTocOpen(false);
+		return;
+	}
+
+	// 点目录里的锚点后自动收起，否则抽屉会一直盖着正文
+	if (target.closest("#right-sidebar-container a[href^='#']")) {
+		setMobileTocOpen(false);
+	}
+});
+
+// 换页前先收起，避免 swup 替换容器内容时抽屉闪一下
+document.addEventListener("astro:before-swap", () => setMobileTocOpen(false));
+// 换页后重新判断当前页有没有目录
+document.addEventListener("astro:page-load", syncMobileTocState);
+syncMobileTocState();
 </script>

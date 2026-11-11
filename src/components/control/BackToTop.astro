@@ -3,7 +3,7 @@ import { Icon } from "astro-icon/components";
 ---
 
 <!-- There can't be a filter on parent element, or it will break `fixed` -->
-<div class="back-to-top-wrapper hidden lg:block">
+<div class="back-to-top-wrapper">
     <div id="back-to-top-btn" class="back-to-top-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
         <button aria-label="Back to Top" class="btn-card h-[3.75rem] w-[3.75rem]">
             <Icon name="material-symbols:keyboard-arrow-up-rounded" class="mx-auto"></Icon>
@@ -42,6 +42,11 @@ import { Icon } from "astro-icon/components";
     &:active
         transform: translateX(0) scale(0.9)
 
+/* 移动端：和目录抽屉按钮一起排在右下角，返回顶部叠在它上面 */
+@media (max-width: 1023px)
+    .back-to-top-btn
+        bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px))
+
 </style>
 
 <script is:raw is:inline>
@@ -59,6 +64,13 @@ function backToTop() {
 function positionBackToTop() {
 	var btn = document.getElementById('back-to-top-btn');
 	if (!btn) return;
+
+	// 移动端没有右侧栏，按钮直接和目录抽屉按钮对齐在右下角
+	if (window.innerWidth < 1024) {
+		btn.style.right = '1rem';
+		return;
+	}
+
 	var content = document.querySelector('#main-grid main') || document.getElementById('main-grid');
 	if (!content) return;
 	var rect = content.getBoundingClientRect();

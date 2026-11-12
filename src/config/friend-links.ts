@@ -278,6 +278,12 @@ export const friendLinkGroups: FriendLinkGroup[] = [
 				color: "#F1B0AC",
 			},
 			{
+				name: "微光集",
+				url: "https://goblincwl.site/",
+				avatar: "https://goblincwl.site/static/Profile_compressed.png",
+				description: "零散的梦，汇聚成未尽的星河。",
+			},
+			{
 				name: "夏枫的猫窝w",
 				url: "https://blog.mcxiafeng.top",
 				description: "一只会敲代码的笨笨猫咪xmx",

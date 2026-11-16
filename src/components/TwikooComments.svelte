@@ -11,41 +11,64 @@ onMount(() => {
 
 	const twikooCDN = cdn || "https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.7.19/twikoo.min.js";
 	let loaded = false;
-	let observer: MutationObserver | null = null;
-	let pollTimer: ReturnType<typeof setInterval> | null = null;
+	let rootObserver: MutationObserver | null = null;
+	const bound = new WeakSet<HTMLElement>();
 
 	/**
 	 * 表情面板是 absolute 浮层，超出卡片的部分会被卡片的 overflow: hidden
-	 * 裁掉。这里量出面板底部超出卡片底部的距离，给卡片补 padding-bottom，
-	 * 让卡片自己伸长把面板包进去；面板仍是浮层，位置和遮挡行为都不变。
+	 * 裁掉。主提交框和每条评论的回复框各有一个 .OwO（回复框的是点开回复后
+	 * 才创建的），这里统一接管：量出每个打开面板底部超出卡片的距离，取最大
+	 * 值给卡片补 padding-bottom，让卡片自己伸长把面板包进去；面板仍是浮层，
+	 * 位置和遮挡行为都不变。
 	 */
-	function syncCardHeight() {
-		const owo = document.querySelector<HTMLElement>(".twikoo .OwO");
-		const body = owo?.querySelector<HTMLElement>(".OwO-body");
-		const card = owo?.closest<HTMLElement>(".card-base");
-		if (!owo || !body || !card) return;
-
-		if (!owo.classList.contains("OwO-open")) {
-			card.style.paddingBottom = "";
-			return;
+	function syncCards() {
+		const owos = [...document.querySelectorAll<HTMLElement>(".twikoo .OwO")];
+		const cards = new Set<HTMLElement>();
+		for (const owo of owos) {
+			const card = owo.closest<HTMLElement>(".card-base");
+			if (card) cards.add(card);
 		}
-
 		// 先还原再量，避免上一次补的高度影响测量
-		card.style.paddingBottom = "";
-		const overflow = body.getBoundingClientRect().bottom - card.getBoundingClientRect().bottom;
-		if (overflow <= 0) return;
-		const base = Number.parseFloat(getComputedStyle(card).paddingBottom) || 0;
-		card.style.paddingBottom = `${Math.ceil(base + overflow + 16)}px`;
+		for (const card of cards) card.style.paddingBottom = "";
+
+		const need = new Map<HTMLElement, number>();
+		for (const owo of owos) {
+			if (!owo.classList.contains("OwO-open")) continue;
+			const body = owo.querySelector<HTMLElement>(".OwO-body");
+			const card = owo.closest<HTMLElement>(".card-base");
+			if (!body || !card) continue;
+			const overflow = body.getBoundingClientRect().bottom - card.getBoundingClientRect().bottom;
+			if (overflow <= 0) continue;
+			const base = Number.parseFloat(getComputedStyle(card).paddingBottom) || 0;
+			need.set(card, Math.max(need.get(card) ?? 0, base + overflow + 16));
+		}
+		for (const [card, padding] of need) {
+			card.style.paddingBottom = `${Math.ceil(padding)}px`;
+		}
 	}
 
-	function bindOwo() {
-		const owo = document.querySelector<HTMLElement>(".twikoo .OwO");
-		if (!owo) return false;
-		observer?.disconnect();
-		observer = new MutationObserver(syncCardHeight);
-		observer.observe(owo, { attributes: true, attributeFilter: ["class"] });
-		window.addEventListener("resize", syncCardHeight);
-		return true;
+	function bindAll() {
+		let added = false;
+		for (const owo of document.querySelectorAll<HTMLElement>(".twikoo .OwO")) {
+			if (bound.has(owo)) continue;
+			bound.add(owo);
+			new MutationObserver(syncCards).observe(owo, {
+				attributes: true,
+				attributeFilter: ["class"],
+			});
+			added = true;
+		}
+		if (added) syncCards();
+	}
+
+	function watchComments() {
+		const root = document.getElementById("tcomment");
+		if (!root) return;
+		bindAll();
+		rootObserver?.disconnect();
+		rootObserver = new MutationObserver(bindAll);
+		rootObserver.observe(root, { childList: true, subtree: true });
+		window.addEventListener("resize", syncCards);
 	}
 
 	function hideLoader() {
@@ -77,13 +100,8 @@ onMount(() => {
 					region: region || "",
 					lang: lang || "",
 				});
-				// .OwO 由 twikoo 异步渲染，等它出现后再挂监听
-				pollTimer = setInterval(() => {
-					if (bindOwo() && pollTimer) {
-						clearInterval(pollTimer);
-						pollTimer = null;
-					}
-				}, 300);
+				// 回复框的 .OwO 是点开回复后才创建的，用 MutationObserver 持续接管
+				watchComments();
 			}
 		};
 		document.head.appendChild(script);
@@ -105,9 +123,8 @@ onMount(() => {
 	}
 
 	return () => {
-		observer?.disconnect();
-		if (pollTimer) clearInterval(pollTimer);
-		window.removeEventListener("resize", syncCardHeight);
+		rootObserver?.disconnect();
+		window.removeEventListener("resize", syncCards);
 	};
 });
 </script>

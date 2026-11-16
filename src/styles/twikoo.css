@@ -1,15 +1,24 @@
 /* ==========================================================================
    twikoo 评论区移动端适配
    --------------------------------------------------------------------------
-   twikoo 内置的 OwO 表情面板固定 400px 宽，窄屏下会顶出正文；
-   超出 #swup-container 的部分被它的 overflow: hidden 裁掉，表情点不到。
-   这里把面板宽度收进视口内，让表情格子自己换行。
+   twikoo 的 OwO 表情面板是 position: absolute + left: 0，相对表情按钮定位。
+   窄屏下按钮本身就在工具栏偏右，面板从那儿往右铺固定宽度会顶出评论卡片，
+   超出部分被卡片的 overflow: hidden 裁掉，表情看不见也点不到。
+
+   只收窄宽度没用 —— 起点偏右，收得再窄也还是往右伸。所以改成 fixed 贴视口
+   两边，彻底脱离按钮位置。面板仍在 .OwO 的 DOM 里，twikoo 自己那套「点外部
+   关闭」的判断（closest('.OwO')）不受影响。
    ========================================================================== */
 @media (max-width: 640px) {
-	.OwO-body {
-		width: calc(100vw - 3rem) !important;
-		max-width: calc(100vw - 3rem) !important;
-		left: 0 !important;
-		right: auto !important;
+	.OwO .OwO-body {
+		position: fixed !important;
+		left: 1rem !important;
+		right: 1rem !important;
+		bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+		top: auto !important;
+		width: auto !important;
+		max-width: none !important;
+		max-height: 60vh !important;
+		z-index: 100 !important;
 	}
 }

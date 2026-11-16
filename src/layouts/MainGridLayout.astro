@@ -298,9 +298,14 @@ const mainPanelTop = siteConfig.banner.enable
    复用同一个 DOM 而不是克隆，是因为 TOC 是 custom element，内部用全局的
    #toc / #toc-inner-wrapper 查询锚点，两份实例会互相抢高亮。
    ========================================================================== */
+/*
+   这里必须用 !important：按钮同时带 .btn-card，那个类里有 display: flex，
+   和 .mobile-toc-toggle 特异性相同，谁后加载谁赢 —— 一旦被它盖住，按钮会在
+   所有页面都显示，点了却因为当前页没有目录而毫无反应。
+*/
 .mobile-toc-overlay,
 .mobile-toc-toggle {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 1023px) {
@@ -312,20 +317,20 @@ const mainPanelTop = siteConfig.banner.enable
     z-index: 65;
   }
 
-  /* 显隐由 JS 按当前页是否有目录决定，默认不出现 */
+  /* 显隐由 JS 按当前页是否有目录决定，默认不出现；尺寸与返回顶部按钮保持一致 */
   .mobile-toc-toggle[data-visible="true"] {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     position: fixed;
     right: 1rem;
     bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 3.75rem;
+    height: 3.75rem;
     border-radius: 1rem;
     z-index: 45;
     color: var(--primary);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     box-shadow: 0 8px 24px -12px oklch(0.5 0.1 var(--hue));
   }
 

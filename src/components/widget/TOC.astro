@@ -60,6 +60,16 @@ const maxLevel = siteConfig.toc.depth;
 </table-of-contents>}
 
 <style>
+    /*
+        TOC 的脚本用 setAttribute("style", ...) 整段覆盖内联样式，会把模板里
+        style="opacity: 0; z-index: -1;" 的 z-index 一起冲掉，之后指示器就变成
+        auto，压在目录文字上面。CSS 规则不受 setAttribute 影响，这里补回来。
+    */
+    #active-indicator {
+        z-index: -1;
+        pointer-events: none;
+    }
+
     table-of-contents .visible .toc-label {
         color: oklch(0.55 0.12 var(--hue));
     }

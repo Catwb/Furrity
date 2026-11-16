@@ -298,14 +298,13 @@ const mainPanelTop = siteConfig.banner.enable
    复用同一个 DOM 而不是克隆，是因为 TOC 是 custom element，内部用全局的
    #toc / #toc-inner-wrapper 查询锚点，两份实例会互相抢高亮。
    ========================================================================== */
-/*
-   这里必须用 !important：按钮同时带 .btn-card，那个类里有 display: flex，
-   和 .mobile-toc-toggle 特异性相同，谁后加载谁赢 —— 一旦被它盖住，按钮会在
-   所有页面都显示，点了却因为当前页没有目录而毫无反应。
-*/
-.mobile-toc-overlay,
-.mobile-toc-toggle {
-  display: none !important;
+/* 这两个都是移动端专用，桌面端直接不渲染。
+   必须 !important —— .btn-card 里有 display: flex，和 .mobile-toc-toggle 同特异性。 */
+@media (min-width: 1024px) {
+  .mobile-toc-toggle,
+  .mobile-toc-overlay {
+    display: none !important;
+  }
 }
 
 @media (max-width: 1023px) {
@@ -317,9 +316,14 @@ const mainPanelTop = siteConfig.banner.enable
     z-index: 65;
   }
 
-  /* 显隐由 JS 按当前页是否有目录决定，默认不出现；尺寸与返回顶部按钮保持一致 */
+  /* 没有目录的页面不显示入口。:not() 特异性高于 .btn-card，不需要 !important */
+  .mobile-toc-toggle:not([data-visible="true"]) {
+    display: none;
+  }
+
+  /* 尺寸与返回顶部按钮保持一致 */
   .mobile-toc-toggle[data-visible="true"] {
-    display: flex !important;
+    display: flex;
     align-items: center;
     justify-content: center;
     position: fixed;
@@ -335,9 +339,7 @@ const mainPanelTop = siteConfig.banner.enable
   }
 
   .mobile-toc-overlay {
-    /* 必须带 !important：上面那条 display: none !important 是给桌面端兜底的，
-       这里不加的话遮罩根本不会渲染，点不到自然也就关不掉抽屉 */
-    display: block !important;
+    display: block;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.35);

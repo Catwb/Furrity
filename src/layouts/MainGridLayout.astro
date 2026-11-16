@@ -335,7 +335,9 @@ const mainPanelTop = siteConfig.banner.enable
   }
 
   .mobile-toc-overlay {
-    display: block;
+    /* 必须带 !important：上面那条 display: none !important 是给桌面端兜底的，
+       这里不加的话遮罩根本不会渲染，点不到自然也就关不掉抽屉 */
+    display: block !important;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.35);

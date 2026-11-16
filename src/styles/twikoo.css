@@ -1,24 +1,17 @@
 /* ==========================================================================
    twikoo 评论区移动端适配
    --------------------------------------------------------------------------
-   twikoo 的 OwO 表情面板是 position: absolute + left: 0，相对表情按钮定位。
-   窄屏下按钮本身就在工具栏偏右，面板从那儿往右铺固定宽度会顶出评论卡片，
-   超出部分被卡片的 overflow: hidden 裁掉，表情看不见也点不到。
+   twikoo 的 OwO 表情面板是 position: absolute + top: 2em，相对
+   .tk-row.actions 定位，宽度由 left/right: 0 撑满工具栏，本身不会横向
+   溢出卡片。
 
-   只收窄宽度没用 —— 起点偏右，收得再窄也还是往右伸。所以改成 fixed 贴视口
-   两边，彻底脱离按钮位置。面板仍在 .OwO 的 DOM 里，twikoo 自己那套「点外部
-   关闭」的判断（closest('.OwO')）不受影响。
+   问题在纵向：面板高约 290px，卡片带 overflow: hidden，面板底部超出卡片
+   时会被裁掉，表情看不见也点不到。
+
+   这里不改面板定位 —— fixed 会浮在正文上挡住大半屏，static 会把预览/发送
+   按钮推下去。面板继续当浮层（可以盖住卡片里的内容），由
+   TwikooComments.svelte 在面板打开时量出超出量，给卡片补 padding-bottom，
+   让卡片自己伸长把面板包进去，超出部分就不会被裁。
+
+   所以本文件不再需要规则，保留作说明。
    ========================================================================== */
-@media (max-width: 640px) {
-	.OwO .OwO-body {
-		position: fixed !important;
-		left: 1rem !important;
-		right: 1rem !important;
-		bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
-		top: auto !important;
-		width: auto !important;
-		max-width: none !important;
-		max-height: 60vh !important;
-		z-index: 100 !important;
-	}
-}

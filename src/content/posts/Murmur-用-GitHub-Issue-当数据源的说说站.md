@@ -1,5 +1,6 @@
 ---
 title: Murmur：用 GitHub Issue 写说说的小站
+abbrlink: '54726'
 published: 2026-11-15T21:20:00+08:00
 description: 开个 issue 就是发一条说说，编辑、关闭、删除都跟着变，站点是纯静态的，挂在 GitHub Pages 上。
 category:

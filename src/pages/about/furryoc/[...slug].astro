@@ -85,21 +85,16 @@ const themeColor = oc.color || "var(--primary)";
 </MainGridLayout>
 
 <script>
-import PhotoSwipeLightbox from "photoswipe/lightbox";
+import { createLightbox } from "@/scripts/lightbox";
 
 const gallery = document.querySelector(".fursona-gallery");
 if (gallery) {
-	const lightbox = new PhotoSwipeLightbox({
+	createLightbox({
 		gallery: ".fursona-gallery",
 		children: "a",
-		pswpModule: () => import("photoswipe"),
-		padding: { top: 20, bottom: 20, left: 20, right: 20 },
-		wheelToZoom: true,
-		imageClickAction: "close",
-		tapAction: "close",
-		doubleTapAction: "zoom",
+		// 兽设页通常只有几张图，缩略图条反而挤，关掉
+		thumbstrip: false,
 	});
-	lightbox.init();
 }
 
 document.querySelectorAll(".fursona-gallery img").forEach(function (img) {

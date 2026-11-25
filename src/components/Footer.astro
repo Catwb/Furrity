@@ -57,3 +57,46 @@ const md = new MarkdownIt({ html: true });
         @apply h-auto;
     }
 </style>
+
+<script>
+    // 站点运行时间。
+    // 算法与 cdn.245179.xyz/js/runtime.js 完全一致：同样的 +250ms 补偿、
+    // 同样的取整顺序、同样的文案与 &nbsp，连秒数用 Math.round 都照搬。
+    //
+    // 唯一改动是取值方式：原脚本用 getElementById("timeDate")，而页面里有两个
+    // footer（桌面 hidden lg:block / 移动 block lg:hidden），两处同名 id 造成重复。
+    // getElementById 只返回 DOM 里第一个 —— 也就是桌面那份；手机上它被 hidden 藏着，
+    // 所以脚本一直在更新看不见的元素，可见的那份永远停在"载入天数..."。
+    // 这里改成 querySelectorAll，两份一起更新。
+    const UPTIME_START = new Date("2024/08/31 10:05:30").getTime();
+
+    function pad2(n: number): string {
+        return String(n).padStart(2, "0");
+    }
+
+    function updateUptime(): void {
+        const now = Date.now() + 250;
+        const diffSeconds = (now - UPTIME_START) / 1000;
+        const diffMinutes = diffSeconds / 60;
+        const diffHours = diffMinutes / 60;
+        const diffDays = diffHours / 24;
+
+        const dnum = Math.floor(diffDays);
+        const hnum = Math.floor(diffHours - 24 * dnum);
+        const mnum = Math.floor(diffMinutes - 24 * 60 * dnum - 60 * hnum);
+        const snum = Math.round(diffSeconds - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum);
+
+        const daysText = `本站在恶劣的环境中生存了&nbsp${dnum}&nbsp天`;
+        const clockText = `${pad2(hnum)}&nbsp小时&nbsp;${pad2(mnum)}&nbsp分&nbsp;${pad2(snum)}&nbsp秒`;
+
+        document.querySelectorAll('[id="timeDate"]').forEach((el) => {
+            el.innerHTML = daysText;
+        });
+        document.querySelectorAll('[id="times"]').forEach((el) => {
+            el.innerHTML = clockText;
+        });
+    }
+
+    updateUptime();
+    window.setInterval(updateUptime, 1000);
+</script>

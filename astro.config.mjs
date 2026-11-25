@@ -27,6 +27,7 @@ import { FrameComponent } from "./src/plugins/rehype-tags/frame.mjs";
 import { MetingComponent } from "./src/plugins/rehype-tags/meting.mjs";
 import { rehypePoetryComponent } from "./src/plugins/rehype-tags/poetry.mjs";
 import { rehypePaperComponent } from "./src/plugins/rehype-tags/paper.mjs";
+import { rehypeChatComponent } from "./src/plugins/rehype-tags/chat.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkAbbrlink } from "./src/plugins/remark-abbrlink";
@@ -251,6 +252,7 @@ export default defineConfig({
 				rehypeCodeGroupWrapper,
 				rehypePoetryComponent,
 				rehypePaperComponent,
+				rehypeChatComponent,
 				rehypeSpacing,
 				rehypeExternalLinks,
 				[

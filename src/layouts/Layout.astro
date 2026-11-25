@@ -628,6 +628,14 @@ const setup = () => {
 		}
 	});
 	window.swup.hooks.on('visit:end', (_visit: {to: {url: string}}) => {
+		// 切换页面后回到顶部。
+		// 不要只依赖 swup 的 scroll 插件：这里同时有 OverlayScrollbars 接管 body、
+		// #page-height-extend 临时把页面撑高 300vh，平滑滚动的时序并不可靠 ——
+		// 结果是普通页面之间切换会停在原来的位置（进文章时整页替换，才恰好回顶）。
+		window.scrollTo(0, 0);
+		document.documentElement.scrollTop = 0;
+		document.body.scrollTop = 0;
+
 		setTimeout(() => {
 			const heightExtend = document.getElementById('page-height-extend')
 			if (heightExtend) {

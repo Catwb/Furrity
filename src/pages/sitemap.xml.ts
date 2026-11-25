@@ -80,7 +80,7 @@ function getStaticPageUrls(): string[] {
 		let rel = file.replace(/^\.\//, "").replace(/\.astro$/, "");
 		// 跳过动态路由（含 [ 参数）与非页面文件
 		if (rel.includes("[")) continue;
-		if (rel === "rss" || rel === "atom" || rel === "robots") continue;
+		if (rel === "rss" || rel === "atom" || rel === "robots" || rel === "404") continue;
 		if (rel === "index") {
 			urls.add("/");
 			continue;

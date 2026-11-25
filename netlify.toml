@@ -53,9 +53,10 @@
   status = 301
   force = true
 
+# 兜底：Astro 的静态 404 产物是 dist/404.html（不是 /404/index.html）
 [[redirects]]
   from = "/*"
-  to = "/404/"
+  to = "/404.html"
   status = 404
 
 # 4. 隐式处理 /index.html

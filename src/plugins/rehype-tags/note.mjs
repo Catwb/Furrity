@@ -1,44 +1,6 @@
-import { h } from "hastscript"
-import { shouldInject } from "./_registry.js"
-import { parseTitleProps } from "./_parse-title.mjs"
-
-const STYLE = `.tag-plugin.colorful.note {
-  position: relative;
-  margin: 1em 0;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  background: var(--block-bg, oklch(0.95 0.01 var(--hue)));
-}
-.tag-plugin.colorful.note > .title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-.tag-plugin.colorful.note[color="red"] { --block-bg: oklch(0.93 0.04 20); }
-.tag-plugin.colorful.note[color="orange"] { --block-bg: oklch(0.93 0.04 50); }
-.tag-plugin.colorful.note[color="yellow"] { --block-bg: oklch(0.95 0.04 80); }
-.tag-plugin.colorful.note[color="green"] { --block-bg: oklch(0.93 0.04 140); }
-.tag-plugin.colorful.note[color="cyan"] { --block-bg: oklch(0.93 0.04 190); }
-.tag-plugin.colorful.note[color="blue"] { --block-bg: oklch(0.93 0.04 240); }
-.tag-plugin.colorful.note[color="purple"] { --block-bg: oklch(0.93 0.04 290); }`
-
-export function NoteComponent(properties, children) {
-  const nodes = []
-  if (shouldInject("note")) {
-    nodes.push(h("style", { "data-tag-plugin": "note" }, STYLE))
-  }
-
-  const props = parseTitleProps(properties || {})
-  const attrs = { class: "tag-plugin colorful note" }
-  if (props.color) attrs.color = props.color
-
-  const inner = []
-  if (props.title) {
-    inner.push(h("div", { class: "title" }, props.title))
-  }
-  if (children && children.length > 0) {
-    inner.push(h("div", { class: "body" }, children))
-  }
-
-  nodes.push(h("div", attrs, inner))
-  return nodes.length === 1 ? nodes[0] : nodes
-}
+// note 是 box 的别名。
+//
+// 两者的样式规则逐字相同，上游 Stellar 文档也写明「note 标签由 box 容器实现」。
+// 这里只保留一份实现，`:::note` / `:::stnote` 继续可用（老文章不会失效），
+// 渲染出来就是 box 的结构与样式，改动颜色时也只需要改 box.mjs 一处。
+export { BoxComponent as NoteComponent } from "./box.mjs"

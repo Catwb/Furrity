@@ -21,15 +21,15 @@ title: 标签插件
 
 可选颜色：`red` / `orange` / `yellow` / `green` / `cyan` / `blue` / `purple`。
 
-## note 备注块
+## note 备注块（box 的别名）
 
 :::note{color="cyan" title="备注"}
-note 和 box 样式接近，但视觉上更轻，适合做旁注。
+note 和 box 共用同一份实现，写哪个都行，样式完全一样。
 :::
 
 ```markdown
 :::note{color="cyan" title="备注"}
-note 和 box 样式接近，但视觉上更轻，适合做旁注。
+note 和 box 共用同一份实现，写哪个都行，样式完全一样。
 :::
 ```
 
